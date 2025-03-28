@@ -31,7 +31,7 @@ namespace CSharp.Core.XLua
 
         public static LuaEnv GetInstance()
         {
-            // if (_luaEnv != null) return _luaEnv;
+            if (_luaEnv != null) return _luaEnv;
 
             Debug.Log("Creating new LuaEnv instance");
             _luaEnv = new LuaEnv();

@@ -1,23 +1,24 @@
-print("Loaded Player script")
+print("Loaded Player script");
 
-local M = {}  -- tạo module table
+local M = {}
 
-local rb
-
-function M.start()
-    rb = M.self:GetComponent(typeof(CS.UnityEngine.Rigidbody2D))
+function M:start()
+    print("lua start");
 end
 
-function M.update()
-    if rb:IsTouchingLayers(CS.UnityEngine.LayerMask.GetMask("Ground")) then
-        local randomForce = math.random(1, 20) / 10
-        local force = CS.UnityEngine.Vector2(0, randomForce)
-        rb:AddForce(force, CS.UnityEngine.ForceMode2D.Impulse)
-    end
+function M:update()
+    M.monoBehaviour:TryJumpIfGrounded()  -- Gọi trực tiếp `self`, không cần `M.self`
 end
 
-function M.ondestroy()
-    print("lua destroy")
+function M:ondestroy()
+    print("lua destroy");
 end
 
-return M 
+function M:new()
+    local newObj = {}
+    self.__index = self
+    setmetatable(newObj, self)
+    return newObj
+end
+
+return M
