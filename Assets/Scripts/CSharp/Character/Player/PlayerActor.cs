@@ -12,66 +12,67 @@ namespace CSharp.Character.Player
         public GameObject value;
     }
 
+    [LuaCallCSharp]
     public class PlayerActor : MonoBehaviour
     {
-        private  LuaEnv luaEnv;
+        public Injection[] injections;
 
+        private LuaTable luaModule;
 
+        private Action luaOnDestroy;
         private Action luaStart;
         private Action luaUpdate;
-        private Action luaOnDestroy;
-
-        private LuaTable scriptScopeTable;
-
-        public Injection[] injections;
 
         private void Awake()
         {
-            luaEnv = LuaManager.GetInstance();
+            var luaEnv = LuaManager.GetInstance();
 
-            scriptScopeTable = luaEnv.NewTable();
-            using (var meta = luaEnv.NewTable())
+            // Gọi module Lua
+            luaModule = luaEnv.DoString("return require('character.player')", "character.player")[0] as LuaTable;
+            if (luaModule == null)
             {
-                meta.Set("__index", luaEnv.Global);
-                scriptScopeTable.SetMetaTable(meta);
+                Debug.LogError("Lua module load failed!");
+                return;
             }
 
-            // 将所需值注入到 Lua 脚本域中
-            scriptScopeTable.Set("self", this);
+            // Inject các biến C# vào Lua module
+            luaModule.Set("self", this);
             foreach (var injection in injections)
             {
-                scriptScopeTable.Set(injection.name, injection.value);
+                luaModule.Set(injection.name, injection.value);
             }
 
-            luaEnv.DoString("require('player')");
+            // Lấy các function từ Lua
+            luaModule.Get("awake", out Action luaAwake);
+            luaModule.Get("start", out luaStart);
+            luaModule.Get("update", out luaUpdate);
+            luaModule.Get("ondestroy", out luaOnDestroy);
 
-            var luaAwake = scriptScopeTable.Get<Action>("awake");
-            scriptScopeTable.Get("start", out luaStart);
-            scriptScopeTable.Get("update", out luaUpdate);
-            scriptScopeTable.Get("ondestroy", out luaOnDestroy);
-
+            // Gọi hàm awake nếu có
             luaAwake?.Invoke();
         }
 
-        void Start()
+        private void Start()
         {
             luaStart?.Invoke();
         }
 
-        // Update is called once per frame
-        void Update()
+        private void Update()
         {
             luaUpdate?.Invoke();
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             luaOnDestroy?.Invoke();
 
-            scriptScopeTable.Dispose();
             luaOnDestroy = null;
             luaUpdate = null;
             luaStart = null;
+
+            luaModule?.Dispose();
+            luaModule = null;
+
             injections = null;
         }
     }
