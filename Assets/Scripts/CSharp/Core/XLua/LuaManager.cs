@@ -11,6 +11,11 @@ namespace CSharp.Core.XLua
         private static LuaEnv _luaEnv;
         private static float _lastGCTime;
 
+        private void Awake()
+        {
+            GetInstance();
+        }
+
         private void Update()
         {
             if (!(Time.time - _lastGCTime > GCInterval)) return;
@@ -26,13 +31,13 @@ namespace CSharp.Core.XLua
 
         public static LuaEnv GetInstance()
         {
-            if (_luaEnv == null)
-            {
-                _luaEnv = new LuaEnv();
+            if (_luaEnv != null) return _luaEnv;
 
-                // AddLoader expects a delegate that returns byte[]
-                _luaEnv.AddLoader(LoadLuaScriptFromServer);
-            }
+            Debug.Log("Creating new LuaEnv instance");
+            _luaEnv = new LuaEnv();
+
+            // AddLoader expects a delegate that returns byte[]
+            _luaEnv.AddLoader(LoadLuaScriptFromServer);
 
             return _luaEnv;
         }
@@ -50,8 +55,11 @@ namespace CSharp.Core.XLua
 
             // Check if the request was successful
             if (request.result == UnityWebRequest.Result.Success)
+            {
                 // Return the script as a byte array
+                Debug.Log("Loaded lua script from server: " + filename);
                 return Encoding.UTF8.GetBytes(request.downloadHandler.text);
+            }
 
             // Log the error if the request fails
             Debug.LogError($"Failed to load `{filename}` lua script from server. Error: {request.error}");
