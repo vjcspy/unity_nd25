@@ -1,6 +1,6 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using UnityEngine;
-using UnityEngine.Networking;
 using XLua;
 
 namespace CSharp.Core.XLua
@@ -31,39 +31,44 @@ namespace CSharp.Core.XLua
 
         public static LuaEnv GetInstance()
         {
-            if (_luaEnv != null) return _luaEnv;
+            // if (_luaEnv != null) return _luaEnv;
 
             Debug.Log("Creating new LuaEnv instance");
             _luaEnv = new LuaEnv();
 
             // AddLoader expects a delegate that returns byte[]
-            _luaEnv.AddLoader(LoadLuaScriptFromServer);
+            _luaEnv.AddLoader(LoadLuaScriptDevelopment);
 
             return _luaEnv;
         }
 
-        // This method returns a byte[] (script) and is passed to AddLoader
-        private static byte[] LoadLuaScriptFromServer(ref string filename)
+        public static LuaEnv GetNewEnv()
         {
-            // Construct the URL to fetch the Lua script
-            var url = "http://localhost:3000/load/" + filename;
+            Debug.Log("Creating new LuaEnv instance");
+            var luaEnv = new LuaEnv();
 
-            // Use UnityWebRequest to fetch the Lua script (blocking or async)
-            using var request = UnityWebRequest.Get(url);
-            // Wait for the request to complete
-            request.SendWebRequest();
+            // AddLoader expects a delegate that returns byte[]
+            luaEnv.AddLoader(LoadLuaScriptDevelopment);
 
-            // Check if the request was successful
-            if (request.result == UnityWebRequest.Result.Success)
+            return luaEnv;
+        }
+
+        // This method returns a byte[] (script) and is passed to AddLoader
+        private static byte[] LoadLuaScriptDevelopment(ref string filename)
+        {
+            var filepath = Application.dataPath + "/Scripts/XLua/" + filename.Replace('.', '/') + ".lua";
+            // Debug.Log($"Attempting to load Lua script from: {filepath}");
+
+            if (!File.Exists(filepath))
             {
-                // Return the script as a byte array
-                Debug.Log("Loaded lua script from server: " + filename);
-                return Encoding.UTF8.GetBytes(request.downloadHandler.text);
+                Debug.LogError("File does not exist");
+                return null;
             }
+            using var reader = new StreamReader(filepath, Encoding.UTF8);
+            var script = reader.ReadToEnd();
 
-            // Log the error if the request fails
-            Debug.LogError($"Failed to load `{filename}` lua script from server. Error: {request.error}");
-            return null;
+            // Debug.Log($"Loaded Lua script from: {filepath}");
+            return Encoding.UTF8.GetBytes(script);
         }
     }
 }
