@@ -1,9 +1,8 @@
-using CSharp.Core.XLua;
-using JetBrains.Annotations;
+using Core.XLua;
 using UnityEngine;
 using XLua;
 
-namespace CSharp.Character.Player
+namespace Character.Player
 {
     [LuaCallCSharp]
     public class PlayerActor : LuaMono
@@ -18,7 +17,6 @@ namespace CSharp.Character.Player
             rb = GetComponent<Rigidbody2D>();
         }
 
-        [UsedImplicitly]
         public void TryJumpIfGrounded()
         {
             if (!rb.IsTouchingLayers(LayerMask.GetMask("Ground"))) return;

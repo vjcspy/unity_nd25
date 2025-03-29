@@ -3,7 +3,7 @@ using System.Text;
 using UnityEngine;
 using XLua;
 
-namespace CSharp.Core.XLua
+namespace Core.XLua
 {
     public class LuaManager : MonoBehaviour
     {

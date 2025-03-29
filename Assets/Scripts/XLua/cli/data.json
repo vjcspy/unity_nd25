@@ -1,0 +1,70 @@
+{
+  "context": {
+    "a": 1
+  },
+  "id": "WarriorPlayer",
+  "initial": "Idle",
+  "states": {
+    "Idle": {
+      "entry": [
+        {
+          "type": "updateAnimator",
+          "params": {
+            "Idle": true
+          }
+        },
+        {
+          "type": "coreLogAction",
+          "params": {
+            "action": "Idle start"
+          }
+        }
+      ],
+      "exit": {
+        "type": "updateAnimator",
+        "params": {
+          "Idle": false
+        }
+      },
+      "invoke": {
+        "input": {},
+        "src": "handleMove"
+      },
+      "on": {
+        "move": [
+          {
+            "target": "Move",
+            "actions": [],
+            "meta": {}
+          }
+        ]
+      }
+    },
+    "Move": {
+      "entry": {
+        "type": "updateAnimator",
+        "params": {
+          "Move": true
+        }
+      },
+      "exit": {
+        "type": "updateAnimator",
+        "params": {
+          "Move": false
+        }
+      },
+      "invoke": [
+        {
+          "input": {},
+          "src": "handleMove"
+        },
+        {
+          "input": {
+            "action": "handle move"
+          },
+          "src": "coreLogAction"
+        }
+      ]
+    }
+  }
+}

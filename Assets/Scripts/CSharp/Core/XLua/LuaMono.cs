@@ -2,7 +2,7 @@
 using UnityEngine;
 using XLua;
 
-namespace CSharp.Core.XLua
+namespace Core.XLua
 {
     [Serializable]
     public class Injection
@@ -52,8 +52,8 @@ namespace CSharp.Core.XLua
             var luaEnv = LuaManager.GetInstance();
 
             var result = luaEnv.DoString($@"
-            player = require(""{ModuleName}"")
-            return player:new()
+                player = require(""{ModuleName}"")
+                return player:new()
             ");
 
             if (result.Length != 1 || result[0] is not LuaTable)
