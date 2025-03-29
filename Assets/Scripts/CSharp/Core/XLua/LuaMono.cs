@@ -15,7 +15,7 @@ namespace CSharp.Core.XLua
     {
         private LuaTable luaModule;
 
-        private Action luaOnDestroy;
+        private Action luaDestroy;
         private Action luaStart;
         private Action luaUpdate;
 
@@ -36,9 +36,9 @@ namespace CSharp.Core.XLua
 
         protected void OnDestroy()
         {
-            luaOnDestroy?.Invoke();
+            luaDestroy?.Invoke();
 
-            luaOnDestroy = null;
+            luaDestroy = null;
             luaUpdate = null;
             luaStart = null;
 
@@ -61,10 +61,10 @@ namespace CSharp.Core.XLua
             luaModule!.Set("monoBehaviour", this);
 
             // Lấy các function từ Lua
-            luaModule.Get("awake", out Action luaAwake);
-            luaModule.Get("start", out luaStart);
-            luaModule.Get("update", out luaUpdate);
-            luaModule.Get("ondestroy", out luaOnDestroy);
+            luaModule.Get("Awake", out Action luaAwake);
+            luaModule.Get("Start", out luaStart);
+            luaModule.Get("Update", out luaUpdate);
+            luaModule.Get("Destroy", out luaDestroy);
 
             // Gọi hàm awake nếu có
             luaAwake?.Invoke();
