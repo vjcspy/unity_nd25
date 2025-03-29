@@ -13,28 +13,28 @@ namespace CSharp.Core.XLua
 
     public abstract class LuaMono : MonoBehaviour
     {
-        private LuaTable luaModule;
-
         private Action luaDestroy;
+        private LuaTable luaModule;
         private Action luaStart;
         private Action luaUpdate;
+        protected abstract string ModuleName { get; }
 
         protected virtual void Awake()
         {
             InitLuaEnv();
         }
 
-        protected void Start()
+        private void Start()
         {
             luaStart?.Invoke();
         }
 
-        protected void Update()
+        private void Update()
         {
             luaUpdate?.Invoke();
         }
 
-        protected void OnDestroy()
+        private void OnDestroy()
         {
             luaDestroy?.Invoke();
 
@@ -42,16 +42,21 @@ namespace CSharp.Core.XLua
             luaUpdate = null;
             luaStart = null;
 
-            luaModule?.Dispose();
+            if (luaModule != null) luaModule.Dispose();
+
             luaModule = null;
         }
 
         private void InitLuaEnv()
         {
-            var luaEnv = LuaManager.GetNewEnv();
+            var luaEnv = LuaManager.GetInstance();
 
-            var result = luaEnv.DoString("return require('character.player')", "character.player");
-            if (result == null || result.Length == 0 || result[0] is not LuaTable)
+            var result = luaEnv.DoString($@"
+            player = require(""{ModuleName}"")
+            return player:new()
+            ");
+
+            if (result.Length != 1 || result[0] is not LuaTable)
             {
                 Debug.LogError("Lua module not loaded properly!");
                 return;

@@ -1,9 +1,12 @@
 print("Loaded Player script");
 
-local M = {}
+local M = {
+    id = 1,
+    monoBehaviour = nil
+}
 
 function M:start()
-    print("lua start")
+    print("lua start with script id: " .. self.id)
 end
 
 function M:update()
@@ -15,7 +18,10 @@ function M:destroy()
 end
 
 function M:new()
-    local newObj = {}
+    local newObj = {
+        id = math.random(1, 1000),
+        monoBehaviour = nil
+    }
 
     function newObj.Start()
         self.start(newObj)
@@ -31,8 +37,7 @@ function M:new()
 
     self.__index = self
     setmetatable(newObj, self)
-
     return newObj
 end
 
-return M:new()
+return M

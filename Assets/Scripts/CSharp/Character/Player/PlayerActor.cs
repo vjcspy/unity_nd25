@@ -10,6 +10,8 @@ namespace CSharp.Character.Player
     {
         private Rigidbody2D rb;
 
+        protected override string ModuleName => "character.player";
+
         protected override void Awake()
         {
             base.Awake();
