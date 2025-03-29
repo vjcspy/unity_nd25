@@ -1,12 +1,12 @@
 print("Loaded Player script");
 
 local M = {
-    id = 1,
+    id = nil,
     monoBehaviour = nil
 }
 
 function M:start()
-    print("lua start with script id: " .. self.id)
+    print("start player script with id: " .. self.id)
 end
 
 function M:update()
