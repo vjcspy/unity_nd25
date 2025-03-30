@@ -1,14 +1,12 @@
-local M = {}  -- Tạo bảng module
+local TableUtil = {} -- Tạo bảng module
 
-function M.is_list(t)
-    local i = 1
-    for k, _ in pairs(t) do
-        if k ~= i then
-            return false  -- Nếu khóa không phải là số liên tiếp, không phải list
+function TableUtil.isList(tbl)
+    for key, _ in pairs(tbl) do
+        if type(key) ~= "number" then
+            return false
         end
-        i = i + 1
     end
-    return true  -- Nếu tất cả các khóa là số liên tiếp, là list
+    return true
 end
 
-return M  -- Trả về bảng chứa các hàm tiện ích
+return TableUtil -- Trả về bảng chứa các hàm tiện ích

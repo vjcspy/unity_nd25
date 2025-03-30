@@ -22,7 +22,7 @@ return {
       },
       ["entry"] = {
         [1] = {
-          ["type"] = "updateAnimator",
+          ["type"] = "coreUpdateAnimator",
           ["params"] = {
             ["Idle"] = true,
           },
@@ -35,7 +35,7 @@ return {
         },
       },
       ["exit"] = {
-        ["type"] = "updateAnimator",
+        ["type"] = "coreUpdateAnimator",
         ["params"] = {
           ["Idle"] = false,
         },
@@ -56,13 +56,13 @@ return {
         },
       },
       ["entry"] = {
-        ["type"] = "updateAnimator",
+        ["type"] = "coreUpdateAnimator",
         ["params"] = {
           ["Move"] = true,
         },
       },
       ["exit"] = {
-        ["type"] = "updateAnimator",
+        ["type"] = "coreUpdateAnimator",
         ["params"] = {
           ["Move"] = false,
         },

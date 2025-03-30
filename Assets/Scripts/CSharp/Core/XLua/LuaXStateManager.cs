@@ -5,7 +5,7 @@ using XLua;
 namespace Core.XLua
 {
     [CSharpCallLua]
-    public interface ILuaMonoXState
+    public interface ILuaStateMachineMono
     {
         // event EventHandler<PropertyChangedEventArgs> PropertyChanged;
 
@@ -14,15 +14,17 @@ namespace Core.XLua
         Action OnDestroy();
 
         void Dispatch(string evenName, object[] args);
+        void SetData(string key, object value);
     }
 
     [CSharpCallLua]
-    public delegate ILuaMonoXState LuaMonoXState();
+    public delegate ILuaStateMachineMono LuaStateMachineMono();
 
-    public abstract class MonoXState : MonoBehaviour
+
+    public abstract class XStateMonoBehavior : MonoBehaviour
     {
         private LuaTable _luaModule;
-        protected ILuaMonoXState _luaMonoXState;
+        protected ILuaStateMachineMono _luaStateMachineMono;
         protected abstract string ModuleName { get; }
 
         protected virtual void Awake()
@@ -35,8 +37,8 @@ namespace Core.XLua
             var luaEnv = LuaManager.GetInstance();
 
             var result = luaEnv.DoString(@$"
-                xState = require(""{ModuleName}"")
-                return xState:new()
+                warrior = require(""{ModuleName}"")
+                return warrior:factory()
             ");
 
             if (result.Length != 1 || result[0] is not LuaTable)
@@ -50,37 +52,38 @@ namespace Core.XLua
                 Debug.LogError("Lua module is null!");
                 return;
             }
+            LuaStateMachineMono LuaStateMachineMono = _luaModule.Get<LuaStateMachineMono>("LuaStateMachineMono");
 
-            _luaModule.Get("LuaMonoXState", out LuaMonoXState LuaMonoXState);
-            if (LuaMonoXState == null)
+            if (LuaStateMachineMono == null)
             {
-                Debug.LogError("Lua module does not have an Awake method!");
+                Debug.LogError("Lua module does not have an LuaStateMachineMono method!");
                 return;
             }
 
-            _luaMonoXState = LuaMonoXState();
-            if (_luaMonoXState == null)
+            _luaStateMachineMono = LuaStateMachineMono();
+            if (_luaStateMachineMono == null)
             {
-                Debug.LogError("Lua module does not return a valid LuaMonoXState!");
+                Debug.LogError("Lua module does not return a valid LuaStateMachineMono");
                 return;
             }
+            _luaStateMachineMono.SetData("monoBehaviourCSharp", this);
         }
 
         private void Start()
         {
-            _luaMonoXState?.Start();
+            _luaStateMachineMono?.Start();
         }
 
         private void Update()
         {
-            _luaMonoXState?.Update();
+            _luaStateMachineMono?.Update();
         }
 
         private void OnDestroy()
         {
-            _luaMonoXState?.OnDestroy();
+            _luaStateMachineMono?.OnDestroy();
             _luaModule?.Dispose();
-            _luaMonoXState = null;
+            _luaStateMachineMono = null;
             _luaModule = null;
         }
     }
