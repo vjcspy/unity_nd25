@@ -4,11 +4,7 @@ local StateMachine = require("core.xstate.state_machine")
 TableUtil = {}
 
 function TableUtil:factory()
-    return StateMachine:new(warror_state_config, {
-        handleMove = function(stateMachine, input)
-            stateMachine.monoBehaviourCSharp:HandleMove()
-        end
-    })
+    return StateMachine:new(warror_state_config, {})
 end
 
 return TableUtil

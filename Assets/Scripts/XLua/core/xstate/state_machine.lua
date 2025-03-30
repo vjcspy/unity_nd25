@@ -1,40 +1,19 @@
-local Ulti = require("core.util.init")
+local util = require("core.util.init")
 local CoreActions = require("core.xstate.actions.core_actions")
 
-local coreActions = {
-    coreLogAction = CoreActions.coreLogAction,
-    coreUpdateAnimator = CoreActions.coreUpdateAnimator
-}
 local StateMachine = {
     monoBehaviourCSharp = nil,
     config = nil,
-    currentState = nil
+    currentState = nil,
+    states = {}
 }
-
--- Set the current state and trigger the entry/exit functions.
-function StateMachine:setState(name)
-    if StateMachine.currentState and StateMachine.states[StateMachine.currentState].exit then
-        StateMachine.states[StateMachine.currentState].exit()
-    end
-
-    StateMachine.currentState = name
-
-    if StateMachine.states[name].entry then
-        StateMachine.states[name].entry()
-    end
-end
-
--- Get the current state name.
-function StateMachine:getCurrentState()
-    return StateMachine.currentState
-end
 
 -- Prepare action functions for each action configuration.
 local function prepareActions(actionConfigs, actions)
     local actionFns = {}
 
     local function processAction(actionConfig)
-        local actionFn = coreActions[actionConfig.type] or actions[actionConfig.type]
+        local actionFn = CoreActions[actionConfig.type] or actions[actionConfig.type]
         if not actionFn then
             error("Action not found: " .. actionConfig.type)
         end
@@ -44,7 +23,7 @@ local function prepareActions(actionConfigs, actions)
         end)
     end
 
-    if Ulti.TableUtil.isList(actionConfigs) then
+    if util.tableUtil.isList(actionConfigs) then
         for _, actionConfig in ipairs(actionConfigs) do
             processAction(actionConfig)
         end
@@ -55,23 +34,24 @@ local function prepareActions(actionConfigs, actions)
     return actionFns
 end
 
+-- Prepare invoke functions for each invoke configuration.
 local function prepareInvokes(invokeConfigs, actions)
     local actionFns = {}
 
-    local function processInvoke(actionConfig)
-        local actionFn = coreActions[actionConfig.src] or actions[actionConfig.src]
+    local function processInvoke(invokeConfig)
+        local actionFn = CoreActions[invokeConfig.src] or actions[invokeConfig.src]
         if not actionFn then
-            error("Action not found: " .. actionConfig.src)
+            error("Action not found: " .. invokeConfig.src)
         end
 
         table.insert(actionFns, function(stateMachine)
-            actionFn(stateMachine, actionConfig.input)
+            actionFn(stateMachine, invokeConfig.input)
         end)
     end
 
-    if Ulti.TableUtil.isList(invokeConfigs) then
-        for _, actionConfig in ipairs(invokeConfigs) do
-            processInvoke(actionConfig)
+    if util.tableUtil.isList(invokeConfigs) then
+        for _, invokeConfig in ipairs(invokeConfigs) do
+            processInvoke(invokeConfig)
         end
     else
         processInvoke(invokeConfigs)
@@ -80,9 +60,40 @@ local function prepareInvokes(invokeConfigs, actions)
     return actionFns
 end
 
+-- Set the current state and trigger the entry/exit functions.
+function StateMachine:setState(name)
+    if name == self.currentState then
+        -- TODO: Sau này có thể thêm self transition (new event nhưng lại quay về state cũ)
+        return
+    end
+
+    if self.currentState and self.states[self.currentState] then
+        local exitState = self.states[self.currentState]
+        if exitState.exit then
+            exitState:exit(self)
+        end
+    end
+
+    self.currentState = name
+
+    if self.states[name] and self.states[name].entry then
+        self.states[name]:entry(self)
+    end
+end
+
+-- Get the current state name.
+function StateMachine:getCurrentState()
+    return self.currentState
+end
+
 -- Build the states and define actions, transitions, etc.
 function StateMachine:new(config, actions)
-    local states = {}
+    local instance = {
+        _type = "StateMachine",
+        config = config,
+        states = {},
+        currentState = nil
+    }
 
     -- Process states' entry, invoke, and exit functions.
     for name, stateConfig in pairs(config.states) do
@@ -97,62 +108,74 @@ function StateMachine:new(config, actions)
                 fn(stateMachine)
             end
         end
+
         function state:invoke(stateMachine)
             for _, fn in ipairs(invokeFns) do
                 fn(stateMachine)
             end
         end
+
         function state:exit(stateMachine)
             for _, fn in ipairs(exitFns) do
                 fn(stateMachine)
             end
         end
+
         function state:dispatch(stateMachine, event, params)
-            local onEvent = stateConfig.on[event]
+            local onEvent = stateConfig.on and stateConfig.on[event]
             if onEvent then
-                local nextState = onEvent[0] -- hardcoded index 0
-                StateMachine:setState(nextState.target)
-            else
-                error("Dispatch an unknown event: " .. event)
+                local nextState = onEvent[1] -- hardcoded index 1, see xstate config
+                if nextState and nextState.target then
+                    -- TODO: need to support call actions here
+                    stateMachine:setState(nextState.target)
+                else
+                    error("Invalid transition for event: " .. event)
+                end
             end
         end
 
-        states[name] = state
+        instance.states[name] = state
     end
 
-    local newObj = {
-        _type = "StateMachine",
-        config = config,
-        states = states
-    }
-
-    function newObj.LuaStateMachineMono()
+    -- Method này sẽ expose cho C# nên sẽ không có self
+    function instance.LuaStateMachineMono()
         return {
             Start = function(csharpObject)
-                newObj.states[newObj.currentState]:entry(newObj)
+                instance:setState(instance.config.initial)
             end,
+
             Update = function(csharpObject)
-                newObj.states[newObj.currentState]:invoke(newObj)
+                instance.states[instance.currentState]:invoke(instance)
             end,
+
             OnDestroy = function(csharpObject)
-                newObj.states[newObj.currentState]:exit(newObj)
+                if instance.currentState and instance.states[instance.currentState] then
+                    instance.states[instance.currentState]:exit(instance)
+                end
             end,
+
             Dispatch = function(csharpObject, event, params)
-                newObj.states[newObj.currentState]:dispatch(newObj, event, params)
+                if instance.currentState and instance.states[instance.currentState] then
+                    instance.states[instance.currentState]:dispatch(instance, event, params)
+                else
+                    error("Cannot dispatch event: no current state")
+                end
             end,
-            SetData = function(csharpObject, key, value)
-                newObj[key] = value
+
+            Set = function(csharpObject, key, value)
+                instance[key] = value
             end,
-            Initilize = function(csharpObject)
-                newObj:setState(newObj.config.initial)
+
+            Initialize = function(csharpObject)
+                print("Initialize StateMachine")
             end
         }
     end
 
     self.__index = self
-    setmetatable(newObj, self)
+    setmetatable(instance, self)
 
-    return newObj
+    return instance
 end
 
 return StateMachine

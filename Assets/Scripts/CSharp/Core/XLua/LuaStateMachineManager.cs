@@ -14,17 +14,18 @@ namespace Core.XLua
         Action OnDestroy();
 
         void Dispatch(string evenName, object[] args);
-        void SetData(string key, object value);
+        void Set(string key, object value);
+        void Initialize();
     }
 
     [CSharpCallLua]
     public delegate ILuaStateMachineMono LuaStateMachineMono();
 
 
-    public abstract class XStateMonoBehavior : MonoBehaviour
+    public abstract class StateMachineActorMono : MonoBehaviour
     {
-        private LuaTable _luaModule;
-        protected ILuaStateMachineMono _luaStateMachineMono;
+        private LuaTable luaModule;
+        protected ILuaStateMachineMono luaStateMachineMono;
         protected abstract string ModuleName { get; }
 
         protected virtual void Awake()
@@ -60,31 +61,31 @@ namespace Core.XLua
                 return;
             }
 
-            _luaStateMachineMono = LuaStateMachineMono();
-            if (_luaStateMachineMono == null)
+            luaStateMachineMono = LuaStateMachineMono();
+            if (luaStateMachineMono == null)
             {
                 Debug.LogError("Lua module does not return a valid LuaStateMachineMono");
                 return;
             }
-            _luaStateMachineMono.SetData("monoBehaviourCSharp", this);
+            luaStateMachineMono.Set("monoBehaviourCSharp", this);
         }
 
-        private void Start()
+        protected virtual void Start()
         {
-            _luaStateMachineMono?.Start();
+            luaStateMachineMono.Start();
         }
 
-        private void Update()
+        protected virtual void Update()
         {
-            _luaStateMachineMono?.Update();
+            luaStateMachineMono.Update();
         }
 
         private void OnDestroy()
         {
-            _luaStateMachineMono?.OnDestroy();
-            _luaModule?.Dispose();
-            _luaStateMachineMono = null;
-            _luaModule = null;
+            luaStateMachineMono.OnDestroy();
+            luaModule?.Dispose();
+            luaStateMachineMono = null;
+            luaModule = null;
         }
     }
 }

@@ -176,7 +176,7 @@ namespace XLua.CSObjectWrap
 #endif
 		}
         
-		void Core.XLua.ILuaStateMachineMono.SetData(string key, object value)
+		void Core.XLua.ILuaStateMachineMono.Set(string key, object value)
 		{
 #if THREAD_SAFE || HOTFIX_ENABLE
             lock (luaEnv.luaEnvLock)
@@ -187,14 +187,14 @@ namespace XLua.CSObjectWrap
 				ObjectTranslator translator = luaEnv.translator;
 				
 				LuaAPI.lua_getref(L, luaReference);
-				LuaAPI.xlua_pushasciistring(L, "SetData");
+				LuaAPI.xlua_pushasciistring(L, "Set");
 				if (0 != LuaAPI.xlua_pgettable(L, -2))
 				{
 					luaEnv.ThrowExceptionFromError(err_func - 1);
 				}
 				if(!LuaAPI.lua_isfunction(L, -1))
 				{
-					LuaAPI.xlua_pushasciistring(L, "no such function SetData");
+					LuaAPI.xlua_pushasciistring(L, "no such function Set");
 					luaEnv.ThrowExceptionFromError(err_func - 1);
 				}
 				LuaAPI.lua_pushvalue(L, -2);
@@ -203,6 +203,43 @@ namespace XLua.CSObjectWrap
 				translator.PushAny(L, value);
 				
 				int __gen_error = LuaAPI.lua_pcall(L, 3, 0, err_func);
+				if (__gen_error != 0)
+					luaEnv.ThrowExceptionFromError(err_func - 1);
+				
+				
+				
+				LuaAPI.lua_settop(L, err_func - 1);
+				
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
+		void Core.XLua.ILuaStateMachineMono.Initialize()
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+				RealStatePtr L = luaEnv.L;
+				int err_func = LuaAPI.load_error_func(L, luaEnv.errorFuncRef);
+				
+				
+				LuaAPI.lua_getref(L, luaReference);
+				LuaAPI.xlua_pushasciistring(L, "Initialize");
+				if (0 != LuaAPI.xlua_pgettable(L, -2))
+				{
+					luaEnv.ThrowExceptionFromError(err_func - 1);
+				}
+				if(!LuaAPI.lua_isfunction(L, -1))
+				{
+					LuaAPI.xlua_pushasciistring(L, "no such function Initialize");
+					luaEnv.ThrowExceptionFromError(err_func - 1);
+				}
+				LuaAPI.lua_pushvalue(L, -2);
+				LuaAPI.lua_remove(L, -3);
+				
+				int __gen_error = LuaAPI.lua_pcall(L, 1, 0, err_func);
 				if (__gen_error != 0)
 					luaEnv.ThrowExceptionFromError(err_func - 1);
 				

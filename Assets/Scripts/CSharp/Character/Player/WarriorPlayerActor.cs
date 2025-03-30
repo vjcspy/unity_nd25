@@ -4,7 +4,7 @@ using XLua;
 namespace Character.Player
 {
     [LuaCallCSharp]
-    public class WarriorPlayerActor : XStateMonoBehavior
+    public class WarriorPlayerActor : StateMachineActorMono
     {
         private Animator animator;
         private Rigidbody2D rb;
@@ -18,23 +18,36 @@ namespace Character.Player
             rb = GetComponent<Rigidbody2D>();
         }
 
-        [LuaCallable]
-        public void UpdateAnimator(string stateName, bool value)
+        protected override void Start()
         {
-            animator.SetBool(stateName, value);
+            base.Start();
         }
 
         [LuaCallable]
-        public void UpdateAnimator(string stateName, float value)
+        public void UpdateAnimator(string stateName, bool value)
         {
-            animator.SetFloat(stateName, value);
+            if (animator == null)
+            {
+                Debug.LogWarning("Animator is null in WarriorPlayerActor");
+                return;
+            }
+            animator.SetBool(stateName, value);
         }
 
         [LuaCallable]
         public void HandleMove()
         {
-            var moveDirection = new Vector2(Input.GetAxis("Horizontal"), rb.linearVelocity.y);
-            rb.linearVelocity = moveDirection * 5;
+            float moveInput = Input.GetAxisRaw("Horizontal");
+
+            if (moveInput != 0)
+            {
+                luaStateMachineMono.Dispatch("move", null);
+            }else{
+                luaStateMachineMono.Dispatch("idle", null);
+            }
+
+            Vector2 newVelocity = new(moveInput * 5f, rb.linearVelocity.y);
+            rb.linearVelocity = newVelocity;
         }
 
         [LuaCallable]

@@ -85,23 +85,10 @@ namespace XLua.CSObjectWrap
                 Character.Player.WarriorPlayerActor gen_to_be_invoked = (Character.Player.WarriorPlayerActor)translator.FastGetCSObj(L, 1);
             
             
-			    int gen_param_count = LuaAPI.lua_gettop(L);
-            
-                if(gen_param_count == 3&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)&& LuaTypes.LUA_TBOOLEAN == LuaAPI.lua_type(L, 3)) 
+                
                 {
                     string _stateName = LuaAPI.lua_tostring(L, 2);
                     bool _value = LuaAPI.lua_toboolean(L, 3);
-                    
-                    gen_to_be_invoked.UpdateAnimator( _stateName, _value );
-                    
-                    
-                    
-                    return 0;
-                }
-                if(gen_param_count == 3&& (LuaAPI.lua_isnil(L, 2) || LuaAPI.lua_type(L, 2) == LuaTypes.LUA_TSTRING)&& LuaTypes.LUA_TNUMBER == LuaAPI.lua_type(L, 3)) 
-                {
-                    string _stateName = LuaAPI.lua_tostring(L, 2);
-                    float _value = (float)LuaAPI.lua_tonumber(L, 3);
                     
                     gen_to_be_invoked.UpdateAnimator( _stateName, _value );
                     
@@ -113,8 +100,6 @@ namespace XLua.CSObjectWrap
             } catch(System.Exception gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
             }
-            
-            return LuaAPI.luaL_error(L, "invalid arguments to Character.Player.WarriorPlayerActor.UpdateAnimator!");
             
         }
         

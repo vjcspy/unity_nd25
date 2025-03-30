@@ -1,8 +1,14 @@
 local M = {}
+local ultil = require("core.util.init")
+local Configuration = require("core.configuration")
 
-function M.coreLogAction(stateMachine, ...)
+local coreLogAction = function(stateMachine, ...)
+    if Configuration.DEBUG ~= true then
+        return
+    end
+
     local args = {...}
-    local result = {}
+    local result = {"coreLogAction"}
 
     local typeHandlers = {
         string = tostring,
@@ -25,10 +31,19 @@ function M.coreLogAction(stateMachine, ...)
     print(table.concat(result))
 end
 
-function M.coreUpdateAnimator(stateMachine, params)
+local coreUpdateAnimator = function(stateMachine, params)
+    ultil.log("coreUpdateAnimator", params)
     for key, value in pairs(params) do
-        stateMachine.monoBehavior:UpdateAnimator(key, value)
+        stateMachine.monoBehaviourCSharp:UpdateAnimator(key, value)
     end
 end
 
-return M
+local coreHandleMove = function(stateMachine, params)
+    stateMachine.monoBehaviourCSharp:HandleMove()
+end
+
+return {
+    coreLogAction = coreLogAction,
+    coreUpdateAnimator = coreUpdateAnimator,
+    coreHandleMove = coreHandleMove
+}

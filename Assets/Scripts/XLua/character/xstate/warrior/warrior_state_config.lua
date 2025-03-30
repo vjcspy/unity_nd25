@@ -1,74 +1,93 @@
 return {
-  ["context"] = {
-    ["a"] = 1,
-  },
   ["states"] = {
+    ["Move"] = {
+      ["entry"] = {
+        [1] = {
+          ["params"] = {
+            ["Move"] = true,
+          },
+          ["type"] = "coreUpdateAnimator",
+        },
+        [2] = {
+          ["params"] = {
+            ["currentState"] = "Move",
+            ["action"] = "Move State Start",
+          },
+          ["type"] = "coreLogAction",
+        },
+      },
+      ["on"] = {
+        ["idle"] = {
+          [1] = {
+            ["target"] = "Idle",
+            ["actions"] = {
+            },
+          },
+        },
+      },
+      ["exit"] = {
+        ["params"] = {
+          ["Move"] = false,
+        },
+        ["type"] = "coreUpdateAnimator",
+      },
+      ["invoke"] = {
+        ["src"] = "coreHandleMove",
+        ["input"] = {
+        },
+      },
+    },
     ["Idle"] = {
+      ["entry"] = {
+        [1] = {
+          ["params"] = {
+            ["Idle"] = true,
+          },
+          ["type"] = "coreUpdateAnimator",
+        },
+        [2] = {
+          ["params"] = {
+            ["currentState"] = "Idle",
+            ["action"] = "Idle State Start",
+          },
+          ["type"] = "coreLogAction",
+        },
+      },
       ["on"] = {
         ["move"] = {
           [1] = {
             ["target"] = "Move",
-            ["actions"] = {
-            },
             ["meta"] = {
             },
+            ["actions"] = {
+            },
           },
         },
       },
-      ["invoke"] = {
-        ["src"] = "handleMove",
-        ["input"] = {
-        },
-      },
-      ["entry"] = {
+      ["exit"] = {
         [1] = {
+          ["params"] = {
+            ["Idle"] = false,
+          },
           ["type"] = "coreUpdateAnimator",
-          ["params"] = {
-            ["Idle"] = true,
-          },
         },
         [2] = {
+          ["params"] = {
+            ["action"] = "Exit Idle State",
+          },
           ["type"] = "coreLogAction",
-          ["params"] = {
-            ["action"] = "Idle start",
-          },
         },
       },
-      ["exit"] = {
-        ["type"] = "coreUpdateAnimator",
-        ["params"] = {
-          ["Idle"] = false,
-        },
-      },
-    },
-    ["Move"] = {
       ["invoke"] = {
-        [1] = {
-          ["src"] = "handleMove",
-          ["input"] = {
-          },
-        },
-        [2] = {
-          ["src"] = "coreLogAction",
-          ["input"] = {
-            ["action"] = "handle move",
-          },
-        },
-      },
-      ["entry"] = {
-        ["type"] = "coreUpdateAnimator",
-        ["params"] = {
-          ["Move"] = true,
-        },
-      },
-      ["exit"] = {
-        ["type"] = "coreUpdateAnimator",
-        ["params"] = {
-          ["Move"] = false,
+        ["src"] = "coreHandleMove",
+        ["input"] = {
         },
       },
     },
   },
-  ["initial"] = "Idle",
+  ["context"] = {
+    ["a"] = 1,
+  },
   ["id"] = "WarriorPlayer",
+  ["initial"] = "Idle",
 }

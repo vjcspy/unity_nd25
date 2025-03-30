@@ -8,7 +8,7 @@
     "Idle": {
       "entry": [
         {
-          "type": "updateAnimator",
+          "type": "coreUpdateAnimator",
           "params": {
             "Idle": true
           }
@@ -16,19 +16,28 @@
         {
           "type": "coreLogAction",
           "params": {
-            "action": "Idle start"
+            "action": "Idle State Start",
+            "currentState": "Idle"
           }
         }
       ],
-      "exit": {
-        "type": "updateAnimator",
-        "params": {
-          "Idle": false
+      "exit": [
+        {
+          "type": "coreUpdateAnimator",
+          "params": {
+            "Idle": false
+          }
+        },
+        {
+          "type": "coreLogAction",
+          "params": {
+            "action": "Exit Idle State"
+          }
         }
-      },
+      ],
       "invoke": {
         "input": {},
-        "src": "handleMove"
+        "src": "coreHandleMove"
       },
       "on": {
         "move": [
@@ -41,30 +50,39 @@
       }
     },
     "Move": {
-      "entry": {
-        "type": "updateAnimator",
-        "params": {
-          "Move": true
+      "entry": [
+        {
+          "type": "coreUpdateAnimator",
+          "params": {
+            "Move": true
+          }
+        },
+        {
+          "type": "coreLogAction",
+          "params": {
+            "action": "Move State Start",
+            "currentState": "Move\n"
+          }
         }
-      },
+      ],
       "exit": {
-        "type": "updateAnimator",
+        "type": "coreUpdateAnimator",
         "params": {
           "Move": false
         }
       },
-      "invoke": [
-        {
-          "input": {},
-          "src": "handleMove"
-        },
-        {
-          "input": {
-            "action": "handle move"
-          },
-          "src": "coreLogAction"
-        }
-      ]
+      "invoke": {
+        "input": {},
+        "src": "coreHandleMove"
+      },
+      "on": {
+        "idle": [
+          {
+            "target": "Idle",
+            "actions": []
+          }
+        ]
+      }
     }
   }
 }
