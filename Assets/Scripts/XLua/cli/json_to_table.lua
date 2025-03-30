@@ -4,7 +4,7 @@ local json = require("dkjson")
 -- Đọc file JSON
 local file = io.open("data.json", "r") -- Mở file data.json để đọc
 if not file then
-    print("Không thể mở file.")
+    print("Không thể mở file data.json.")
     return
 end
 
@@ -13,37 +13,44 @@ file:close() -- Đóng file
 
 -- Phân tích JSON thành Lua table
 local luaTable, pos, err = json.decode(content, 1, nil)
-
--- Kiểm tra lỗi khi phân tích JSON
 if err then
     print("Lỗi khi phân tích JSON: " .. err)
     return
 end
 
-function printTable(t, indent)
+-- Mở file output.lua để ghi kết quả
+local outfile = io.open("output.lua", "w")
+if not outfile then
+    print("Không thể mở file output.lua để ghi.")
+    return
+end
+
+-- Hàm ghi table ra file dưới định dạng giống như khi print
+local function writeTable(f, t, indent)
     indent = indent or "" -- Nếu không có indent, mặc định là chuỗi rỗng
     for k, v in pairs(t) do
-        -- Nếu giá trị là bảng, gọi đệ quy để in bảng con
         if type(v) == "table" then
-            print(indent .. "[" .. (type(k) == "string" and '"' .. k .. '"' or k) .. "] = {")
-            printTable(v, indent .. "  ")
-            print(indent .. "},")
+            f:write(indent .. "[" .. (type(k) == "string" and '"' .. k .. '"' or k) .. "] = {\n")
+            writeTable(f, v, indent .. "  ")
+            f:write(indent .. "},\n")
         else
-            -- Xử lý các kiểu dữ liệu khác nhau (chuỗi, boolean, số)
             local valueStr
             if type(v) == "string" then
                 valueStr = '"' .. v .. '"'
             elseif type(v) == "boolean" then
-                valueStr = tostring(v)  -- Chuyển boolean thành chuỗi "true" hoặc "false"
+                valueStr = tostring(v)
             else
-                valueStr = tostring(v)  -- Chuyển các kiểu khác thành chuỗi
+                valueStr = tostring(v)
             end
-
-            print(indent .. "[" .. (type(k) == "string" and '"' .. k .. '"' or k) .. "] = " .. valueStr .. ",")
+            f:write(indent .. "[" .. (type(k) == "string" and '"' .. k .. '"' or k) .. "] = " .. valueStr .. ",\n")
         end
     end
 end
 
-print("return {")
-printTable(luaTable, "  ")
-print("}")
+outfile:write("return {\n")
+writeTable(outfile, luaTable, "  ")
+outfile:write("}\n")
+
+outfile:close()
+
+print("Đã lưu table vào file output.lua")

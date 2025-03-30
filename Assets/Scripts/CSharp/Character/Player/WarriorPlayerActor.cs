@@ -24,25 +24,44 @@ namespace Character.Player
         }
 
         [LuaCallable]
-        public void UpdateAnimator(string stateName, bool value)
+        public void UpdateAnimatorParams(LuaTable animatorParams)
         {
-            if (animator == null)
+            foreach (var key in animatorParams.GetKeys())
             {
-                Debug.LogWarning("Animator is null in WarriorPlayerActor");
-                return;
+                animatorParams.Get(key, out object value);
+                if (key is string keyString)
+                {
+                    if (value is bool boolVal)
+                    {
+                        animator.SetBool(keyString, boolVal);
+                    }
+                    else if (value is float floatVal)
+                    {
+                        animator.SetFloat(keyString, floatVal);
+                    }
+                    else if (value is double doubleVal)
+                    {
+                        animator.SetFloat(keyString, (float)doubleVal);
+                    }
+                    else
+                    {
+                        Debug.Log("Unsupport type: " + value.GetType());
+                    }
+                }
             }
-            animator.SetBool(stateName, value);
         }
 
         [LuaCallable]
-        public void HandleMove()
+        public void HandleUserInput()
         {
             float moveInput = Input.GetAxisRaw("Horizontal");
 
             if (moveInput != 0)
             {
                 luaStateMachineMono.Dispatch("move", null);
-            }else{
+            }
+            else
+            {
                 luaStateMachineMono.Dispatch("idle", null);
             }
 

@@ -8,9 +8,9 @@
     "Idle": {
       "entry": [
         {
-          "type": "coreUpdateAnimator",
+          "type": "monoBehaviourCSharp:UpdateAnimatorParams",
           "params": {
-            "Idle": true
+            "idle": true
           }
         },
         {
@@ -23,9 +23,9 @@
       ],
       "exit": [
         {
-          "type": "coreUpdateAnimator",
+          "type": "monoBehaviourCSharp:UpdateAnimatorParams",
           "params": {
-            "Idle": false
+            "idle": false
           }
         },
         {
@@ -37,7 +37,7 @@
       ],
       "invoke": {
         "input": {},
-        "src": "coreHandleMove"
+        "src": "monoBehaviourCSharp:HandleUserInput"
       },
       "on": {
         "move": [
@@ -52,9 +52,10 @@
     "Move": {
       "entry": [
         {
-          "type": "coreUpdateAnimator",
+          "type": "monoBehaviourCSharp:UpdateAnimatorParams",
           "params": {
-            "Move": true
+            "move": true,
+            "yVelocity": 1.2
           }
         },
         {
@@ -66,14 +67,14 @@
         }
       ],
       "exit": {
-        "type": "coreUpdateAnimator",
+        "type": "monoBehaviourCSharp:UpdateAnimatorParams",
         "params": {
-          "Move": false
+          "move": false
         }
       },
       "invoke": {
         "input": {},
-        "src": "coreHandleMove"
+        "src": "monoBehaviourCSharp:HandleUserInput"
       },
       "on": {
         "idle": [

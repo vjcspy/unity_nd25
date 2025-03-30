@@ -1,6 +1,6 @@
 local util = require("core.util.init")
 local CoreActions = require("core.xstate.actions.core_actions")
-
+local monoBehaviorCsharpName = "monoBehaviourCSharp"
 local StateMachine = {
     monoBehaviourCSharp = nil,
     config = nil,
@@ -9,18 +9,55 @@ local StateMachine = {
 }
 
 -- Prepare action functions for each action configuration.
+local compiledActions = {}
+
+-- Hàm lấy hàm đã biên dịch từ code, nếu chưa có thì compile và lưu lại
+local function getCompiledAction(code)
+    if compiledActions[code] then
+        return compiledActions[code]
+    end
+    local f = load(code, nil, "t", _ENV) -- biên dịch theo môi trường global hiện hành
+    if not f then
+        error("Lỗi khi compile code: " .. code)
+    end
+    compiledActions[code] = f
+    return f
+end
+
 local function prepareActions(actionConfigs, actions)
     local actionFns = {}
 
     local function processAction(actionConfig)
         local actionFn = CoreActions[actionConfig.type] or actions[actionConfig.type]
-        if not actionFn then
-            error("Action not found: " .. actionConfig.type)
-        end
 
-        table.insert(actionFns, function(stateMachine)
-            actionFn(stateMachine, actionConfig.params)
-        end)
+        if not actionFn then
+            if actionConfig.type:sub(1, #monoBehaviorCsharpName) == monoBehaviorCsharpName then
+                local code
+                if next(actionConfig.params) == nil then
+                    -- Tạo hàm bọc: khi gọi sẽ thực hiện stateMachine.<method>()
+                    code = "return function(stateMachine) return stateMachine." .. actionConfig.type .. "() end"
+                else
+                    -- Tạo hàm bọc: khi gọi sẽ thực hiện stateMachine.<method>(actionParams)
+                    code = "return function(stateMachine, actionParams) return stateMachine." .. actionConfig.type ..
+                               "(actionParams) end"
+                end
+                -- Lấy hàm đã biên dịch (cache)
+                local compiledWrapper = getCompiledAction(code)()
+                table.insert(actionFns, function(stateMachine)
+                    if next(actionConfig.params) == nil then
+                        compiledWrapper(stateMachine)
+                    else
+                        compiledWrapper(stateMachine, actionConfig.params)
+                    end
+                end)
+            else
+                error("Action not found: " .. actionConfig.type)
+            end
+        else
+            table.insert(actionFns, function(stateMachine)
+                actionFn(stateMachine, actionConfig.params)
+            end)
+        end
     end
 
     if util.tableUtil.isList(actionConfigs) then
@@ -40,13 +77,34 @@ local function prepareInvokes(invokeConfigs, actions)
 
     local function processInvoke(invokeConfig)
         local actionFn = CoreActions[invokeConfig.src] or actions[invokeConfig.src]
-        if not actionFn then
-            error("Action not found: " .. invokeConfig.src)
-        end
 
-        table.insert(actionFns, function(stateMachine)
-            actionFn(stateMachine, invokeConfig.input)
-        end)
+        if not actionFn then
+            if invokeConfig.src:sub(1, #monoBehaviorCsharpName) == monoBehaviorCsharpName then
+                local code
+                if next(invokeConfig.input) == nil then
+                    code = "return function(stateMachine) return stateMachine." .. invokeConfig.src .. "() end"
+                else
+                    code = "return function(stateMachine, inputParams) return stateMachine." .. invokeConfig.src ..
+                               "(inputParams) end"
+                end
+
+                local compiledWrapper = getCompiledAction(code)() -- Lấy ra hàm wrapper đã compile
+
+                table.insert(actionFns, function(stateMachine)
+                    if next(invokeConfig.input) == nil then
+                        compiledWrapper(stateMachine)
+                    else
+                        compiledWrapper(stateMachine, invokeConfig.input)
+                    end
+                end)
+            else
+                error("Action not found: " .. invokeConfig.src)
+            end
+        else
+            table.insert(actionFns, function(stateMachine)
+                actionFn(stateMachine, invokeConfig.input)
+            end)
+        end
     end
 
     if util.tableUtil.isList(invokeConfigs) then
@@ -88,6 +146,7 @@ end
 
 -- Build the states and define actions, transitions, etc.
 function StateMachine:new(config, actions)
+    print("Create new StateMchine")
     local instance = {
         _type = "StateMachine",
         config = config,
@@ -137,7 +196,7 @@ function StateMachine:new(config, actions)
         instance.states[name] = state
     end
 
-    -- Method này sẽ expose cho C# nên sẽ không có self
+    -- Method này sẽ expose cho C# với type là MonoBehavior nên sẽ không có self
     function instance.LuaStateMachineMono()
         return {
             Start = function(csharpObject)

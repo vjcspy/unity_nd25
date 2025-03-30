@@ -23,8 +23,8 @@ namespace XLua.CSObjectWrap
 			System.Type type = typeof(Character.Player.WarriorPlayerActor);
 			Utils.BeginObjectRegister(type, L, translator, 0, 3, 0, 0);
 			
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "UpdateAnimator", _m_UpdateAnimator);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "HandleMove", _m_HandleMove);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "UpdateAnimatorParams", _m_UpdateAnimatorParams);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "HandleUserInput", _m_HandleUserInput);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "Log", _m_Log);
 			
 			
@@ -75,7 +75,7 @@ namespace XLua.CSObjectWrap
         
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_UpdateAnimator(RealStatePtr L)
+        static int _m_UpdateAnimatorParams(RealStatePtr L)
         {
 		    try {
             
@@ -87,10 +87,9 @@ namespace XLua.CSObjectWrap
             
                 
                 {
-                    string _stateName = LuaAPI.lua_tostring(L, 2);
-                    bool _value = LuaAPI.lua_toboolean(L, 3);
+                    XLua.LuaTable _animatorParams = (XLua.LuaTable)translator.GetObject(L, 2, typeof(XLua.LuaTable));
                     
-                    gen_to_be_invoked.UpdateAnimator( _stateName, _value );
+                    gen_to_be_invoked.UpdateAnimatorParams( _animatorParams );
                     
                     
                     
@@ -104,7 +103,7 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_HandleMove(RealStatePtr L)
+        static int _m_HandleUserInput(RealStatePtr L)
         {
 		    try {
             
@@ -117,7 +116,7 @@ namespace XLua.CSObjectWrap
                 
                 {
                     
-                    gen_to_be_invoked.HandleMove(  );
+                    gen_to_be_invoked.HandleUserInput(  );
                     
                     
                     

@@ -26,7 +26,7 @@ namespace Core.XLua
 
         private void OnDestroy()
         {
-            _luaEnv.Dispose(); // Always dispose LuaEnv when done
+            _luaEnv.Dispose();
         }
 
         public static LuaEnv GetInstance()
@@ -40,17 +40,6 @@ namespace Core.XLua
             _luaEnv.AddLoader(LoadLuaScriptDevelopment);
 
             return _luaEnv;
-        }
-
-        public static LuaEnv GetNewEnv()
-        {
-            Debug.Log("Creating new LuaEnv instance");
-            var luaEnv = new LuaEnv();
-
-            // AddLoader expects a delegate that returns byte[]
-            luaEnv.AddLoader(LoadLuaScriptDevelopment);
-
-            return luaEnv;
         }
 
         // This method returns a byte[] (script) and is passed to AddLoader

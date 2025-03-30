@@ -21,6 +21,8 @@ namespace Core.XLua
     [CSharpCallLua]
     public delegate ILuaStateMachineMono LuaStateMachineMono();
 
+    
+
 
     public abstract class StateMachineActorMono : MonoBehaviour
     {
