@@ -38,12 +38,13 @@ local coreUpdateAnimator = function(stateMachine, params)
     end
 end
 
-local coreHandleMove = function(stateMachine, params)
-    stateMachine.monoBehaviourCSharp:HandleMove()
+local coreHandleMove = function(stateMachine)
+    stateMachine.monoBehaviourCSharp:HandleUserInput()
 end
 
 return {
     coreLogAction = coreLogAction,
     coreUpdateAnimator = coreUpdateAnimator,
-    coreHandleMove = coreHandleMove
+    coreHandleMove = coreHandleMove,
+    -- ["monoBehaviourCSharp:HandleUserInput"] = coreHandleMove
 }

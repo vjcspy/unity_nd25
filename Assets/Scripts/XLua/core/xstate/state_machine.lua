@@ -16,6 +16,7 @@ local function getCompiledAction(code)
     if compiledActions[code] then
         return compiledActions[code]
     end
+    print("comppile code: `" .. code .. "`")
     local f = load(code, nil, "t", _ENV) -- biên dịch theo môi trường global hiện hành
     if not f then
         error("Lỗi khi compile code: " .. code)

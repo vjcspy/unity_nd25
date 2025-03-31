@@ -512,6 +512,7 @@ GameObject:
   - component: {fileID: 1281836265}
   - component: {fileID: 1281836266}
   - component: {fileID: 1281836264}
+  - component: {fileID: 1281836267}
   m_Layer: 0
   m_Name: WarriorPlayer
   m_TagString: Untagged
@@ -611,6 +612,27 @@ CapsuleCollider2D:
   m_Offset: {x: -0.4520271, y: -0.27558422}
   m_Size: {x: 0.8954027, y: 2.0783734}
   m_Direction: 0
+--- !u!114 &1281836267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1281836262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12cba85a5ff6e3741ae286bf0c1ebbe6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  method: 0
+  groundCheckPoint: {fileID: 1281836263}
+  checkDistance: 0.74
+  overlapRadius: 0.25
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  drawDebugRay: 1
+  drawGizmos: 1
 --- !u!1 &1459778653
 GameObject:
   m_ObjectHideFlags: 0
