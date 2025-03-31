@@ -1,28 +1,31 @@
 return {
   ["states"] = {
     ["Idle"] = {
-      ["exit"] = {
+      ["invoke"] = {
         [1] = {
-          ["params"] = {
-            ["idle"] = false,
+          ["input"] = {
           },
-          ["type"] = "monoBehaviourCSharp:UpdateAnimatorParams",
+          ["src"] = "monoBehaviourCSharp:HandleActionMove",
         },
         [2] = {
-          ["params"] = {
-            ["action"] = "Exit Idle State",
+          ["input"] = {
           },
-          ["type"] = "coreLogAction",
+          ["src"] = "monoBehaviourCSharp:HandleActionJump",
         },
       },
       ["on"] = {
         ["move"] = {
           [1] = {
-            ["meta"] = {
-            },
-            ["target"] = "Move",
             ["actions"] = {
             },
+            ["target"] = "Move",
+          },
+        },
+        ["jump"] = {
+          [1] = {
+            ["actions"] = {
+            },
+            ["target"] = "Jump",
           },
         },
       },
@@ -41,33 +44,100 @@ return {
           ["type"] = "coreLogAction",
         },
       },
-      ["invoke"] = {
-        ["input"] = {
+      ["exit"] = {
+        [1] = {
+          ["params"] = {
+            ["idle"] = false,
+          },
+          ["type"] = "monoBehaviourCSharp:UpdateAnimatorParams",
         },
-        ["src"] = "monoBehaviourCSharp:HandleUserInput",
+        [2] = {
+          ["params"] = {
+            ["action"] = "Exit Idle State",
+          },
+          ["type"] = "coreLogAction",
+        },
       },
     },
-    ["Move"] = {
-      ["exit"] = {
-        ["params"] = {
-          ["move"] = false,
+    ["Jump"] = {
+      ["invoke"] = {
+        [1] = {
+          ["input"] = {
+          },
+          ["src"] = "monoBehaviourCSharp:HandleActionMove",
         },
-        ["type"] = "monoBehaviourCSharp:UpdateAnimatorParams",
+        [2] = {
+          ["input"] = {
+          },
+          ["src"] = "monoBehaviourCSharp:HandleFall",
+        },
+        [3] = {
+          ["input"] = {
+          },
+          ["src"] = "monoBehaviourCSharp:CheckAndUpdateGroundedInfo",
+        },
       },
       ["on"] = {
-        ["idle"] = {
+        ["grounded"] = {
           [1] = {
-            ["target"] = "Idle",
             ["actions"] = {
             },
+            ["target"] = "Idle",
           },
         },
       },
       ["entry"] = {
         [1] = {
           ["params"] = {
-            ["yVelocity"] = 1.2,
+            ["jump"] = true,
+          },
+          ["type"] = "monoBehaviourCSharp:UpdateAnimatorParams",
+        },
+        [2] = {
+          ["type"] = "monoBehaviourCSharp:ForceJump",
+        },
+      },
+      ["exit"] = {
+        ["params"] = {
+          ["jump"] = false,
+        },
+        ["type"] = "monoBehaviourCSharp:UpdateAnimatorParams",
+      },
+    },
+    ["Move"] = {
+      ["invoke"] = {
+        [1] = {
+          ["input"] = {
+          },
+          ["src"] = "monoBehaviourCSharp:HandleActionMove",
+        },
+        [2] = {
+          ["input"] = {
+          },
+          ["src"] = "monoBehaviourCSharp:HandleActionJump",
+        },
+      },
+      ["on"] = {
+        ["idle"] = {
+          [1] = {
+            ["actions"] = {
+            },
+            ["target"] = "Idle",
+          },
+        },
+        ["jump"] = {
+          [1] = {
+            ["actions"] = {
+            },
+            ["target"] = "Jump",
+          },
+        },
+      },
+      ["entry"] = {
+        [1] = {
+          ["params"] = {
             ["move"] = true,
+            ["yVelocity"] = 1.2,
           },
           ["type"] = "monoBehaviourCSharp:UpdateAnimatorParams",
         },
@@ -79,16 +149,17 @@ return {
           ["type"] = "coreLogAction",
         },
       },
-      ["invoke"] = {
-        ["input"] = {
+      ["exit"] = {
+        ["params"] = {
+          ["move"] = false,
         },
-        ["src"] = "monoBehaviourCSharp:HandleUserInput",
+        ["type"] = "monoBehaviourCSharp:UpdateAnimatorParams",
       },
     },
   },
-  ["id"] = "WarriorPlayer",
   ["context"] = {
     ["a"] = 1,
   },
+  ["id"] = "WarriorPlayer",
   ["initial"] = "Idle",
 }

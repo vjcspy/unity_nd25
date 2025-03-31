@@ -21,11 +21,14 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(Character.Actor.WarriorPlayerActor);
-			Utils.BeginObjectRegister(type, L, translator, 0, 3, 0, 0);
+			Utils.BeginObjectRegister(type, L, translator, 0, 6, 0, 0);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "UpdateAnimatorParams", _m_UpdateAnimatorParams);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "HandleUserInput", _m_HandleUserInput);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "Log", _m_Log);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "HandleActionMove", _m_HandleActionMove);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "HandleActionJump", _m_HandleActionJump);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "ForceJump", _m_ForceJump);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "HandleFall", _m_HandleFall);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "CheckAndUpdateGroundedInfo", _m_CheckAndUpdateGroundedInfo);
 			
 			
 			
@@ -103,7 +106,7 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_HandleUserInput(RealStatePtr L)
+        static int _m_HandleActionMove(RealStatePtr L)
         {
 		    try {
             
@@ -116,7 +119,7 @@ namespace XLua.CSObjectWrap
                 
                 {
                     
-                    gen_to_be_invoked.HandleUserInput(  );
+                    gen_to_be_invoked.HandleActionMove(  );
                     
                     
                     
@@ -130,7 +133,7 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_Log(RealStatePtr L)
+        static int _m_HandleActionJump(RealStatePtr L)
         {
 		    try {
             
@@ -142,9 +145,89 @@ namespace XLua.CSObjectWrap
             
                 
                 {
-                    string _message = LuaAPI.lua_tostring(L, 2);
                     
-                    gen_to_be_invoked.Log( _message );
+                    gen_to_be_invoked.HandleActionJump(  );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_ForceJump(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                Character.Actor.WarriorPlayerActor gen_to_be_invoked = (Character.Actor.WarriorPlayerActor)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    
+                    gen_to_be_invoked.ForceJump(  );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_HandleFall(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                Character.Actor.WarriorPlayerActor gen_to_be_invoked = (Character.Actor.WarriorPlayerActor)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    
+                    gen_to_be_invoked.HandleFall(  );
+                    
+                    
+                    
+                    return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_CheckAndUpdateGroundedInfo(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                Character.Actor.WarriorPlayerActor gen_to_be_invoked = (Character.Actor.WarriorPlayerActor)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    
+                    gen_to_be_invoked.CheckAndUpdateGroundedInfo(  );
                     
                     
                     

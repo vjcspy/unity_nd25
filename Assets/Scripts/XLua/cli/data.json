@@ -35,16 +35,27 @@
           }
         }
       ],
-      "invoke": {
-        "input": {},
-        "src": "monoBehaviourCSharp:HandleUserInput"
-      },
+      "invoke": [
+        {
+          "input": {},
+          "src": "monoBehaviourCSharp:HandleActionMove"
+        },
+        {
+          "src": "monoBehaviourCSharp:HandleActionJump",
+          "input": {}
+        }
+      ],
       "on": {
         "move": [
           {
             "target": "Move",
-            "actions": [],
-            "meta": {}
+            "actions": []
+          }
+        ],
+        "jump": [
+          {
+            "target": "Jump",
+            "actions": []
           }
         ]
       }
@@ -72,12 +83,65 @@
           "move": false
         }
       },
-      "invoke": {
-        "input": {},
-        "src": "monoBehaviourCSharp:HandleUserInput"
-      },
+      "invoke": [
+        {
+          "input": {},
+          "src": "monoBehaviourCSharp:HandleActionMove"
+        },
+        {
+          "src": "monoBehaviourCSharp:HandleActionJump",
+          "input": {}
+        }
+      ],
       "on": {
         "idle": [
+          {
+            "target": "Idle",
+            "actions": []
+          }
+        ],
+        "jump": [
+          {
+            "target": "Jump",
+            "actions": []
+          }
+        ]
+      }
+    },
+    "Jump": {
+      "entry": [
+        {
+          "type": "monoBehaviourCSharp:UpdateAnimatorParams",
+          "params": {
+            "jump": true
+          }
+        },
+        {
+          "type": "monoBehaviourCSharp:ForceJump"
+        }
+      ],
+      "exit": {
+        "type": "monoBehaviourCSharp:UpdateAnimatorParams",
+        "params": {
+          "jump": false
+        }
+      },
+      "invoke": [
+        {
+          "src": "monoBehaviourCSharp:HandleActionMove",
+          "input": {}
+        },
+        {
+          "src": "monoBehaviourCSharp:HandleFall",
+          "input": {}
+        },
+        {
+          "src": "monoBehaviourCSharp:CheckAndUpdateGroundedInfo",
+          "input": {}
+        }
+      ],
+      "on": {
+        "grounded": [
           {
             "target": "Idle",
             "actions": []

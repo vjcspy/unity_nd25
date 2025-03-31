@@ -34,7 +34,7 @@ local function prepareActions(actionConfigs, actions)
         if not actionFn then
             if actionConfig.type:sub(1, #monoBehaviorCsharpName) == monoBehaviorCsharpName then
                 local code
-                if next(actionConfig.params) == nil then
+                if actionConfig.params == nil or next(actionConfig.params) == nil then
                     -- Tạo hàm bọc: khi gọi sẽ thực hiện stateMachine.<method>()
                     code = "return function(stateMachine) return stateMachine." .. actionConfig.type .. "() end"
                 else
@@ -45,7 +45,7 @@ local function prepareActions(actionConfigs, actions)
                 -- Lấy hàm đã biên dịch (cache)
                 local compiledWrapper = getCompiledAction(code)()
                 table.insert(actionFns, function(stateMachine)
-                    if next(actionConfig.params) == nil then
+                    if actionConfig.params == nil or next(actionConfig.params) == nil then
                         compiledWrapper(stateMachine)
                     else
                         compiledWrapper(stateMachine, actionConfig.params)
@@ -82,7 +82,7 @@ local function prepareInvokes(invokeConfigs, actions)
         if not actionFn then
             if invokeConfig.src:sub(1, #monoBehaviorCsharpName) == monoBehaviorCsharpName then
                 local code
-                if next(invokeConfig.input) == nil then
+                if invokeConfig.input == nil or next(invokeConfig.input) == nil then
                     code = "return function(stateMachine) return stateMachine." .. invokeConfig.src .. "() end"
                 else
                     code = "return function(stateMachine, inputParams) return stateMachine." .. invokeConfig.src ..
@@ -92,7 +92,7 @@ local function prepareInvokes(invokeConfigs, actions)
                 local compiledWrapper = getCompiledAction(code)() -- Lấy ra hàm wrapper đã compile
 
                 table.insert(actionFns, function(stateMachine)
-                    if next(invokeConfig.input) == nil then
+                    if invokeConfig.input == nil or next(invokeConfig.input) == nil then
                         compiledWrapper(stateMachine)
                     else
                         compiledWrapper(stateMachine, invokeConfig.input)

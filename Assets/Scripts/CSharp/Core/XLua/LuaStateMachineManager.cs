@@ -13,7 +13,7 @@ namespace Core.XLua
         Action Update();
         Action OnDestroy();
 
-        void Dispatch(string evenName, object[] args);
+        void Dispatch(string evenName, object[] args = null);
         void Set(string key, object value);
         void Initialize();
     }
@@ -21,7 +21,7 @@ namespace Core.XLua
     [CSharpCallLua]
     public delegate ILuaStateMachineMono LuaStateMachineMono();
 
-    
+
 
 
     public abstract class StateMachineActorMono : MonoBehaviour
@@ -84,7 +84,7 @@ namespace Core.XLua
 
         private void OnDestroy()
         {
-            luaStateMachineMono.OnDestroy();
+            luaStateMachineMono?.OnDestroy();
             luaModule?.Dispose();
             luaStateMachineMono = null;
             luaModule = null;

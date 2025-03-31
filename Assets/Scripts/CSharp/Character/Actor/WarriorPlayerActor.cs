@@ -6,21 +6,26 @@ namespace Character.Actor
     [LuaCallCSharp]
     public class WarriorPlayerActor : StateMachineActorMono
     {
+
+        [Header("Movement Settings")]
+        [SerializeField] private float moveSpeed = 5f;
+        [SerializeField] private float jumpForce = 2f;
+
         private Animator animator;
         private Rigidbody2D rb;
+        private GroundChecker groundChecker;
+
 
         protected override string ModuleName => "character.xstate.warrior.warrior_state_machine";
 
         protected override void Awake()
         {
             base.Awake();
+
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody2D>();
-        }
+            groundChecker = GetComponent<GroundChecker>();
 
-        protected override void Start()
-        {
-            base.Start();
         }
 
         [LuaCallable]
@@ -52,27 +57,57 @@ namespace Character.Actor
         }
 
         [LuaCallable]
-        public void HandleUserInput()
+        public void HandleActionMove()
         {
             float moveInput = Input.GetAxisRaw("Horizontal");
 
             if (moveInput != 0)
             {
-                luaStateMachineMono.Dispatch("move", null);
+                luaStateMachineMono.Dispatch("move");
             }
             else
             {
-                luaStateMachineMono.Dispatch("idle", null);
+                luaStateMachineMono.Dispatch("idle");
             }
 
-            Vector2 newVelocity = new(moveInput * 5f, rb.linearVelocity.y);
+            Vector2 newVelocity = new(moveInput * moveSpeed, rb.linearVelocity.y);
             rb.linearVelocity = newVelocity;
         }
 
         [LuaCallable]
-        public void Log(string message)
+        public void HandleActionJump()
         {
-            Debug.Log(message);
+            if (Input.GetKeyDown(KeyCode.Space) && groundChecker.IsGrounded)
+            {
+                luaStateMachineMono.Dispatch("jump");
+            }
+        }
+        [LuaCallable]
+        public void ForceJump()
+        {
+            if (groundChecker.IsGrounded)
+            {
+                groundChecker.ForceCheck(); // Reset ground check
+                Vector2 jumpForceVector = Vector2.up * jumpForce;
+                rb.AddForce(jumpForceVector, ForceMode2D.Impulse);
+            }
+        }
+
+        [LuaCallable]
+        public void HandleFall()
+        {
+            // TODO: Should not check by compare y velocity
+            if (rb.linearVelocity.y < 0 && groundChecker.IsGrounded)
+            {
+                luaStateMachineMono.Dispatch("grounded");
+            }
+        }
+
+        [LuaCallable]
+        public void CheckAndUpdateGroundedInfo()
+        {
+            animator.SetBool("jump", !groundChecker.IsGrounded);
+            animator.SetFloat("yVelocity", rb.linearVelocity.y);
         }
     }
 }
