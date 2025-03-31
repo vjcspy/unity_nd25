@@ -2,7 +2,7 @@ using Core.XLua;
 using UnityEngine;
 using XLua;
 
-namespace Character.Player
+namespace Character.Actor
 {
     [LuaCallCSharp]
     public class PlayerActor : LuaMono

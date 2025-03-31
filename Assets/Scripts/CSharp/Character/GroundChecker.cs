@@ -26,6 +26,26 @@ namespace Character
 
         public bool IsGrounded { get; private set; }
 
+        private void Awake()
+        {
+            // Nếu groundCheckPoint chưa được thiết lập, tự động tìm hoặc tạo một child GameObject có tên "GroundCheck"
+            if (groundCheckPoint == null)
+            {
+                Transform found = transform.Find("GroundCheck");
+                if (found != null)
+                {
+                    groundCheckPoint = found;
+                }
+                else
+                {
+                    GameObject emptyObj = new("GroundCheck");
+                    emptyObj.transform.parent = transform;
+                    emptyObj.transform.localPosition = Vector3.zero;
+                    groundCheckPoint = emptyObj.transform;
+                }
+            }
+        }
+
         private void Update()
         {
             switch (method)

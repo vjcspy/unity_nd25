@@ -22,10 +22,10 @@ namespace XLua.CSObjectWrap
         static void wrapInit0(LuaEnv luaenv, ObjectTranslator translator)
         {
         
-            translator.DelayWrapLoader(typeof(Character.Player.PlayerActor), CharacterPlayerPlayerActorWrap.__Register);
+            translator.DelayWrapLoader(typeof(Character.Actor.PlayerActor), CharacterActorPlayerActorWrap.__Register);
         
         
-            translator.DelayWrapLoader(typeof(Character.Player.WarriorPlayerActor), CharacterPlayerWarriorPlayerActorWrap.__Register);
+            translator.DelayWrapLoader(typeof(Character.Actor.WarriorPlayerActor), CharacterActorWarriorPlayerActorWrap.__Register);
         
         
         

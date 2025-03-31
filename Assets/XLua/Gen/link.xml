@@ -3,8 +3,8 @@
 <linker>
 
 	<assembly fullname="Assembly-CSharp">
-	    <type fullname="Character.Player.PlayerActor" preserve="all"/>
-		<type fullname="Character.Player.WarriorPlayerActor" preserve="all"/>
+	    <type fullname="Character.Actor.PlayerActor" preserve="all"/>
+		<type fullname="Character.Actor.WarriorPlayerActor" preserve="all"/>
 		
 	</assembly>
 

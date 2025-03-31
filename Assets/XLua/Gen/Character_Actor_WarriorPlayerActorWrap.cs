@@ -15,12 +15,12 @@ using System.Collections.Generic;
 namespace XLua.CSObjectWrap
 {
     using Utils = XLua.Utils;
-    public class CharacterPlayerWarriorPlayerActorWrap 
+    public class CharacterActorWarriorPlayerActorWrap 
     {
         public static void __Register(RealStatePtr L)
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			System.Type type = typeof(Character.Player.WarriorPlayerActor);
+			System.Type type = typeof(Character.Actor.WarriorPlayerActor);
 			Utils.BeginObjectRegister(type, L, translator, 0, 3, 0, 0);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "UpdateAnimatorParams", _m_UpdateAnimatorParams);
@@ -53,7 +53,7 @@ namespace XLua.CSObjectWrap
 				if(LuaAPI.lua_gettop(L) == 1)
 				{
 					
-					var gen_ret = new Character.Player.WarriorPlayerActor();
+					var gen_ret = new Character.Actor.WarriorPlayerActor();
 					translator.Push(L, gen_ret);
                     
 					return 1;
@@ -63,7 +63,7 @@ namespace XLua.CSObjectWrap
 			catch(System.Exception gen_e) {
 				return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
 			}
-            return LuaAPI.luaL_error(L, "invalid arguments to Character.Player.WarriorPlayerActor constructor!");
+            return LuaAPI.luaL_error(L, "invalid arguments to Character.Actor.WarriorPlayerActor constructor!");
             
         }
         
@@ -82,7 +82,7 @@ namespace XLua.CSObjectWrap
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
             
             
-                Character.Player.WarriorPlayerActor gen_to_be_invoked = (Character.Player.WarriorPlayerActor)translator.FastGetCSObj(L, 1);
+                Character.Actor.WarriorPlayerActor gen_to_be_invoked = (Character.Actor.WarriorPlayerActor)translator.FastGetCSObj(L, 1);
             
             
                 
@@ -110,7 +110,7 @@ namespace XLua.CSObjectWrap
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
             
             
-                Character.Player.WarriorPlayerActor gen_to_be_invoked = (Character.Player.WarriorPlayerActor)translator.FastGetCSObj(L, 1);
+                Character.Actor.WarriorPlayerActor gen_to_be_invoked = (Character.Actor.WarriorPlayerActor)translator.FastGetCSObj(L, 1);
             
             
                 
@@ -137,7 +137,7 @@ namespace XLua.CSObjectWrap
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
             
             
-                Character.Player.WarriorPlayerActor gen_to_be_invoked = (Character.Player.WarriorPlayerActor)translator.FastGetCSObj(L, 1);
+                Character.Actor.WarriorPlayerActor gen_to_be_invoked = (Character.Actor.WarriorPlayerActor)translator.FastGetCSObj(L, 1);
             
             
                 

@@ -15,12 +15,12 @@ using System.Collections.Generic;
 namespace XLua.CSObjectWrap
 {
     using Utils = XLua.Utils;
-    public class CharacterPlayerPlayerActorWrap 
+    public class CharacterActorPlayerActorWrap 
     {
         public static void __Register(RealStatePtr L)
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			System.Type type = typeof(Character.Player.PlayerActor);
+			System.Type type = typeof(Character.Actor.PlayerActor);
 			Utils.BeginObjectRegister(type, L, translator, 0, 1, 0, 0);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "TryJumpIfGrounded", _m_TryJumpIfGrounded);
@@ -51,7 +51,7 @@ namespace XLua.CSObjectWrap
 				if(LuaAPI.lua_gettop(L) == 1)
 				{
 					
-					var gen_ret = new Character.Player.PlayerActor();
+					var gen_ret = new Character.Actor.PlayerActor();
 					translator.Push(L, gen_ret);
                     
 					return 1;
@@ -61,7 +61,7 @@ namespace XLua.CSObjectWrap
 			catch(System.Exception gen_e) {
 				return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
 			}
-            return LuaAPI.luaL_error(L, "invalid arguments to Character.Player.PlayerActor constructor!");
+            return LuaAPI.luaL_error(L, "invalid arguments to Character.Actor.PlayerActor constructor!");
             
         }
         
@@ -80,7 +80,7 @@ namespace XLua.CSObjectWrap
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
             
             
-                Character.Player.PlayerActor gen_to_be_invoked = (Character.Player.PlayerActor)translator.FastGetCSObj(L, 1);
+                Character.Actor.PlayerActor gen_to_be_invoked = (Character.Actor.PlayerActor)translator.FastGetCSObj(L, 1);
             
             
                 
