@@ -15,6 +15,7 @@ namespace Character.Actor
         private Rigidbody2D rb;
         private GroundChecker groundChecker;
 
+        private float horizontalInput;
 
         protected override string ModuleName => "character.xstate.warrior.warrior_state_machine";
 
@@ -59,9 +60,9 @@ namespace Character.Actor
         [LuaCallable]
         public void HandleActionMove()
         {
-            float moveInput = Input.GetAxisRaw("Horizontal");
+            horizontalInput = Input.GetAxis("Horizontal");
 
-            if (moveInput != 0)
+            if (horizontalInput != 0)
             {
                 luaStateMachineMono.Dispatch("move");
             }
@@ -70,7 +71,7 @@ namespace Character.Actor
                 luaStateMachineMono.Dispatch("idle");
             }
 
-            Vector2 newVelocity = new(moveInput * moveSpeed, rb.linearVelocity.y);
+            Vector2 newVelocity = new(horizontalInput * moveSpeed, rb.linearVelocity.y);
             rb.linearVelocity = newVelocity;
         }
 
