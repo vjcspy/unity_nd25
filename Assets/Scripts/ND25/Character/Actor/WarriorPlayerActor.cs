@@ -1,22 +1,25 @@
 using Core.XLua;
 using UnityEngine;
 using XLua;
-
 namespace ND25.Character.Actor
 {
     [LuaCallCSharp]
+    /*
+     * This version is using XLua Xstate
+     */
     public class WarriorPlayerActor : StateMachineActorMono
     {
 
         [Header("Movement Settings")]
-        [SerializeField] private float moveSpeed = 5f;
-        [SerializeField] private float jumpForce = 2f;
+        [SerializeField]
+        float moveSpeed = 5f;
+        [SerializeField] float jumpForce = 2f;
 
-        private Animator animator;
-        private Rigidbody2D rb;
-        private GroundChecker groundChecker;
+        Animator animator;
+        GroundChecker groundChecker;
 
-        private float horizontalInput;
+        float horizontalInput;
+        Rigidbody2D rb;
 
         protected override string ModuleName
         {
@@ -36,7 +39,7 @@ namespace ND25.Character.Actor
         [LuaCallable]
         public void UpdateAnimatorParams(LuaTable animatorParams)
         {
-            foreach (var key in animatorParams.GetKeys())
+            foreach (object key in animatorParams.GetKeys())
             {
                 animatorParams.Get(key, out object value);
                 if (key is string keyString)
@@ -75,7 +78,7 @@ namespace ND25.Character.Actor
                 luaStateMachineMono.Dispatch("idle");
             }
 
-            Vector2 newVelocity = new(horizontalInput * moveSpeed, rb.linearVelocity.y);
+            Vector2 newVelocity = new Vector2(horizontalInput * moveSpeed, rb.linearVelocity.y);
             rb.linearVelocity = newVelocity;
         }
 

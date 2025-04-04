@@ -14,26 +14,34 @@ namespace ND25.Core.ReactiveMachine
     public class ReactiveMachine
     {
         readonly BehaviorSubject<ReactiveMachineAction> actionSubject = new BehaviorSubject<ReactiveMachineAction>(null);
-        readonly ReactiveMachineConfig config;
+        readonly string jsonFileName;
+
+        readonly Dictionary<string, ReactiveMachineState> states = new Dictionary<string, ReactiveMachineState>();
+        ReactiveMachineConfig config;
 
         string currentStateName;
 
-        Dictionary<string, ReactiveMachineState> states;
+        DisposableBag disposable;
 
-        public ReactiveMachine(string jsonConfig)
+        public ReactiveMachine(string jsonFileName)
         {
+            this.jsonFileName = jsonFileName;
+        }
+
+        void LoadConfig()
+        {
+            TextAsset jsonFile = Resources.Load<TextAsset>($"Configs/ReactiveStateMachine/{jsonFileName}.json");
+            string jsonContent = jsonFile.text;
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new ReactiveMachineStateConfigConverter());
 
-            config = JsonConvert.DeserializeObject<ReactiveMachineConfig>(jsonConfig, settings);
+            config = JsonConvert.DeserializeObject<ReactiveMachineConfig>(jsonContent, settings);
         }
 
         void InitStates()
         {
-            foreach (var kvp in config.states)
+            foreach ((string stateName, ReactiveMachineStateConfig cfg) in config.states)
             {
-                string stateName = kvp.Key;
-                ReactiveMachineStateConfig cfg = kvp.Value;
 
                 ReactiveMachineState state = new ReactiveMachineState(this, cfg);
                 states[stateName] = state;
@@ -52,9 +60,6 @@ namespace ND25.Core.ReactiveMachine
 
         public void DispatchAction(ReactiveMachineAction action)
         {
-            #if UNITY_EDITOR
-            Debug.Log($"[ReactiveMachine] Dispatching Action: {action.type}");
-            #endif
             actionSubject.OnNext(action);
         }
 
@@ -64,12 +69,8 @@ namespace ND25.Core.ReactiveMachine
             return states[currentStateName];
         }
 
-        public void TransitionTo(string nextState, List<ReactiveMachineAction> transitionActions)
+        public void TransitionTo(string nextState, [CanBeNull] List<ReactiveMachineAction> transitionActions = null)
         {
-            #if UNITY_EDITOR
-            Debug.Log($"[ReactiveMachine] Transition from {currentStateName} → {nextState}");
-            #endif
-
             // Exit current state
             GetCurrentState()
                 ?.Exit();
@@ -105,7 +106,7 @@ namespace ND25.Core.ReactiveMachine
                         DispatchAction(handledEvent);
                     },
                     error => Debug.LogError($"Error in event stream: {error.ToString()}")
-                );
+                ).AddTo(ref disposable);
         }
 
         void RegisterActionHandler(object eventEffectInstance)
@@ -135,22 +136,56 @@ namespace ND25.Core.ReactiveMachine
 
         public void Awake()
         {
-            InitStates();
+            LoadConfig();
+            // InitStates();
         }
 
         public void Start()
         {
+            TransitionTo(config.initial);
         }
 
         public void Update()
         {
-            GetCurrentState()
-                ?.Invoke();
+            GetCurrentState()!.Invoke();
         }
 
         public void OnDestroy()
         {
             actionSubject.Dispose();
+            disposable.Dispose();
         }
+    }
+
+
+    public abstract class ReactiveMachineMono : MonoBehaviour
+    {
+        ReactiveMachine machine;
+
+        protected virtual void Awake()
+        {
+            machine = new ReactiveMachine(GetJsonFileName());
+            machine.Awake();
+            // machine.RegisterActionHandler(GetActionHandlers());
+        }
+
+        // void Start()
+        // {
+        //     machine.Start();
+        // }
+        //
+        // void Update()
+        // {
+        //     machine.Update();
+        // }
+
+        void OnDestroy()
+        {
+            machine.OnDestroy();
+        }
+
+        protected abstract string GetJsonFileName();
+
+        protected abstract object[] GetActionHandlers();
     }
 }

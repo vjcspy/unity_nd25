@@ -34,11 +34,7 @@ namespace ND25.Core.ReactiveMachine
 
         public void Invoke()
         {
-#if UNITY_EDITOR
-            Debug.Log("[FSM State] Invoke");
-#endif
-
-            foreach (var action in config.invoke) machine.DispatchAction(action);
+            foreach (ReactiveMachineAction action in config.invoke) machine.DispatchAction(action);
         }
 
         public void Exit()
