@@ -1,7 +1,18 @@
 ﻿using ND25.Core.ReactiveMachine;
+using R3;
 using UnityEngine;
 namespace ND25.Character.Actor
 {
+    public enum WarriorAction
+    {
+        HandleMoveInput,
+        Walk,
+        Jump,
+        Attack,
+        Die,
+    }
+
+
     /*
      * This version is using ReactiveMachine
      */
@@ -36,6 +47,23 @@ namespace ND25.Character.Actor
             {
                 this,
             };
+        }
+
+        [ReactiveMachineEffect]
+        public ReactiveMachineActionHandler HandleMoveInput()
+        {
+            return upstream => upstream
+                .OfAction(WarriorAction.HandleMoveInput)
+                .Select(
+                    _ =>
+                    {
+                        horizontalInput = Input.GetAxis("Horizontal");
+                        Vector2 newVelocity = new Vector2(horizontalInput * moveSpeed, rb.linearVelocity.y);
+                        rb.linearVelocity = newVelocity;
+
+                        return ReactiveMachineCoreAction.Empty;
+                    }
+                );
         }
     }
 }

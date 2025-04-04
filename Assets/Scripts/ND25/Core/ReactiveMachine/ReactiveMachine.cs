@@ -13,19 +13,21 @@ namespace ND25.Core.ReactiveMachine
 
     public class ReactiveMachine
     {
-        readonly BehaviorSubject<ReactiveMachineAction> actionSubject = new BehaviorSubject<ReactiveMachineAction>(null);
+        readonly Subject<ReactiveMachineAction> actionSubject = new Subject<ReactiveMachineAction>();
         readonly string jsonFileName;
+        readonly Observable<ReactiveMachineAction> sharedActionStream;
 
         readonly Dictionary<string, ReactiveMachineState> states = new Dictionary<string, ReactiveMachineState>();
         ReactiveMachineConfig config;
 
-        string currentStateName;
+        [CanBeNull] string currentStateName;
 
         DisposableBag disposable;
 
         public ReactiveMachine(string jsonFileName)
         {
             this.jsonFileName = jsonFileName;
+            sharedActionStream = actionSubject.Share();
         }
 
         void LoadConfig()
@@ -72,7 +74,7 @@ namespace ND25.Core.ReactiveMachine
         [CanBeNull]
         ReactiveMachineState GetCurrentState()
         {
-            return states[currentStateName];
+            return currentStateName == null ? null : states[currentStateName];
         }
 
         public void TransitionTo(string nextState, [CanBeNull] List<ReactiveMachineAction> transitionActions = null)
@@ -98,20 +100,12 @@ namespace ND25.Core.ReactiveMachine
 
         void RegisterAction(ReactiveMachineActionHandler eventHandler)
         {
-            actionSubject
-                .SelectMany(
-                    originalEvent =>
-                        eventHandler(Observable.Return(originalEvent))
-                            .Select(handledEvent => new { Original = originalEvent, Handled = handledEvent, })
-                )
-                .Where(events => events.Handled != ReactiveMachineCoreAction.Empty)
+            // Truyền trực tiếp subject vào handler để nhận stream xử lý
+            eventHandler(sharedActionStream)
+                .Where(handledEvent => handledEvent != ReactiveMachineCoreAction.Empty)
                 .Subscribe(
-                    events =>
-                    {
-                        ReactiveMachineAction handledEvent = events.Handled;
-                        DispatchAction(handledEvent);
-                    },
-                    error => Debug.LogError($"Error in event stream: {error.ToString()}")
+                    DispatchAction,
+                    error => Debug.LogError($"[ReactiveMachine] Error in event stream: {error}")
                 )
                 .AddTo(ref disposable);
         }
@@ -163,7 +157,5 @@ namespace ND25.Core.ReactiveMachine
             disposable.Dispose();
         }
     }
-
-
 
 }

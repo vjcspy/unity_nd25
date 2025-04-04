@@ -12,15 +12,15 @@ namespace ND25.Core.ReactiveMachine
             machine.RegisterActionHandler(GetActionHandlers());
         }
 
-        // void Start()
-        // {
-        //     machine.Start();
-        // }
-        //
-        // void Update()
-        // {
-        //     machine.Update();
-        // }
+        void Start()
+        {
+            machine.Start();
+        }
+
+        void Update()
+        {
+            machine.Update();
+        }
 
         void OnDestroy()
         {

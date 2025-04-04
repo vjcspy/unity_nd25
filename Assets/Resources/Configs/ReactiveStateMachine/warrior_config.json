@@ -35,10 +35,16 @@
           }
         }
       ],
-      "invoke": {
-        "input": {},
-        "src": "monoBehaviourCSharp:HandleUserInput"
-      },
+      "invoke": [
+        {
+          "input": {},
+          "src": "HandleMoveInput"
+        },
+        {
+          "src": "ajf",
+          "input": {}
+        }
+      ],
       "on": {
         "move": [
           {
