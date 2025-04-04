@@ -85,7 +85,7 @@ namespace ND25.Character.Actor
         [LuaCallable]
         public void HandleActionJump()
         {
-            if (Input.GetKeyDown(KeyCode.Space) && groundChecker.IsGrounded)
+            if (Input.GetKeyDown(KeyCode.Space) && groundChecker.isGrounded)
             {
                 luaStateMachineMono.Dispatch("jump");
             }
@@ -93,7 +93,7 @@ namespace ND25.Character.Actor
         [LuaCallable]
         public void ForceJump()
         {
-            if (groundChecker.IsGrounded)
+            if (groundChecker.isGrounded)
             {
                 groundChecker.ForceCheck(); // Reset ground check
                 Vector2 jumpForceVector = Vector2.up * jumpForce;
@@ -105,7 +105,7 @@ namespace ND25.Character.Actor
         public void HandleFall()
         {
             // TODO: Should not check by compare y velocity
-            if (rb.linearVelocity.y < 0 && groundChecker.IsGrounded)
+            if (rb.linearVelocity.y < 0 && groundChecker.isGrounded)
             {
                 luaStateMachineMono.Dispatch("grounded");
             }
@@ -114,7 +114,7 @@ namespace ND25.Character.Actor
         [LuaCallable]
         public void CheckAndUpdateGroundedInfo()
         {
-            animator.SetBool("jump", !groundChecker.IsGrounded);
+            animator.SetBool("jump", !groundChecker.isGrounded);
             animator.SetFloat("yVelocity", rb.linearVelocity.y);
         }
     }

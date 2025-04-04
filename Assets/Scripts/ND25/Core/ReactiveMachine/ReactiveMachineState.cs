@@ -2,12 +2,12 @@
 using UnityEngine;
 namespace ND25.Core.ReactiveMachine
 {
-    public class ReactiveMachineState
+    public class ReactiveMachineState<T>
     {
         readonly ReactiveMachineStateConfig config;
-        readonly ReactiveMachine machine;
+        readonly ReactiveMachine<T> machine;
 
-        public ReactiveMachineState(string stateName, ReactiveMachine machine, ReactiveMachineStateConfig config)
+        public ReactiveMachineState(string stateName, ReactiveMachine<T> machine, ReactiveMachineStateConfig config)
         {
             name = stateName;
             this.machine = machine;
@@ -28,9 +28,9 @@ namespace ND25.Core.ReactiveMachine
 
         public void Entry()
         {
-            #if UNITY_EDITOR
-            Debug.Log($"[ReactiveMachineState] Entry state: {name}");
-            #endif
+            // #if UNITY_EDITOR
+            // Debug.Log($"[ReactiveMachineState] Entry state: {name}");
+            // #endif
 
             foreach (ReactiveMachineAction action in config.entry)
             {
@@ -49,9 +49,9 @@ namespace ND25.Core.ReactiveMachine
 
         public void Exit()
         {
-            #if UNITY_EDITOR
-            Debug.Log($"[ReactiveMachineState] Exit state: {name}");
-            #endif
+            // #if UNITY_EDITOR
+            // Debug.Log($"[ReactiveMachineState] Exit state: {name}");
+            // #endif
 
             foreach (ReactiveMachineAction action in config.exit)
             {
@@ -61,9 +61,9 @@ namespace ND25.Core.ReactiveMachine
 
         public void DispatchEvent(string eventName)
         {
-            #if UNITY_EDITOR
-            Debug.Log($"[ReactiveMachineState] Dispatch event: {eventName}");
-            #endif
+            // #if UNITY_EDITOR
+            // Debug.Log($"[ReactiveMachineState] Dispatch event: {eventName}");
+            // #endif
 
             if (!config.on.TryGetValue(eventName, out var transitions) || transitions == null || transitions.Count == 0)
             {

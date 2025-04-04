@@ -1,52 +1,40 @@
+using System;
 using UnityEngine;
-
 namespace ND25.Character
 {
+    internal enum CheckMethod
+    {
+        Raycast,
+        OverlapCircle,
+        // Có thể thêm BoxCast sau nếu muốn
+    }
+
     public class GroundChecker : MonoBehaviour
     {
-        public enum CheckMethod
-        {
-            Raycast,
-            OverlapCircle
-            // Có thể thêm BoxCast sau nếu muốn
-        }
 
         [Header("Ground Check Settings")]
-        [SerializeField] private CheckMethod method = CheckMethod.Raycast;
+        [SerializeField]
+        CheckMethod method = CheckMethod.Raycast;
 
-        [SerializeField] private Transform groundCheckPoint;
-        [SerializeField] private float checkDistance = 0.2f;
-        [SerializeField] private float overlapRadius = 0.25f;
+        [SerializeField] Transform groundCheckPoint;
+        [SerializeField] float checkDistance = 0.2f;
+        [SerializeField] float overlapRadius = 0.25f;
 
-        [SerializeField] private LayerMask groundLayer;
+        [SerializeField] LayerMask groundLayer;
 
         [Header("Debug")]
-        [SerializeField] private bool drawDebugRay = true;
-        [SerializeField] private bool drawGizmos = true;
+        [SerializeField]
+        bool drawDebugRay = true;
+        [SerializeField] bool drawGizmos = true;
 
-        public bool IsGrounded { get; private set; }
+        public bool isGrounded { get; private set; }
 
-        private void Awake()
+        void Awake()
         {
-            // Nếu groundCheckPoint chưa được thiết lập, tự động tìm hoặc tạo một child GameObject có tên "GroundCheck"
-            if (groundCheckPoint == null)
-            {
-                Transform found = transform.Find("GroundCheck");
-                if (found != null)
-                {
-                    groundCheckPoint = found;
-                }
-                else
-                {
-                    GameObject emptyObj = new("GroundCheck");
-                    emptyObj.transform.parent = transform;
-                    emptyObj.transform.localPosition = Vector3.zero;
-                    groundCheckPoint = emptyObj.transform;
-                }
-            }
+            InitializeGroundCheckPoint();
         }
 
-        private void Update()
+        void Update()
         {
             switch (method)
             {
@@ -56,53 +44,87 @@ namespace ND25.Character
                 case CheckMethod.OverlapCircle:
                     CheckGroundOverlap();
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        private void CheckGroundRaycast()
+        void OnDrawGizmos()
+        {
+            if (!drawGizmos || groundCheckPoint == null)
+            {
+                return;
+            }
+
+            Gizmos.color = Color.yellow;
+
+            switch (method)
+            {
+                case CheckMethod.Raycast:
+                    Gizmos.DrawLine(groundCheckPoint.position, groundCheckPoint.position + Vector3.down * checkDistance);
+                    Gizmos.DrawWireSphere(groundCheckPoint.position + Vector3.down * checkDistance, 0.05f);
+                    break;
+                case CheckMethod.OverlapCircle:
+                    Gizmos.DrawWireSphere(groundCheckPoint.position, overlapRadius);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        void InitializeGroundCheckPoint()
+        {
+            Transform found = transform.Find("GroundCheck");
+            if (found != null)
+            {
+                groundCheckPoint = found;
+            }
+            else
+            {
+                GameObject emptyObj = new GameObject("GroundCheck")
+                {
+                    transform =
+                    {
+                        parent = transform,
+                        localPosition = Vector3.zero,
+                    },
+                };
+                groundCheckPoint = emptyObj.transform;
+            }
+        }
+
+        void CheckGroundRaycast()
         {
             RaycastHit2D hit = Physics2D.Raycast(groundCheckPoint.position, Vector2.down, checkDistance, groundLayer);
-            IsGrounded = hit.collider != null;
+            isGrounded = hit.collider;
 
-            if (drawDebugRay)
+            if (!drawDebugRay)
             {
-                Color rayColor = IsGrounded ? Color.green : Color.red;
-                Debug.DrawRay(groundCheckPoint.position, Vector2.down * checkDistance, rayColor);
+                return;
             }
+
+            Color rayColor = isGrounded ? Color.green : Color.red;
+            Debug.DrawRay(groundCheckPoint.position, Vector2.down * checkDistance, rayColor);
         }
 
-        private void CheckGroundOverlap()
+        void CheckGroundOverlap()
         {
             Collider2D hit = Physics2D.OverlapCircle(groundCheckPoint.position, overlapRadius, groundLayer);
-            IsGrounded = hit != null;
+            isGrounded = hit;
 
-            if (drawDebugRay)
+            if (!drawDebugRay)
             {
-                Color circleColor = IsGrounded ? Color.green : Color.red;
-                Debug.DrawLine(groundCheckPoint.position, groundCheckPoint.position + Vector3.down * 0.01f, circleColor); // marker line
+                return;
             }
+
+            Color circleColor = isGrounded ? Color.green : Color.red;
+            Debug.DrawLine(groundCheckPoint.position, groundCheckPoint.position + Vector3.down * 0.01f, circleColor); // marker line
         }
 
         public void ForceCheck()
         {
             Update(); // gọi thủ công nếu cần
-        }
-
-        private void OnDrawGizmos()
-        {
-            if (!drawGizmos || groundCheckPoint == null) return;
-
-            Gizmos.color = Color.yellow;
-
-            if (method == CheckMethod.Raycast)
-            {
-                Gizmos.DrawLine(groundCheckPoint.position, groundCheckPoint.position + Vector3.down * checkDistance);
-                Gizmos.DrawWireSphere(groundCheckPoint.position + Vector3.down * checkDistance, 0.05f);
-            }
-            else if (method == CheckMethod.OverlapCircle)
-            {
-                Gizmos.DrawWireSphere(groundCheckPoint.position, overlapRadius);
-            }
         }
     }
 }

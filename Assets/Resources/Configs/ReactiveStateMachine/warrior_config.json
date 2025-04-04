@@ -1,14 +1,11 @@
 ﻿{
-  "context": {
-    "a": 1
-  },
   "id": "WarriorPlayer",
   "initial": "Idle",
   "states": {
     "Idle": {
       "entry": [
         {
-          "type": "monoBehaviourCSharp:UpdateAnimatorParams",
+          "type": "UpdateAnimatorParams",
           "params": {
             "idle": true
           }
@@ -23,7 +20,7 @@
       ],
       "exit": [
         {
-          "type": "monoBehaviourCSharp:UpdateAnimatorParams",
+          "type": "UpdateAnimatorParams",
           "params": {
             "idle": false
           }
@@ -35,16 +32,10 @@
           }
         }
       ],
-      "invoke": [
-        {
-          "input": {},
-          "src": "HandleMoveInput"
-        },
-        {
-          "src": "ajf",
-          "input": {}
-        }
-      ],
+      "invoke": {
+        "input": {},
+        "src": "HandleMoveInput"
+      },
       "on": {
         "move": [
           {
@@ -57,29 +48,27 @@
     "Move": {
       "entry": [
         {
-          "type": "monoBehaviourCSharp:UpdateAnimatorParams",
+          "type": "UpdateAnimatorParams",
           "params": {
-            "move": true,
-            "yVelocity": 1.2
+            "move": true
           }
         },
         {
           "type": "coreLogAction",
           "params": {
-            "action": "Move State Start",
-            "currentState": "Move\n"
+            "action": "Move State Start"
           }
         }
       ],
       "exit": {
-        "type": "monoBehaviourCSharp:UpdateAnimatorParams",
+        "type": "UpdateAnimatorParams",
         "params": {
           "move": false
         }
       },
       "invoke": {
         "input": {},
-        "src": "monoBehaviourCSharp:HandleUserInput"
+        "src": "HandleMoveInput"
       },
       "on": {
         "idle": [

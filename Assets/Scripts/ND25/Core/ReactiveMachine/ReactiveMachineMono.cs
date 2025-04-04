@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 namespace ND25.Core.ReactiveMachine
 {
-    public abstract class ReactiveMachineMono : MonoBehaviour
+    public abstract class ReactiveMachineMono<T> : MonoBehaviour
     {
-        ReactiveMachine machine;
+        protected ReactiveMachine<T> machine;
 
         protected virtual void Awake()
         {
-            machine = new ReactiveMachine(GetJsonFileName());
+            machine = new ReactiveMachine<T>(GetInitContext(), GetJsonFileName());
             machine.Awake();
             machine.RegisterActionHandler(GetActionHandlers());
         }
@@ -30,5 +30,6 @@ namespace ND25.Core.ReactiveMachine
         protected abstract string GetJsonFileName();
 
         protected abstract object[] GetActionHandlers();
+        protected abstract T GetInitContext();
     }
 }

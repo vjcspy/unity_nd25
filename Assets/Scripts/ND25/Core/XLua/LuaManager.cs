@@ -6,33 +6,42 @@ namespace ND25.Core.XLua
 {
     public class LuaManager : MonoBehaviour
     {
-        private const float GCInterval = 1f;
-        private static LuaEnv _luaEnv;
-        private static float _lastGCTime;
+        const float GCInterval = 1f;
+        static LuaEnv _luaEnv;
+        static float _lastGCTime;
 
-        private void Awake()
+        void Awake()
         {
             GetInstance();
         }
 
-        private void Update()
+        void Update()
         {
-            if (!(Time.time - _lastGCTime > GCInterval)) return;
+            if (!(Time.time - _lastGCTime > GCInterval))
+            {
+                return;
+            }
 
             _luaEnv.Tick();
             _lastGCTime = Time.time;
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
             _luaEnv.Dispose();
         }
 
         public static LuaEnv GetInstance()
         {
-            if (_luaEnv != null) return _luaEnv;
+            if (_luaEnv != null)
+            {
+                return _luaEnv;
+            }
 
+            #if UNITY_EDITOR
             Debug.Log("Creating new LuaEnv instance");
+            #endif
+
             _luaEnv = new LuaEnv();
 
             // AddLoader expects a delegate that returns byte[]
@@ -42,9 +51,9 @@ namespace ND25.Core.XLua
         }
 
         // This method returns a byte[] (script) and is passed to AddLoader
-        private static byte[] LoadLuaScriptDevelopment(ref string filename)
+        static byte[] LoadLuaScriptDevelopment(ref string filename)
         {
-            var filepath = Application.dataPath + "/Scripts/XLua/" + filename.Replace('.', '/') + ".lua";
+            string filepath = Application.dataPath + "/Scripts/XLua/" + filename.Replace('.', '/') + ".lua";
             // Debug.Log($"Attempting to load Lua script from: {filepath}");
 
             if (!File.Exists(filepath))
@@ -52,8 +61,8 @@ namespace ND25.Core.XLua
                 Debug.LogError("File does not exist");
                 return null;
             }
-            using var reader = new StreamReader(filepath, Encoding.UTF8);
-            var script = reader.ReadToEnd();
+            using StreamReader reader = new StreamReader(filepath, Encoding.UTF8);
+            string script = reader.ReadToEnd();
 
             // Debug.Log($"Loaded Lua script from: {filepath}");
             return Encoding.UTF8.GetBytes(script);

@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Newtonsoft.Json;
 using R3;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,24 +12,26 @@ namespace ND25.Core.ReactiveMachine
         Observable<ReactiveMachineAction> upstream
     );
 
-    public class ReactiveMachine
+    public class ReactiveMachine<T>
     {
         readonly Subject<ReactiveMachineAction> actionSubject = new Subject<ReactiveMachineAction>();
+        readonly T initialContext;
         readonly string jsonFileName;
         readonly Observable<ReactiveMachineAction> sharedActionStream;
 
-        readonly Dictionary<string, ReactiveMachineState> states = new Dictionary<string, ReactiveMachineState>();
+        readonly Dictionary<string, ReactiveMachineState<T>> states = new Dictionary<string, ReactiveMachineState<T>>();
         ReactiveMachineConfig config;
 
-        [CanBeNull] string currentStateName;
 
         DisposableBag disposable;
-
-        public ReactiveMachine(string jsonFileName)
+        public ReactiveMachine(T initialContext, string jsonFileName)
         {
+            this.initialContext = initialContext;
             this.jsonFileName = jsonFileName;
             sharedActionStream = actionSubject.Share();
         }
+        public ReactiveProperty<T> context { get; private set; }
+        public ReactiveProperty<string> currentStateName { get; } = new ReactiveProperty<string>(null);
 
         void LoadConfig()
         {
@@ -51,19 +54,33 @@ namespace ND25.Core.ReactiveMachine
         {
             foreach ((string stateName, ReactiveMachineStateConfig cfg) in config.states)
             {
-                ReactiveMachineState state = new ReactiveMachineState(stateName, this, cfg);
+                var state = new ReactiveMachineState<T>(stateName, this, cfg);
                 states[stateName] = state;
 
-                #if UNITY_EDITOR
-                Debug.Log($"[ReactiveMachine] Built state: {stateName}");
-                #endif
+                // #if UNITY_EDITOR
+                // Debug.Log($"[ReactiveMachine] Built state: {stateName}");
+                // #endif
             }
         }
 
-        public void DispatchEvent(string eventName)
+        void InitContext()
         {
+            context = new ReactiveProperty<T>(initialContext);
+        }
+
+        public void SetContext(Func<T, T> contextUpdater)
+        {
+            context.OnNext(contextUpdater(initialContext));
+        }
+
+        public void DispatchEvent(Enum eventName)
+        {
+            // #if UNITY_EDITOR
+            // Debug.Log($"[ReactiveMachine] Dispatch event: {eventName}");
+            // #endif
+
             GetCurrentState()
-                ?.DispatchEvent(eventName);
+                !.DispatchEvent(eventName.ToString());
         }
 
         public void DispatchAction(ReactiveMachineAction action)
@@ -72,9 +89,9 @@ namespace ND25.Core.ReactiveMachine
         }
 
         [CanBeNull]
-        ReactiveMachineState GetCurrentState()
+        ReactiveMachineState<T> GetCurrentState()
         {
-            return currentStateName == null ? null : states[currentStateName];
+            return currentStateName.Value == null ? null : states[currentStateName.Value];
         }
 
         public void TransitionTo(string nextState, [CanBeNull] List<ReactiveMachineAction> transitionActions = null)
@@ -93,9 +110,9 @@ namespace ND25.Core.ReactiveMachine
             }
 
             // Update current state and enter new one
-            currentStateName = nextState;
-            GetCurrentState()
-                ?.Entry();
+            currentStateName.Value = nextState;
+            GetCurrentState()!
+                .Entry();
         }
 
         void RegisterAction(ReactiveMachineActionHandler eventHandler)
@@ -138,6 +155,7 @@ namespace ND25.Core.ReactiveMachine
         public void Awake()
         {
             LoadConfig();
+            InitContext();
             InitStates();
         }
 
