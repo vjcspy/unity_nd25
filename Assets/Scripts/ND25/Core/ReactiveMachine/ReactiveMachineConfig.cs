@@ -1,71 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace ND25.Core.ReactiveMachine
 {
     public class ReactiveMachineStateConfigConverter : JsonConverter<ReactiveMachineStateConfig>
     {
-        public override ReactiveMachineStateConfig ReadJson(JsonReader reader, Type objectType,
-            ReactiveMachineStateConfig existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override ReactiveMachineStateConfig ReadJson(
+            JsonReader reader,
+            Type objectType,
+            ReactiveMachineStateConfig existingValue,
+            bool hasExistingValue,
+            JsonSerializer serializer
+        )
         {
-            var jo = JObject.Load(reader);
-            var result = new ReactiveMachineStateConfig();
+            JObject jo = JObject.Load(reader);
+            ReactiveMachineStateConfig result = new ReactiveMachineStateConfig();
 
             // Normalize entry
-            var entryToken = jo["entry"];
+            JToken entryToken = jo["entry"];
             result.entry = ParseActions(entryToken);
 
             // Normalize invoke
-            var invokeList = new List<ReactiveMachineAction>();
-            if (jo["invoke"] is JArray invokes)
-                foreach (var item in invokes)
-                {
-                    var action = new ReactiveMachineAction
-                    (
-                        item["src"]?.ToString(),
-                        item["input"]?.ToObject<Dictionary<string, object>>()
-                    );
-                    invokeList.Add(action);
-                }
-
-            result.invoke = invokeList;
+            JToken invokeToken = jo["invoke"];
+            result.invoke = ParseActions(invokeToken, true);
 
             // Normalize exit
-            var exitToken = jo["exit"];
+            JToken exitToken = jo["exit"];
             result.exit = ParseActions(exitToken);
 
             // Handle 'on'
-            result.on = jo["on"]?.ToObject<Dictionary<string, List<StateTransition>>>();
+            result.on = jo["on"]
+                ?.ToObject<Dictionary<string, List<StateTransition>>>();
 
             return result;
         }
 
-        private List<ReactiveMachineAction> ParseActions(JToken token)
+        List<ReactiveMachineAction> ParseActions(JToken token, bool isInvokeConfig = false)
         {
-            if (token == null) return new List<ReactiveMachineAction>();
-
-            if (token is JArray actions)
+            if (isInvokeConfig)
             {
-                var actionList = new List<ReactiveMachineAction>();
-                foreach (var item in actions)
+                return token switch
                 {
-                    var action = new ReactiveMachineAction
-                    (
-                        item["src"]?.ToString(),
-                        item["input"]?.ToObject<Dictionary<string, object>>()
-                    );
-                    actionList.Add(action);
-                }
-
-                return actionList;
+                    null => new List<ReactiveMachineAction>(),
+                    JArray actions => actions
+                        .Select(
+                            item => new ReactiveMachineAction(
+                                item["src"]
+                                    ?.ToString(),
+                                item["input"]
+                                    ?.ToObject<Dictionary<string, object>>()
+                            )
+                        )
+                        .ToList(),
+                    JObject action => new List<ReactiveMachineAction>
+                    {
+                        new ReactiveMachineAction(
+                            action["src"]
+                                ?.ToString(),
+                            action["input"]
+                                ?.ToObject<Dictionary<string, object>>()
+                        ),
+                    },
+                    _ => new List<ReactiveMachineAction>(),
+                };
             }
 
-            if (token.Type == JTokenType.Object)
-                return new List<ReactiveMachineAction> { token.ToObject<ReactiveMachineAction>() };
-
-            return new List<ReactiveMachineAction>();
+            return token switch
+            {
+                null => new List<ReactiveMachineAction>(),
+                JArray actions => actions
+                    .Select(
+                        item => new ReactiveMachineAction(
+                            item["type"]
+                                ?.ToString(),
+                            item["params"]
+                                ?.ToObject<Dictionary<string, object>>()
+                        )
+                    )
+                    .ToList(),
+                JObject action => new List<ReactiveMachineAction>
+                {
+                    new ReactiveMachineAction(
+                        action["type"]
+                            ?.ToString(),
+                        action["params"]
+                            ?.ToObject<Dictionary<string, object>>()
+                    ),
+                },
+                _ => new List<ReactiveMachineAction>(),
+            };
         }
 
         public override void WriteJson(JsonWriter writer, ReactiveMachineStateConfig value, JsonSerializer serializer)

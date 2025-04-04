@@ -18,6 +18,6 @@ namespace ND25.Core.ReactiveMachine
 
     public class ReactiveMachineCoreAction
     {
-        public static readonly ReactiveMachineAction Empty = new("EMPTY_ACTION");
+        public static readonly ReactiveMachineAction Empty = new ReactiveMachineAction("EMPTY_ACTION");
     }
 }

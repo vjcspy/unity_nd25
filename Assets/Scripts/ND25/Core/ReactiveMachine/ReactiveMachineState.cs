@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 namespace ND25.Core.ReactiveMachine
 {
     public class ReactiveMachineState
@@ -6,8 +7,9 @@ namespace ND25.Core.ReactiveMachine
         readonly ReactiveMachineStateConfig config;
         readonly ReactiveMachine machine;
 
-        public ReactiveMachineState(ReactiveMachine machine, ReactiveMachineStateConfig config)
+        public ReactiveMachineState(string stateName, ReactiveMachine machine, ReactiveMachineStateConfig config)
         {
+            name = stateName;
             this.machine = machine;
             this.config = config ?? new ReactiveMachineStateConfig();
 
@@ -18,9 +20,18 @@ namespace ND25.Core.ReactiveMachine
             this.config.on ??= new Dictionary<string, List<StateTransition>>();
         }
 
+        public string name
+        {
+            get;
+        }
+
 
         public void Entry()
         {
+            #if UNITY_EDITOR
+            Debug.Log($"[ReactiveMachineState] Entry state: {name}");
+            #endif
+
             foreach (ReactiveMachineAction action in config.entry)
             {
                 machine.DispatchAction(action);
@@ -38,6 +49,10 @@ namespace ND25.Core.ReactiveMachine
 
         public void Exit()
         {
+            #if UNITY_EDITOR
+            Debug.Log($"[ReactiveMachineState] Exit state: {name}");
+            #endif
+
             foreach (ReactiveMachineAction action in config.exit)
             {
                 machine.DispatchAction(action);
@@ -46,6 +61,10 @@ namespace ND25.Core.ReactiveMachine
 
         public void DispatchEvent(string eventName)
         {
+            #if UNITY_EDITOR
+            Debug.Log($"[ReactiveMachineState] Dispatch event: {eventName}");
+            #endif
+
             if (!config.on.TryGetValue(eventName, out var transitions) || transitions == null || transitions.Count == 0)
             {
                 return;

@@ -16,7 +16,7 @@ namespace XLua
     public partial class DelegateBridge : DelegateBridgeBase
     {
 		
-		public Core.XLua.ILuaStateMachineMono __Gen_Delegate_Imp0()
+		public ND25.Core.XLua.ILuaStateMachineMono __Gen_Delegate_Imp0()
 		{
 #if THREAD_SAFE || HOTFIX_ENABLE
             lock (luaEnv.luaEnvLock)
@@ -29,7 +29,7 @@ namespace XLua
                 PCall(L, 0, 1, errFunc);
                 
                 
-                Core.XLua.ILuaStateMachineMono __gen_ret = (Core.XLua.ILuaStateMachineMono)translator.GetObject(L, errFunc + 1, typeof(Core.XLua.ILuaStateMachineMono));
+                ND25.Core.XLua.ILuaStateMachineMono __gen_ret = (ND25.Core.XLua.ILuaStateMachineMono)translator.GetObject(L, errFunc + 1, typeof(ND25.Core.XLua.ILuaStateMachineMono));
                 LuaAPI.lua_settop(L, errFunc - 1);
                 return  __gen_ret;
 #if THREAD_SAFE || HOTFIX_ENABLE
@@ -46,9 +46,9 @@ namespace XLua
 		public override Delegate GetDelegateByType(Type type)
 		{
 		
-		    if (type == typeof(Core.XLua.LuaStateMachineMono))
+		    if (type == typeof(ND25.Core.XLua.LuaStateMachineMono))
 			{
-			    return new Core.XLua.LuaStateMachineMono(__Gen_Delegate_Imp0);
+			    return new ND25.Core.XLua.LuaStateMachineMono(__Gen_Delegate_Imp0);
 			}
 		
 		    return null;

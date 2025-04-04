@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
 using XLua;
-
-namespace Core.XLua
+namespace ND25.Core.XLua
 {
     [CSharpCallLua]
     public interface ILuaStateMachineMono

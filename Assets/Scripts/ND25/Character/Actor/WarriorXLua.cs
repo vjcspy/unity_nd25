@@ -1,4 +1,4 @@
-using Core.XLua;
+using ND25.Core.XLua;
 using UnityEngine;
 using XLua;
 namespace ND25.Character.Actor
@@ -7,7 +7,7 @@ namespace ND25.Character.Actor
     /*
      * This version is using XLua Xstate
      */
-    public class WarriorPlayerActor : StateMachineActorMono
+    public class WarriorXLua : StateMachineActorMono
     {
 
         [Header("Movement Settings")]

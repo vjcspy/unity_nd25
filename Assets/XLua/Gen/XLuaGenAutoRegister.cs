@@ -11,7 +11,6 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ND25.Character.Actor;
 
 
 namespace XLua.CSObjectWrap
@@ -23,10 +22,7 @@ namespace XLua.CSObjectWrap
         static void wrapInit0(LuaEnv luaenv, ObjectTranslator translator)
         {
         
-            translator.DelayWrapLoader(typeof(PlayerActor), CharacterActorPlayerActorWrap.__Register);
-        
-        
-            translator.DelayWrapLoader(typeof(WarriorPlayerActor), CharacterActorWarriorPlayerActorWrap.__Register);
+            translator.DelayWrapLoader(typeof(ND25.Character.Actor.WarriorXLua), ND25CharacterActorWarriorXLuaWrap.__Register);
         
         
         
@@ -38,7 +34,7 @@ namespace XLua.CSObjectWrap
             wrapInit0(luaenv, translator);
             
             
-            translator.AddInterfaceBridgeCreator(typeof(Core.XLua.ILuaStateMachineMono), CoreXLuaILuaStateMachineMonoBridge.__Create);
+            translator.AddInterfaceBridgeCreator(typeof(ND25.Core.XLua.ILuaStateMachineMono), ND25CoreXLuaILuaStateMachineMonoBridge.__Create);
             
         }
         

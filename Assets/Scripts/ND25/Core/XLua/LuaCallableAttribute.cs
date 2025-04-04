@@ -1,6 +1,5 @@
 using System;
-
-namespace Core.XLua
+namespace ND25.Core.XLua
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
     public sealed class LuaCallableAttribute : Attribute

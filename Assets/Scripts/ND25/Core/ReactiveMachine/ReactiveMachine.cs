@@ -30,7 +30,14 @@ namespace ND25.Core.ReactiveMachine
 
         void LoadConfig()
         {
-            TextAsset jsonFile = Resources.Load<TextAsset>($"Configs/ReactiveStateMachine/{jsonFileName}.json");
+            string filePath = $"Configs/ReactiveStateMachine/{jsonFileName}";
+            TextAsset jsonFile = Resources.Load<TextAsset>(filePath);
+            if (jsonFile == null)
+            {
+                Debug.LogError($"Failed to load JSON file at path: {filePath}");
+                return;
+            }
+
             string jsonContent = jsonFile.text;
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new ReactiveMachineStateConfigConverter());
@@ -42,8 +49,7 @@ namespace ND25.Core.ReactiveMachine
         {
             foreach ((string stateName, ReactiveMachineStateConfig cfg) in config.states)
             {
-
-                ReactiveMachineState state = new ReactiveMachineState(this, cfg);
+                ReactiveMachineState state = new ReactiveMachineState(stateName, this, cfg);
                 states[stateName] = state;
 
                 #if UNITY_EDITOR
@@ -106,7 +112,8 @@ namespace ND25.Core.ReactiveMachine
                         DispatchAction(handledEvent);
                     },
                     error => Debug.LogError($"Error in event stream: {error.ToString()}")
-                ).AddTo(ref disposable);
+                )
+                .AddTo(ref disposable);
         }
 
         void RegisterActionHandler(object eventEffectInstance)
@@ -137,7 +144,7 @@ namespace ND25.Core.ReactiveMachine
         public void Awake()
         {
             LoadConfig();
-            // InitStates();
+            InitStates();
         }
 
         public void Start()
@@ -158,34 +165,5 @@ namespace ND25.Core.ReactiveMachine
     }
 
 
-    public abstract class ReactiveMachineMono : MonoBehaviour
-    {
-        ReactiveMachine machine;
 
-        protected virtual void Awake()
-        {
-            machine = new ReactiveMachine(GetJsonFileName());
-            machine.Awake();
-            // machine.RegisterActionHandler(GetActionHandlers());
-        }
-
-        // void Start()
-        // {
-        //     machine.Start();
-        // }
-        //
-        // void Update()
-        // {
-        //     machine.Update();
-        // }
-
-        void OnDestroy()
-        {
-            machine.OnDestroy();
-        }
-
-        protected abstract string GetJsonFileName();
-
-        protected abstract object[] GetActionHandlers();
-    }
 }
