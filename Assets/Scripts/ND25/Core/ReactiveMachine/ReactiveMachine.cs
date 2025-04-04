@@ -153,8 +153,8 @@ namespace ND25.Core.ReactiveMachine
 
         public void OnDestroy()
         {
-            actionSubject.Dispose();
             disposable.Dispose();
+            actionSubject.Dispose();
         }
     }
 
