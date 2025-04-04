@@ -10,6 +10,7 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 
 using XLua;
 using System.Collections.Generic;
+using ND25.Character.Actor;
 
 
 namespace XLua.CSObjectWrap
@@ -20,7 +21,7 @@ namespace XLua.CSObjectWrap
         public static void __Register(RealStatePtr L)
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-			System.Type type = typeof(Character.Actor.PlayerActor);
+			System.Type type = typeof(PlayerActor);
 			Utils.BeginObjectRegister(type, L, translator, 0, 1, 0, 0);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "TryJumpIfGrounded", _m_TryJumpIfGrounded);
@@ -51,7 +52,7 @@ namespace XLua.CSObjectWrap
 				if(LuaAPI.lua_gettop(L) == 1)
 				{
 					
-					var gen_ret = new Character.Actor.PlayerActor();
+					var gen_ret = new PlayerActor();
 					translator.Push(L, gen_ret);
                     
 					return 1;
@@ -80,7 +81,7 @@ namespace XLua.CSObjectWrap
                 ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
             
             
-                Character.Actor.PlayerActor gen_to_be_invoked = (Character.Actor.PlayerActor)translator.FastGetCSObj(L, 1);
+                PlayerActor gen_to_be_invoked = (PlayerActor)translator.FastGetCSObj(L, 1);
             
             
                 

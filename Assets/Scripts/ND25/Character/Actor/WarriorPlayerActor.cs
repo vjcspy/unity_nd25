@@ -1,7 +1,8 @@
 using Core.XLua;
 using UnityEngine;
 using XLua;
-namespace Character.Actor
+
+namespace ND25.Character.Actor
 {
     [LuaCallCSharp]
     public class WarriorPlayerActor : StateMachineActorMono
@@ -17,7 +18,10 @@ namespace Character.Actor
 
         private float horizontalInput;
 
-        protected override string ModuleName => "character.xstate.warrior.warrior_state_machine";
+        protected override string ModuleName
+        {
+            get => "character.xstate.warrior.warrior_state_machine";
+        }
 
         protected override void Awake()
         {
