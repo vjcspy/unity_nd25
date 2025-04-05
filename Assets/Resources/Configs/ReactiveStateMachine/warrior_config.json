@@ -32,14 +32,30 @@
           }
         }
       ],
-      "invoke": {
-        "input": {},
-        "src": "HandleMoveInput"
-      },
+      "invoke": [
+        {
+          "input": {},
+          "src": "HandleXInput"
+        },
+        {
+          "src": "WhenXInputChange",
+          "input": {}
+        },
+        {
+          "src": "WhenYInputChange",
+          "input": {}
+        }
+      ],
       "on": {
         "move": [
           {
             "target": "Move",
+            "actions": []
+          }
+        ],
+        "jump": [
+          {
+            "target": "Jump",
             "actions": []
           }
         ]
@@ -66,10 +82,63 @@
           "move": false
         }
       },
-      "invoke": {
-        "input": {},
-        "src": "HandleMoveInput"
+      "invoke": [
+        {
+          "input": {},
+          "src": "HandleXInput"
+        },
+        {
+          "src": "WhenXInputChange",
+          "input": {}
+        },
+        {
+          "src": "WhenYInputChange",
+          "input": {}
+        }
+      ],
+      "on": {
+        "idle": [
+          {
+            "target": "Idle",
+            "actions": []
+          }
+        ],
+        "jump": [
+          {
+            "target": "Jump",
+            "actions": []
+          }
+        ]
+      }
+    },
+    "Jump": {
+      "entry": [
+        {
+          "type": "UpdateAnimatorParams",
+          "params": {
+            "jump": true
+          }
+        },
+        {
+          "type": "ForceJump"
+        }
+      ],
+      "exit": {
+        "type": "UpdateAnimatorParams",
+        "params": {
+          "jump": false
+        }
       },
+      "invoke": [
+        {
+          "src": "HandleXInput",
+          "input": {}
+        },
+        {
+          "src": "WhenFallGround",
+          "input": {}
+        }
+      ],
       "on": {
         "idle": [
           {

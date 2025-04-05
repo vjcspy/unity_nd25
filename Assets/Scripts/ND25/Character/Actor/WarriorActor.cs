@@ -6,21 +6,27 @@ namespace ND25.Character.Actor
 {
     internal enum WarriorAction
     {
-        HandleMoveInput,
+        HandleXInput,
         UpdateAnimatorParams,
+        ForceJump,
+
+        WhenXInputChange, // When naming convention, use "When" prefix for dispatching events
+        WhenFallGround,   // When naming convention, use "When" prefix for dispatching events
+        WhenYInputChange  // When naming convention, use "When" prefix for dispatching events
     }
 
-    internal enum WarriorState
-    {
-        idle,
-        move,
-        jump,
-    }
+    // internal enum WarriorState
+    // {
+    //     idle,
+    //     move,
+    //     jump,
+    // }
 
     internal enum WarriorEvent
     {
         move,
         idle,
+        jump
     }
 
     public static class WarriorAnimatorParams
@@ -34,14 +40,14 @@ namespace ND25.Character.Actor
 
     public class WarriorContext
     {
+        public float lastJumpTime;
 
-        public bool isGrounded;
         public float yVelocity;
 
 
-        public WarriorContext(bool isGrounded, float yVelocity = 0f)
+        public WarriorContext(float yVelocity = 0f, float lastJumpTime = 0f)
         {
-            this.isGrounded = isGrounded;
+            this.lastJumpTime = lastJumpTime;
             this.yVelocity = yVelocity;
         }
     }
@@ -81,17 +87,19 @@ namespace ND25.Character.Actor
         {
             return new object[]
             {
-                this,
+                this
             };
         }
         protected override WarriorContext GetInitContext()
         {
-            return new WarriorContext(true);
+            return new WarriorContext();
         }
 
         void HandleContextChange()
         {
-            machine.context
+            machine
+                .context
+                .ThrottleLast(TimeSpan.FromMilliseconds(150))
                 .Subscribe(
                     context =>
                     {
@@ -104,54 +112,27 @@ namespace ND25.Character.Actor
                 );
         }
 
-        void ForceJump()
-        {
-            if (!groundChecker.isGrounded)
-            {
-                return;
-            }
-            Vector2 jumpForceVector = Vector2.up * jumpForce;
-            rb.AddForce(jumpForceVector, ForceMode2D.Impulse);
-        }
-
-        void HandleJumpInput()
-        {
-            if (Input.GetKeyDown(KeyCode.Space) && groundChecker.isGrounded)
-            {
-                ForceJump();
-            }
-        }
-
-        void HandleXInput()
-        {
-            xInput = Input.GetAxis("Horizontal");
-            Vector2 newVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocity.y);
-            rb.linearVelocity = newVelocity;
-
-        }
-
         [ReactiveMachineEffect]
-        public ReactiveMachineActionHandler HandleMoveInput()
+        public ReactiveMachineActionHandler HandleXInput()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.HandleMoveInput)
+                .OfAction(WarriorAction.HandleXInput)
                 .Select(
                     _ =>
                     {
-                        HandleXInput();
-                        HandleJumpInput();
+                        xInput = Input.GetAxis("Horizontal");
+                        Vector2 newVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocity.y);
+                        rb.linearVelocity = newVelocity;
 
                         machine.SetContext(
                             context =>
                             {
-                                context.isGrounded = groundChecker.isGrounded;
                                 context.yVelocity = rb.linearVelocity.y;
 
                                 return context;
                             }
                         );
 
-                        machine.DispatchEvent(xInput != 0 ? WarriorEvent.move : WarriorEvent.idle);
                         return ReactiveMachineCoreAction.Empty;
                     }
                 );
@@ -189,6 +170,86 @@ namespace ND25.Character.Actor
                                     break;
                             }
                         }
+
+                        return ReactiveMachineCoreAction.Empty;
+                    }
+                );
+        }
+
+        [ReactiveMachineEffect]
+        public ReactiveMachineActionHandler WhenXInputChange()
+        {
+            return upstream => upstream
+                .OfAction(WarriorAction.WhenXInputChange)
+                .Select(
+                    _ =>
+                    {
+                        machine.DispatchEvent(xInput != 0 ? WarriorEvent.move : WarriorEvent.idle);
+                        return ReactiveMachineCoreAction.Empty;
+                    }
+                );
+        }
+
+        [ReactiveMachineEffect]
+        public ReactiveMachineActionHandler WhenFallGround()
+        {
+            return upstream => upstream
+                .OfAction(WarriorAction.WhenFallGround)
+                .Where(action => machine.context.Value.lastJumpTime < Time.time - 0.2f)
+                .Select(
+                    _ =>
+                    {
+                        if (groundChecker.isGrounded)
+                        {
+                            machine.DispatchEvent(WarriorEvent.idle);
+                        }
+
+                        return ReactiveMachineCoreAction.Empty;
+                    }
+                );
+        }
+
+        [ReactiveMachineEffect]
+        public ReactiveMachineActionHandler ForceJump()
+        {
+            return upstream => upstream
+                .OfAction(WarriorAction.ForceJump)
+                .Select(
+                    _ =>
+                    {
+                        if (!groundChecker.isGrounded)
+                        {
+                            return ReactiveMachineCoreAction.Empty;
+                        }
+                        Vector2 jumpForceVector = Vector2.up * jumpForce;
+                        rb.AddForce(jumpForceVector, ForceMode2D.Impulse);
+
+                        return ReactiveMachineCoreAction.Empty;
+                    }
+                );
+        }
+
+        [ReactiveMachineEffect]
+        public ReactiveMachineActionHandler WhenYInputChange()
+        {
+            return upstream => upstream
+                .OfAction(WarriorAction.WhenYInputChange)
+                .Select(
+                    _ =>
+                    {
+                        if (!Input.GetKeyDown(KeyCode.Space) || !groundChecker.isGrounded)
+                        {
+                            return ReactiveMachineCoreAction.Empty;
+                        }
+
+                        machine.DispatchEvent(WarriorEvent.jump);
+                        machine.SetContext(
+                            context =>
+                            {
+                                context.lastJumpTime = Time.time;
+                                return context;
+                            }
+                        );
 
                         return ReactiveMachineCoreAction.Empty;
                     }
