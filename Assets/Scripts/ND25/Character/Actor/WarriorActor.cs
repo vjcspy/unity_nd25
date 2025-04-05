@@ -1,6 +1,7 @@
 ﻿using ND25.Core.ReactiveMachine;
 using R3;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 namespace ND25.Character.Actor
 {
@@ -42,13 +43,10 @@ namespace ND25.Character.Actor
     {
         public float lastJumpTime;
 
-        public float yVelocity;
 
-
-        public WarriorContext(float yVelocity = 0f, float lastJumpTime = 0f)
+        public WarriorContext(float lastJumpTime = 0f)
         {
             this.lastJumpTime = lastJumpTime;
-            this.yVelocity = yVelocity;
         }
     }
 
@@ -103,7 +101,6 @@ namespace ND25.Character.Actor
                 .Subscribe(
                     context =>
                     {
-                        animator.SetFloat(WarriorAnimatorParams.yVelocity, context.yVelocity);
                     },
                     error =>
                     {
@@ -121,17 +118,11 @@ namespace ND25.Character.Actor
                     _ =>
                     {
                         xInput = Input.GetAxis("Horizontal");
-                        Vector2 newVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocity.y);
+                        float yVelocity = rb.linearVelocity.y;
+                        Vector2 newVelocity = new Vector2(xInput * moveSpeed, yVelocity);
                         rb.linearVelocity = newVelocity;
 
-                        machine.SetContext(
-                            context =>
-                            {
-                                context.yVelocity = rb.linearVelocity.y;
-
-                                return context;
-                            }
-                        );
+                        animator.SetFloat(WarriorAnimatorParams.yVelocity, yVelocity);
 
                         return ReactiveMachineCoreAction.Empty;
                     }
@@ -141,6 +132,8 @@ namespace ND25.Character.Actor
         [ReactiveMachineEffect]
         public ReactiveMachineActionHandler UpdateAnimatorParams()
         {
+            var cachedKey = new Dictionary<string, int>();
+
             return upstream => upstream
                 .OfAction(WarriorAction.UpdateAnimatorParams)
                 .Select(
@@ -154,16 +147,21 @@ namespace ND25.Character.Actor
 
                         foreach ((string keyString, object value) in action.payload)
                         {
+                            if (!cachedKey.ContainsKey(keyString))
+                            {
+                                cachedKey[keyString] = Animator.StringToHash(keyString);
+                            }
+
                             switch (value)
                             {
                                 case bool boolVal:
-                                    animator.SetBool(keyString, boolVal);
+                                    animator.SetBool(cachedKey[keyString], boolVal);
                                     break;
                                 case float floatVal:
-                                    animator.SetFloat(keyString, floatVal);
+                                    animator.SetFloat(cachedKey[keyString], floatVal);
                                     break;
                                 case double doubleVal:
-                                    animator.SetFloat(keyString, (float)doubleVal);
+                                    animator.SetFloat(cachedKey[keyString], (float)doubleVal);
                                     break;
                                 default:
                                     Debug.Log("Unsupported type: " + value.GetType());
@@ -247,6 +245,7 @@ namespace ND25.Character.Actor
                             context =>
                             {
                                 context.lastJumpTime = Time.time;
+
                                 return context;
                             }
                         );
