@@ -28,9 +28,7 @@ namespace ND25.Core.ReactiveMachine
 
         public void Entry()
         {
-            // #if UNITY_EDITOR
             // Debug.Log($"[ReactiveMachineState] Entry state: {name}");
-            // #endif
 
             foreach (ReactiveMachineAction action in config.entry)
             {
@@ -49,9 +47,7 @@ namespace ND25.Core.ReactiveMachine
 
         public void Exit()
         {
-            // #if UNITY_EDITOR
             // Debug.Log($"[ReactiveMachineState] Exit state: {name}");
-            // #endif
 
             foreach (ReactiveMachineAction action in config.exit)
             {
@@ -61,9 +57,7 @@ namespace ND25.Core.ReactiveMachine
 
         public void DispatchEvent(string eventName)
         {
-            // #if UNITY_EDITOR
             // Debug.Log($"[ReactiveMachineState] Dispatch event: {eventName}");
-            // #endif
 
             if (!config.on.TryGetValue(eventName, out var transitions) || transitions == null || transitions.Count == 0)
             {

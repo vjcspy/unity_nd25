@@ -1,4 +1,5 @@
-﻿using ND25.Core.ReactiveMachine;
+﻿using Cysharp.Threading.Tasks;
+using ND25.Core.ReactiveMachine;
 using R3;
 using System;
 using System.Collections.Generic;
@@ -41,11 +42,14 @@ namespace ND25.Character.Actor
 
     public class WarriorContext
     {
+        public float yVelocity;
+
         public float lastJumpTime;
 
 
-        public WarriorContext(float lastJumpTime = 0f)
+        public WarriorContext(float lastJumpTime = 0f, float yVelocity = 0f)
         {
+            this.yVelocity = yVelocity;
             this.lastJumpTime = lastJumpTime;
         }
     }
@@ -97,10 +101,14 @@ namespace ND25.Character.Actor
         {
             machine
                 .context
-                .ThrottleLast(TimeSpan.FromMilliseconds(150))
+                .ThrottleLast(TimeSpan.FromMilliseconds(200))
                 .Subscribe(
                     context =>
                     {
+                        UniTask.Post(() =>
+                        {
+                            animator.SetFloat(WarriorAnimatorParams.yVelocity, context.yVelocity);
+                        });
                     },
                     error =>
                     {
@@ -122,7 +130,14 @@ namespace ND25.Character.Actor
                         Vector2 newVelocity = new Vector2(xInput * moveSpeed, yVelocity);
                         rb.linearVelocity = newVelocity;
 
-                        animator.SetFloat(WarriorAnimatorParams.yVelocity, yVelocity);
+                        machine.SetContext(
+                            context =>
+                            {
+                                context.yVelocity = yVelocity;
+
+                                return context;
+                            }
+                        );
 
                         return ReactiveMachineCoreAction.Empty;
                     }
@@ -151,7 +166,7 @@ namespace ND25.Character.Actor
                             {
                                 cachedKey[keyString] = Animator.StringToHash(keyString);
                             }
-
+                            // Debug.Log("Update animator key: " + keyString);
                             switch (value)
                             {
                                 case bool boolVal:
@@ -194,12 +209,18 @@ namespace ND25.Character.Actor
             return upstream => upstream
                 .OfAction(WarriorAction.WhenFallGround)
                 .Where(action => machine.context.Value.lastJumpTime < Time.time - 0.2f)
+                .ThrottleLast(TimeSpan.FromMilliseconds(200))
                 .Select(
                     _ =>
                     {
+                        Debug.Log($"here {groundChecker.isGrounded}");
+
                         if (groundChecker.isGrounded)
                         {
-                            machine.DispatchEvent(WarriorEvent.idle);
+                            UniTask.Post(() =>
+                            {
+                                machine.DispatchEvent(WarriorEvent.idle);
+                            });
                         }
 
                         return ReactiveMachineCoreAction.Empty;
