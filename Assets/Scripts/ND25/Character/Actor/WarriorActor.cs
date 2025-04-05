@@ -1,8 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
 using ND25.Core.ReactiveMachine;
+using ND25.Core.Utils;
 using R3;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 namespace ND25.Character.Actor
 {
@@ -31,20 +31,23 @@ namespace ND25.Character.Actor
         jump
     }
 
-    public static class WarriorAnimatorParams
+    public class WarriorAnimatorParams : AnimatorParamMap<WarriorAnimatorParams.Param>
     {
-        public static readonly int idle = Animator.StringToHash("idle");
-        public static readonly int move = Animator.StringToHash("move");
-        public static readonly int jump = Animator.StringToHash("jump");
-        public static readonly int yVelocity = Animator.StringToHash("yVelocity");
+        public enum Param
+        {
+            idle,
+            move,
+            jump,
+            yVelocity
+        }
     }
 
 
     public class WarriorContext
     {
-        public float yVelocity;
 
         public float lastJumpTime;
+        public float yVelocity;
 
 
         public WarriorContext(float lastJumpTime = 0f, float yVelocity = 0f)
@@ -65,12 +68,13 @@ namespace ND25.Character.Actor
         [SerializeField]
         float moveSpeed = 5f;
         [SerializeField] float jumpForce = 2f;
+        readonly WarriorAnimatorParams warriorParams = new WarriorAnimatorParams();
 
         Animator animator;
         GroundChecker groundChecker;
         Rigidbody2D rb;
-
         float xInput;
+
         protected override void Awake()
         {
             base.Awake();
@@ -107,7 +111,7 @@ namespace ND25.Character.Actor
                     {
                         UniTask.Post(() =>
                         {
-                            animator.SetFloat(WarriorAnimatorParams.yVelocity, context.yVelocity);
+                            animator.SetFloat(warriorParams.Get(WarriorAnimatorParams.Param.yVelocity), context.yVelocity);
                         });
                     },
                     error =>
@@ -147,8 +151,6 @@ namespace ND25.Character.Actor
         [ReactiveMachineEffect]
         public ReactiveMachineActionHandler UpdateAnimatorParams()
         {
-            var cachedKey = new Dictionary<string, int>();
-
             return upstream => upstream
                 .OfAction(WarriorAction.UpdateAnimatorParams)
                 .Select(
@@ -162,21 +164,17 @@ namespace ND25.Character.Actor
 
                         foreach ((string keyString, object value) in action.payload)
                         {
-                            if (!cachedKey.ContainsKey(keyString))
-                            {
-                                cachedKey[keyString] = Animator.StringToHash(keyString);
-                            }
                             // Debug.Log("Update animator key: " + keyString);
                             switch (value)
                             {
                                 case bool boolVal:
-                                    animator.SetBool(cachedKey[keyString], boolVal);
+                                    animator.SetBool(warriorParams.Get(keyString), boolVal);
                                     break;
                                 case float floatVal:
-                                    animator.SetFloat(cachedKey[keyString], floatVal);
+                                    animator.SetFloat(warriorParams.Get(keyString), floatVal);
                                     break;
                                 case double doubleVal:
-                                    animator.SetFloat(cachedKey[keyString], (float)doubleVal);
+                                    animator.SetFloat(warriorParams.Get(keyString), (float)doubleVal);
                                     break;
                                 default:
                                     Debug.Log("Unsupported type: " + value.GetType());
@@ -208,13 +206,11 @@ namespace ND25.Character.Actor
         {
             return upstream => upstream
                 .OfAction(WarriorAction.WhenFallGround)
-                .Where(action => machine.context.Value.lastJumpTime < Time.time - 0.2f)
                 .ThrottleLast(TimeSpan.FromMilliseconds(200))
+                .Where(_ => machine.context.Value.lastJumpTime < Time.time - 0.2f)
                 .Select(
                     _ =>
                     {
-                        Debug.Log($"here {groundChecker.isGrounded}");
-
                         if (groundChecker.isGrounded)
                         {
                             UniTask.Post(() =>
