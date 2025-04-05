@@ -28,12 +28,16 @@ namespace ND25.Character.Warrior.Actor
         void HandleContextChange()
         {
             warriorMonoBehavior.machine.ContextChangeHandler(context => context
-                .ThrottleLast(TimeSpan.FromMilliseconds(200))
+                .ThrottleLast(TimeSpan.FromMilliseconds(150))
                 .Select(warriorContext =>
                 {
                     UniTask.Post(() =>
                     {
                         warriorMonoBehavior.warriorAnimator.UpdateParam(WarriorAnimator.Param.yVelocity, warriorContext.yVelocity);
+                        if (!warriorMonoBehavior.groundChecker.isGrounded)
+                        {
+                            warriorMonoBehavior.machine.DispatchEvent(WarriorEvent.air);
+                        }
                     });
 
                     return Unit.Default;
@@ -41,10 +45,10 @@ namespace ND25.Character.Warrior.Actor
         }
 
         [ReactiveMachineEffect]
-        public ReactiveMachineActionHandler WhenXInputChange()
+        public ReactiveMachineActionHandler XInputChangeTransition()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.WhenXInputChange)
+                .OfAction(WarriorAction.XInputChangeTransition)
                 .Select(
                     _ =>
                     {
@@ -55,10 +59,10 @@ namespace ND25.Character.Warrior.Actor
         }
 
         [ReactiveMachineEffect]
-        public ReactiveMachineActionHandler HandleXInput()
+        public ReactiveMachineActionHandler XInputHandler()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.HandleXInput)
+                .OfAction(WarriorAction.XInputHandler)
                 .Select(
                     _ =>
                     {

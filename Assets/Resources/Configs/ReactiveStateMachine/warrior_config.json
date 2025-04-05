@@ -35,14 +35,14 @@
       "invoke": [
         {
           "input": {},
-          "src": "HandleXInput"
+          "src": "XInputHandler"
         },
         {
-          "src": "WhenXInputChange",
+          "src": "XInputChangeTransition",
           "input": {}
         },
         {
-          "src": "WhenYInputChange",
+          "src": "YInputChangeTransition",
           "input": {}
         }
       ],
@@ -53,9 +53,9 @@
             "actions": []
           }
         ],
-        "jump": [
+        "air": [
           {
-            "target": "Jump",
+            "target": "Air",
             "actions": []
           }
         ]
@@ -85,14 +85,14 @@
       "invoke": [
         {
           "input": {},
-          "src": "HandleXInput"
+          "src": "XInputHandler"
         },
         {
-          "src": "WhenXInputChange",
+          "src": "XInputChangeTransition",
           "input": {}
         },
         {
-          "src": "WhenYInputChange",
+          "src": "YInputChangeTransition",
           "input": {}
         }
       ],
@@ -103,15 +103,15 @@
             "actions": []
           }
         ],
-        "jump": [
+        "air": [
           {
-            "target": "Jump",
+            "target": "Air",
             "actions": []
           }
         ]
       }
     },
-    "Jump": {
+    "Air": {
       "entry": [
         {
           "type": "UpdateAnimatorParams",
@@ -131,11 +131,11 @@
       },
       "invoke": [
         {
-          "src": "HandleXInput",
+          "src": "XInputHandler",
           "input": {}
         },
         {
-          "src": "WhenFallGround",
+          "src": "FallGroundTransition",
           "input": {}
         }
       ],

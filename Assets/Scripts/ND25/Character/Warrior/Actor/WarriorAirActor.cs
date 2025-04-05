@@ -5,16 +5,16 @@ using System;
 using UnityEngine;
 namespace ND25.Character.Warrior.Actor
 {
-    public class WarriorJumpActor : WarriorActorBase
+    public class WarriorAirActor : WarriorActorBase
     {
-        public WarriorJumpActor(WarriorMonoBehavior warriorMonoBehavior) : base(warriorMonoBehavior)
+        public WarriorAirActor(WarriorMonoBehavior warriorMonoBehavior) : base(warriorMonoBehavior)
         {
         }
         [ReactiveMachineEffect]
-        public ReactiveMachineActionHandler WhenFallGround()
+        public ReactiveMachineActionHandler FallGroundTransition()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.WhenFallGround)
+                .OfAction(WarriorAction.FallGroundTransition)
                 .Where(_ => warriorMonoBehavior.machine.context.Value.lastJumpTime < Time.time - 0.2f)
                 .ThrottleLast(TimeSpan.FromMilliseconds(200))
                 .Select(
@@ -44,6 +44,7 @@ namespace ND25.Character.Warrior.Actor
                         {
                             return ReactiveMachineCoreAction.Empty;
                         }
+
                         Vector2 jumpForceVector = Vector2.up * warriorMonoBehavior.jumpForce;
                         warriorMonoBehavior.rb.AddForce(jumpForceVector, ForceMode2D.Impulse);
 
@@ -53,10 +54,10 @@ namespace ND25.Character.Warrior.Actor
         }
 
         [ReactiveMachineEffect]
-        public ReactiveMachineActionHandler WhenYInputChange()
+        public ReactiveMachineActionHandler YInputChangeTransition()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.WhenYInputChange)
+                .OfAction(WarriorAction.YInputChangeTransition)
                 .Select(
                     _ =>
                     {
@@ -65,7 +66,7 @@ namespace ND25.Character.Warrior.Actor
                             return ReactiveMachineCoreAction.Empty;
                         }
 
-                        warriorMonoBehavior.machine.DispatchEvent(WarriorEvent.jump);
+                        warriorMonoBehavior.machine.DispatchEvent(WarriorEvent.air);
                         warriorMonoBehavior.machine.SetContext(
                             context =>
                             {
@@ -75,7 +76,7 @@ namespace ND25.Character.Warrior.Actor
                             }
                         );
 
-                        return ReactiveMachineCoreAction.Empty;
+                        return ReactiveMachineAction.Create(WarriorAction.ForceJump);
                     }
                 );
         }

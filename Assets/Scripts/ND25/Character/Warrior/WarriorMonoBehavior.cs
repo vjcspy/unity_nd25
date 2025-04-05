@@ -1,6 +1,8 @@
 ﻿using ND25.Character.Warrior.Actor;
 using ND25.Core.ReactiveMachine;
+using R3;
 using UnityEngine;
+using UnityEngine.Serialization;
 namespace ND25.Character.Warrior
 {
     public class WarriorMonoBehavior : ReactiveMachineMono<WarriorContext>
@@ -25,6 +27,8 @@ namespace ND25.Character.Warrior
             rb = GetComponent<Rigidbody2D>();
             groundChecker = GetComponent<GroundChecker>();
             warriorAnimator = new WarriorAnimator(animator);
+
+            // machine.currentStateName.Subscribe((_name) => { currentState = _name; }, _ => { });
         }
         protected override string GetJsonFileName()
         {
@@ -34,7 +38,7 @@ namespace ND25.Character.Warrior
         {
             return new object[]
             {
-                new WarriorCommonActor(this), new WarriorJumpActor(this)
+                new WarriorCommonActor(this), new WarriorAirActor(this)
             };
         }
         protected override WarriorContext GetInitContext()

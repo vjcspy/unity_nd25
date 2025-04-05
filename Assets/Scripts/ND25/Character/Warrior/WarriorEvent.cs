@@ -4,6 +4,6 @@
     {
         run,
         idle,
-        jump
+        air
     }
 }

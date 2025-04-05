@@ -2,12 +2,12 @@
 {
     internal enum WarriorAction
     {
-        HandleXInput,
+        XInputHandler,
         UpdateAnimatorParams,
         ForceJump,
 
-        WhenXInputChange, // When naming convention, use "When" prefix for dispatching events
-        WhenFallGround,   // When naming convention, use "When" prefix for dispatching events
-        WhenYInputChange  // When naming convention, use "When" prefix for dispatching events
+        XInputChangeTransition,
+        FallGroundTransition,
+        YInputChangeTransition
     }
 }
