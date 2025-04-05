@@ -206,8 +206,8 @@ namespace ND25.Character.Actor
         {
             return upstream => upstream
                 .OfAction(WarriorAction.WhenFallGround)
-                .ThrottleLast(TimeSpan.FromMilliseconds(200))
                 .Where(_ => machine.context.Value.lastJumpTime < Time.time - 0.2f)
+                .ThrottleLast(TimeSpan.FromMilliseconds(200))
                 .Select(
                     _ =>
                     {
