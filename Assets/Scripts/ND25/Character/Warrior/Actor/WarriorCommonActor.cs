@@ -59,6 +59,23 @@ namespace ND25.Character.Warrior.Actor
         }
 
         [ReactiveMachineEffect]
+        public ReactiveMachineActionHandler ForceStopRun()
+        {
+            return upstream => upstream
+                .OfAction(WarriorAction.ForceStopRun)
+                .Select(
+                    _ =>
+                    {
+                        float yVelocity = warriorMonoBehavior.rb.linearVelocity.y;
+                        Vector2 newVelocity = new Vector2(0, yVelocity);
+                        warriorMonoBehavior.rb.linearVelocity = newVelocity;
+
+                        return ReactiveMachineCoreAction.Empty;
+                    }
+                );
+        }
+
+        [ReactiveMachineEffect]
         public ReactiveMachineActionHandler XInputHandler()
         {
             return upstream => upstream

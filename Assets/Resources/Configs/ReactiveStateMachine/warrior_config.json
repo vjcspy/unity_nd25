@@ -169,12 +169,17 @@
       }
     },
     "PrimaryAttack": {
-      "entry": {
-        "type": "UpdateAnimatorParams",
-        "params": {
-          "primaryAttack": true
+      "entry": [
+        {
+          "type": "UpdateAnimatorParams",
+          "params": {
+            "primaryAttack": true
+          }
+        },
+        {
+          "type": "ForceStopRun"
         }
-      },
+      ],
       "exit": {
         "type": "UpdateAnimatorParams",
         "params": {
@@ -191,5 +196,4 @@
       }
     }
   }
-
 }

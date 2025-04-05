@@ -12,5 +12,6 @@
 
         UpdateAnimatorParams,
         ForceJump,
+        ForceStopRun,
     }
 }
