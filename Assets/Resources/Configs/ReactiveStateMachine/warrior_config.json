@@ -47,9 +47,9 @@
         }
       ],
       "on": {
-        "move": [
+        "run": [
           {
-            "target": "Move",
+            "target": "Run",
             "actions": []
           }
         ],
@@ -61,12 +61,12 @@
         ]
       }
     },
-    "Move": {
+    "Run": {
       "entry": [
         {
           "type": "UpdateAnimatorParams",
           "params": {
-            "move": true
+            "run": true
           }
         },
         {
@@ -79,7 +79,7 @@
       "exit": {
         "type": "UpdateAnimatorParams",
         "params": {
-          "move": false
+          "run": false
         }
       },
       "invoke": [
@@ -116,7 +116,7 @@
         {
           "type": "UpdateAnimatorParams",
           "params": {
-            "jump": true
+            "air": true
           }
         },
         {
@@ -126,7 +126,7 @@
       "exit": {
         "type": "UpdateAnimatorParams",
         "params": {
-          "jump": false
+          "air": false
         }
       },
       "invoke": [

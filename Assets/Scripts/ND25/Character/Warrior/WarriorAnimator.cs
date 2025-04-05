@@ -7,8 +7,8 @@ namespace ND25.Character.Warrior
         public enum Param
         {
             idle,
-            move,
-            jump,
+            run,
+            air,
             yVelocity
         }
         public WarriorAnimator(Animator animator) : base(animator)

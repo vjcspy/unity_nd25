@@ -48,7 +48,7 @@ namespace ND25.Character.Warrior.Actor
                 .Select(
                     _ =>
                     {
-                        warriorMonoBehavior.machine.DispatchEvent(xInput != 0 ? WarriorEvent.move : WarriorEvent.idle);
+                        warriorMonoBehavior.machine.DispatchEvent(xInput != 0 ? WarriorEvent.run : WarriorEvent.idle);
                         return ReactiveMachineCoreAction.Empty;
                     }
                 );

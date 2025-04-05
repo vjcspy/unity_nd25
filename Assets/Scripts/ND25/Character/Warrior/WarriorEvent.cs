@@ -2,7 +2,7 @@
 {
     internal enum WarriorEvent
     {
-        move,
+        run,
         idle,
         jump
     }
