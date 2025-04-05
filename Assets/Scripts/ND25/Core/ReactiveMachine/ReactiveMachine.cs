@@ -33,8 +33,8 @@ namespace ND25.Core.ReactiveMachine
             this.jsonFileName = jsonFileName;
             sharedActionStream = R3.ObservableExtensions.Share(actionSubject);
         }
-        public R3.ReactiveProperty<T> context { get; private set; }
-        public R3.ReactiveProperty<string> currentStateName { get; } = new R3.ReactiveProperty<string>(null);
+        public ReactiveProperty<T> context { get; private set; }
+        public ReactiveProperty<string> currentStateName { get; } = new ReactiveProperty<string>(null);
 
         void LoadConfig()
         {
