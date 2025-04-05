@@ -3,10 +3,8 @@ using UnityEngine;
 using XLua;
 namespace ND25.Character.Warrior
 {
+    [System.Obsolete("This class is obsolete. Use ReactiveMachine instead.")]
     [LuaCallCSharp]
-    /*
-     * This version is using XLua Xstate
-     */
     public class WarriorXLua : StateMachineActorMono
     {
 
