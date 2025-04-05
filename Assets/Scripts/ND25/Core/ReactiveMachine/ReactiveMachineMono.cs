@@ -3,18 +3,18 @@ namespace ND25.Core.ReactiveMachine
 {
     public abstract class ReactiveMachineMono<T> : MonoBehaviour
     {
-        protected ReactiveMachine<T> machine;
+        public ReactiveMachine<T> machine;
 
         protected virtual void Awake()
         {
             machine = new ReactiveMachine<T>(GetInitContext(), GetJsonFileName());
             machine.Awake();
-            machine.RegisterActionHandler(GetActionHandlers());
         }
 
         void Start()
         {
             machine.Start();
+            machine.RegisterActionHandler(GetActionHandlers());
         }
 
         void Update()

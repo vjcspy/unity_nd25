@@ -8,6 +8,7 @@ using RealStatePtr = System.IntPtr;
 using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 #endif
 
+using ND25.Character.Warrior;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -22,7 +23,7 @@ namespace XLua.CSObjectWrap
         static void wrapInit0(LuaEnv luaenv, ObjectTranslator translator)
         {
         
-            translator.DelayWrapLoader(typeof(ND25.Character.Actor.WarriorXLua), ND25CharacterActorWarriorXLuaWrap.__Register);
+            translator.DelayWrapLoader(typeof(WarriorXLua), ND25CharacterActorWarriorXLuaWrap.__Register);
         
         
         

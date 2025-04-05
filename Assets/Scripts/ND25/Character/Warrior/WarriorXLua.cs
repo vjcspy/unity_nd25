@@ -1,7 +1,7 @@
 using ND25.Core.XLua;
 using UnityEngine;
 using XLua;
-namespace ND25.Character.Actor
+namespace ND25.Character.Warrior
 {
     [LuaCallCSharp]
     /*
@@ -23,7 +23,10 @@ namespace ND25.Character.Actor
 
         protected override string ModuleName
         {
-            get => "character.xstate.warrior.warrior_state_machine";
+            get
+            {
+                return "character.xstate.warrior.warrior_state_machine";
+            }
         }
 
         protected override void Awake()

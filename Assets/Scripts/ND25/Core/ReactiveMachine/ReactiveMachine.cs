@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using Cysharp.Threading.Tasks;
+using JetBrains.Annotations;
+using ND25.Character.Warrior;
 using Newtonsoft.Json;
 using R3;
 using System;
@@ -6,18 +8,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using DisposableBag = R3.DisposableBag;
 namespace ND25.Core.ReactiveMachine
 {
-    public delegate Observable<ReactiveMachineAction> ReactiveMachineActionHandler(
-        Observable<ReactiveMachineAction> upstream
-    );
+    public delegate Observable<ReactiveMachineAction> ReactiveMachineActionHandler(Observable<ReactiveMachineAction> upstream);
 
     public class ReactiveMachine<T>
     {
-        readonly Subject<ReactiveMachineAction> actionSubject = new Subject<ReactiveMachineAction>();
+        public delegate Observable<Unit> ReactiveMachineContextHandler(Observable<T> upstream);
+
+        readonly R3.Subject<ReactiveMachineAction> actionSubject = new R3.Subject<ReactiveMachineAction>();
         readonly T initialContext;
         readonly string jsonFileName;
-        readonly Observable<ReactiveMachineAction> sharedActionStream;
+        readonly R3.Observable<ReactiveMachineAction> sharedActionStream;
 
         readonly Dictionary<string, ReactiveMachineState<T>> states = new Dictionary<string, ReactiveMachineState<T>>();
         ReactiveMachineConfig config;
@@ -28,10 +31,10 @@ namespace ND25.Core.ReactiveMachine
         {
             this.initialContext = initialContext;
             this.jsonFileName = jsonFileName;
-            sharedActionStream = actionSubject.Share();
+            sharedActionStream = R3.ObservableExtensions.Share(actionSubject);
         }
-        public ReactiveProperty<T> context { get; private set; }
-        public ReactiveProperty<string> currentStateName { get; } = new ReactiveProperty<string>(null);
+        public R3.ReactiveProperty<T> context { get; private set; }
+        public R3.ReactiveProperty<string> currentStateName { get; } = new R3.ReactiveProperty<string>(null);
 
         void LoadConfig()
         {
@@ -65,12 +68,26 @@ namespace ND25.Core.ReactiveMachine
 
         void InitContext()
         {
-            context = new ReactiveProperty<T>(initialContext);
+            context = new R3.ReactiveProperty<T>(initialContext);
         }
 
         public void SetContext(Func<T, T> contextUpdater)
         {
             context.OnNext(contextUpdater(initialContext));
+        }
+
+        public void ContextChangeHandler(ReactiveMachineContextHandler eventHandler)
+        {
+            // Truyền trực tiếp subject vào handler để nhận stream xử lý
+            eventHandler(context)
+                .Subscribe(
+                    (_) =>
+                    {
+
+                    },
+                    error => Debug.LogError($"[ReactiveMachine] Error in event stream: {error}")
+                )
+                .AddTo(ref disposable);
         }
 
         public void DispatchEvent(Enum eventName)
