@@ -38,7 +38,7 @@ namespace ND25.Character.Warrior
         {
             return new object[]
             {
-                new WarriorCommonActor(this), new WarriorAirActor(this)
+                new WarriorCommonActor(this), new WarriorAirActor(this), new WarriorPrimaryAttackActor(this)
             };
         }
         protected override WarriorContext GetInitContext()

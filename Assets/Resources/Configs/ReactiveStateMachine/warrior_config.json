@@ -44,6 +44,10 @@
         {
           "src": "YInputChangeTransition",
           "input": {}
+        },
+        {
+          "src": "PrimaryAttackTransition",
+          "input": {}
         }
       ],
       "on": {
@@ -56,6 +60,12 @@
         "air": [
           {
             "target": "Air",
+            "actions": []
+          }
+        ],
+        "primaryAttack": [
+          {
+            "target": "PrimaryAttack",
             "actions": []
           }
         ]
@@ -94,6 +104,10 @@
         {
           "src": "YInputChangeTransition",
           "input": {}
+        },
+        {
+          "src": "PrimaryAttackTransition",
+          "input": {}
         }
       ],
       "on": {
@@ -106,6 +120,12 @@
         "air": [
           {
             "target": "Air",
+            "actions": []
+          }
+        ],
+        "primaryAttack": [
+          {
+            "target": "PrimaryAttack",
             "actions": []
           }
         ]
@@ -147,6 +167,29 @@
           }
         ]
       }
+    },
+    "PrimaryAttack": {
+      "entry": {
+        "type": "UpdateAnimatorParams",
+        "params": {
+          "primaryAttack": true
+        }
+      },
+      "exit": {
+        "type": "UpdateAnimatorParams",
+        "params": {
+          "primaryAttack": false
+        }
+      },
+      "on": {
+        "idle": [
+          {
+            "target": "Idle",
+            "actions": []
+          }
+        ]
+      }
     }
   }
+
 }

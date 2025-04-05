@@ -17,10 +17,10 @@ namespace ND25.Core.ReactiveMachine
     {
         public delegate Observable<Unit> ReactiveMachineContextHandler(Observable<T> upstream);
 
-        readonly R3.Subject<ReactiveMachineAction> actionSubject = new R3.Subject<ReactiveMachineAction>();
+        readonly Subject<ReactiveMachineAction> actionSubject = new Subject<ReactiveMachineAction>();
         readonly T initialContext;
         readonly string jsonFileName;
-        readonly R3.Observable<ReactiveMachineAction> sharedActionStream;
+        readonly Observable<ReactiveMachineAction> sharedActionStream;
 
         readonly Dictionary<string, ReactiveMachineState<T>> states = new Dictionary<string, ReactiveMachineState<T>>();
         ReactiveMachineConfig config;
@@ -68,7 +68,7 @@ namespace ND25.Core.ReactiveMachine
 
         void InitContext()
         {
-            context = new R3.ReactiveProperty<T>(initialContext);
+            context = new ReactiveProperty<T>(initialContext);
         }
 
         public void SetContext(Func<T, T> contextUpdater)
@@ -111,7 +111,7 @@ namespace ND25.Core.ReactiveMachine
             return currentStateName.Value == null ? null : states[currentStateName.Value];
         }
 
-        public void TransitionTo(string nextState, [CanBeNull] List<ReactiveMachineAction> transitionActions = null)
+        internal void TransitionTo(string nextState, [CanBeNull] List<ReactiveMachineAction> transitionActions = null)
         {
             // Exit current state
             GetCurrentState()

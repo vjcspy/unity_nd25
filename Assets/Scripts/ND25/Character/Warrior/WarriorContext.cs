@@ -3,14 +3,11 @@
     public class WarriorContext
     {
 
-        public float lastJumpTime;
-        public float yVelocity;
+        public float lastJumpTime = 0f;
+        public float yVelocity = 0f;
+        public int primaryCombo = 0;
+        public float lastPrimaryAttackTime = 0f;
 
 
-        public WarriorContext(float lastJumpTime = 0f, float yVelocity = 0f)
-        {
-            this.yVelocity = yVelocity;
-            this.lastJumpTime = lastJumpTime;
-        }
     }
 }

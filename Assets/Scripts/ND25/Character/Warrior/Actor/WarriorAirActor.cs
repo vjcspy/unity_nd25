@@ -66,7 +66,6 @@ namespace ND25.Character.Warrior.Actor
                             return ReactiveMachineCoreAction.Empty;
                         }
 
-                        warriorMonoBehavior.machine.DispatchEvent(WarriorEvent.air);
                         warriorMonoBehavior.machine.SetContext(
                             context =>
                             {

@@ -9,7 +9,9 @@ namespace ND25.Character.Warrior
             idle,
             run,
             air,
-            yVelocity
+            yVelocity,
+            primaryCombo,
+            primaryAttack,
         }
         public WarriorAnimator(Animator animator) : base(animator)
         {

@@ -4,6 +4,7 @@
     {
         run,
         idle,
-        air
+        air,
+        primaryAttack
     }
 }

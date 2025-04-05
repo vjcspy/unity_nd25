@@ -3,11 +3,14 @@
     internal enum WarriorAction
     {
         XInputHandler,
-        UpdateAnimatorParams,
-        ForceJump,
+
 
         XInputChangeTransition,
         FallGroundTransition,
-        YInputChangeTransition
+        YInputChangeTransition,
+        PrimaryAttackTransition,
+
+        UpdateAnimatorParams,
+        ForceJump,
     }
 }
