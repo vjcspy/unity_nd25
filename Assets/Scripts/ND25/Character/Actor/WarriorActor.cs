@@ -121,6 +121,16 @@ namespace ND25.Character.Actor
                 );
         }
 
+        void Flip()
+        {
+            transform.localScale = rb.linearVelocity.x switch
+            {
+                > 0 => new Vector3(1, 1, 1),
+                < 0 => new Vector3(-1, 1, 1),
+                _ => transform.localScale
+            };
+        }
+
         [ReactiveMachineEffect]
         public ReactiveMachineActionHandler HandleXInput()
         {
@@ -133,6 +143,7 @@ namespace ND25.Character.Actor
                         float yVelocity = rb.linearVelocity.y;
                         Vector2 newVelocity = new Vector2(xInput * moveSpeed, yVelocity);
                         rb.linearVelocity = newVelocity;
+                        Flip();
 
                         machine.SetContext(
                             context =>
