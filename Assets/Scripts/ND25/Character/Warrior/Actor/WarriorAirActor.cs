@@ -15,20 +15,10 @@ namespace ND25.Character.Warrior.Actor
         {
             return upstream => upstream
                 .OfAction(WarriorAction.FallGroundTransition)
+                .ThrottleLast(TimeSpan.FromMilliseconds(200), UnityTimeProvider.Update)
                 .Where(_ => warriorMonoBehavior.machine.context.Value.lastJumpTime < Time.time - 0.2f)
-                .ThrottleLast(TimeSpan.FromMilliseconds(200))
                 .Select(
-                    _ =>
-                    {
-                        UniTask.Post(() =>
-                        {
-                            if (warriorMonoBehavior.groundChecker.isGrounded)
-                            {
-                                warriorMonoBehavior.machine.DispatchEvent(WarriorEvent.idle);
-                            }
-                        });
-                        return ReactiveMachineCoreAction.Empty;
-                    }
+                    _ => warriorMonoBehavior.groundChecker.isGrounded ? ReactiveMachineCoreAction.TransitionActionFactory.Create(WarriorEvent.idle) : ReactiveMachineCoreAction.Empty
                 );
         }
 
