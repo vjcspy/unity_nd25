@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-namespace ND25.Parallax
+namespace ND25.Component.Parallax
 {
 
     [ExecuteAlways]
