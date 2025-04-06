@@ -28,8 +28,30 @@ namespace ND25.Core.ReactiveMachine
         [JsonProperty("type")] public string type { get; }
     }
 
+
+    public class ReactiveMachineActionFactory<T>
+    {
+        public readonly string type;
+
+        public ReactiveMachineActionFactory(string type)
+        {
+            this.type = type;
+        }
+
+        public ReactiveMachineAction Create(T payload)
+        {
+            var payloadDict = new Dictionary<string, object>
+            {
+                { "data", payload }
+            };
+
+            return new ReactiveMachineAction(type, payloadDict);
+        }
+    }
+
     public class ReactiveMachineCoreAction
     {
-        public static readonly ReactiveMachineAction Empty = new ReactiveMachineAction("EMPTY_ACTION");
+        public static readonly ReactiveMachineAction Empty = new ReactiveMachineAction("Empty");
+        public static readonly ReactiveMachineActionFactory<Enum> TransitionActionFactory = new ReactiveMachineActionFactory<Enum>("Transition");
     }
 }

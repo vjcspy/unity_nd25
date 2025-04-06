@@ -50,9 +50,8 @@ namespace ND25.Character.Warrior.Actor
                                 return context;
                             }
                         );
-                        machine.DispatchEvent(WarriorEvent.primaryAttack);
 
-                        return ReactiveMachineCoreAction.Empty;
+                        return ReactiveMachineCoreAction.TransitionActionFactory.Create(WarriorEvent.primaryAttack);
                     }
                 );
         }

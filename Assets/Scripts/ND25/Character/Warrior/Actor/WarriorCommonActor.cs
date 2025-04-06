@@ -50,11 +50,7 @@ namespace ND25.Character.Warrior.Actor
             return upstream => upstream
                 .OfAction(WarriorAction.XInputChangeTransition)
                 .Select(
-                    _ =>
-                    {
-                        warriorMonoBehavior.machine.DispatchEvent(xInput != 0 ? WarriorEvent.run : WarriorEvent.idle);
-                        return ReactiveMachineCoreAction.Empty;
-                    }
+                    _ => ReactiveMachineCoreAction.TransitionActionFactory.Create(xInput != 0 ? WarriorEvent.run : WarriorEvent.idle)
                 );
         }
 

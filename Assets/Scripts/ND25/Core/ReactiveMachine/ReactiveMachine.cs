@@ -11,8 +11,6 @@ using UnityEngine;
 using DisposableBag = R3.DisposableBag;
 namespace ND25.Core.ReactiveMachine
 {
-    public delegate Observable<ReactiveMachineAction> ReactiveMachineActionHandler(Observable<ReactiveMachineAction> upstream);
-
     public class ReactiveMachine<T>
     {
         public delegate Observable<Unit> ReactiveMachineContextHandler(Observable<T> upstream);
@@ -90,12 +88,14 @@ namespace ND25.Core.ReactiveMachine
                 .AddTo(ref disposable);
         }
 
+        public void DispatchEvent(string eventName)
+        {
+            GetCurrentState()
+                !.DispatchEvent(eventName);
+        }
+
         public void DispatchEvent(Enum eventName)
         {
-            // #if UNITY_EDITOR
-            // Debug.Log($"[ReactiveMachine] Dispatch event: {eventName}");
-            // #endif
-
             GetCurrentState()
                 !.DispatchEvent(eventName.ToString());
         }
@@ -138,7 +138,17 @@ namespace ND25.Core.ReactiveMachine
             eventHandler(sharedActionStream)
                 .Where(handledEvent => handledEvent != ReactiveMachineCoreAction.Empty)
                 .Subscribe(
-                    DispatchAction,
+                    action =>
+                    {
+                        if (action.type == ReactiveMachineCoreAction.TransitionActionFactory.type)
+                        {
+                            DispatchEvent(action.payload["data"].ToString());
+                        }
+                        else
+                        {
+                            DispatchAction(action);
+                        }
+                    },
                     error => Debug.LogError($"[ReactiveMachine] Error in event stream: {error}")
                 )
                 .AddTo(ref disposable);
