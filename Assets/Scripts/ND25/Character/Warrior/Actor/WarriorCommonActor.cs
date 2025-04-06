@@ -31,14 +31,11 @@ namespace ND25.Character.Warrior.Actor
                 .ThrottleLast(TimeSpan.FromMilliseconds(150))
                 .Select(warriorContext =>
                 {
-                    UniTask.Post(() =>
+                    warriorMonoBehavior.warriorAnimator.UpdateParam(WarriorAnimator.Param.yVelocity, warriorContext.yVelocity);
+                    if (!warriorMonoBehavior.groundChecker.isGrounded)
                     {
-                        warriorMonoBehavior.warriorAnimator.UpdateParam(WarriorAnimator.Param.yVelocity, warriorContext.yVelocity);
-                        if (!warriorMonoBehavior.groundChecker.isGrounded)
-                        {
-                            warriorMonoBehavior.machine.DispatchEvent(WarriorEvent.air);
-                        }
-                    });
+                        warriorMonoBehavior.machine.DispatchEvent(WarriorEvent.air);
+                    }
 
                     return Unit.Default;
                 }));

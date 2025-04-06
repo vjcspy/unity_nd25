@@ -15,7 +15,7 @@ namespace ND25.Character.Warrior.Actor
         {
             return upstream => upstream
                 .OfAction(WarriorAction.FallGroundTransition)
-                .ThrottleLast(TimeSpan.FromMilliseconds(200), UnityTimeProvider.Update)
+                .ThrottleLast(TimeSpan.FromMilliseconds(200))
                 .Where(_ => warriorMonoBehavior.machine.context.Value.lastJumpTime < Time.time - 0.2f)
                 .Select(
                     _ => warriorMonoBehavior.groundChecker.isGrounded ? ReactiveMachineCoreAction.TransitionActionFactory.Create(WarriorEvent.idle) : ReactiveMachineCoreAction.Empty
