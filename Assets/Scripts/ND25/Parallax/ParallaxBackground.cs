@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 namespace ND25.Parallax
 {
 
@@ -22,7 +21,6 @@ namespace ND25.Parallax
         Transform camTransform;
         Vector3 lastCamPosition;
 
-        float xPosition;
 
         void Start()
         {
@@ -32,27 +30,21 @@ namespace ND25.Parallax
             {
                 lastCamPosition = camTransform.position;
             }
-            xPosition = transform.position.x;
         }
-
-        // void Update()
-        // {
-        //     if (!camTransform) return;
-        //
-        //     Vector3 deltaMovement = camTransform.position - lastCamPosition;
-        //
-        //     float moveX = deltaMovement.x * parallaxMultiplier;
-        //     float moveY = affectY ? deltaMovement.y * parallaxMultiplier : 0f;
-        //
-        //     transform.position += new Vector3(moveX, moveY, 0);
-        //     lastCamPosition = camTransform.position;
-        // }
 
         void Update()
         {
-            float distance = camTransform.position.x * parallaxMultiplier;
-            transform.position = new Vector3(xPosition + distance, transform.position.y, transform.position.z);
+            if (!camTransform) return;
+
+            Vector3 deltaMovement = camTransform.position - lastCamPosition;
+
+            float moveX = deltaMovement.x * parallaxMultiplier;
+            float moveY = affectY ? deltaMovement.y * parallaxMultiplier : 0f;
+
+            transform.position += new Vector3(moveX, moveY, 0);
+            lastCamPosition = camTransform.position;
         }
+
 
         void InitCamera()
         {
