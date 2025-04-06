@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 namespace ND25.Character.Warrior
 {
-    public class WarriorAnimatorMonoBehavior : MonoBehaviour
+    public class WarriorAnimatorListener : MonoBehaviour
     {
         WarriorReactiveMachine warriorReactiveMachine;
         void Awake()
