@@ -7,7 +7,7 @@ namespace ND25.Character.Warrior.Actor
 {
     public class WarriorAirActor : WarriorActorBase
     {
-        public WarriorAirActor(WarriorMonoBehavior warriorMonoBehavior) : base(warriorMonoBehavior)
+        public WarriorAirActor(WarriorReactiveMachine warriorReactiveMachine) : base(warriorReactiveMachine)
         {
         }
         [ReactiveMachineEffect]
@@ -16,9 +16,9 @@ namespace ND25.Character.Warrior.Actor
             return upstream => upstream
                 .OfAction(WarriorAction.FallGroundTransition)
                 .ThrottleLast(TimeSpan.FromMilliseconds(200))
-                .Where(_ => warriorMonoBehavior.machine.context.Value.lastJumpTime < Time.time - 0.2f)
+                .Where(_ => warriorReactiveMachine.machine.context.Value.lastJumpTime < Time.time - 0.2f)
                 .Select(
-                    _ => warriorMonoBehavior.groundChecker.isGrounded ? ReactiveMachineCoreAction.TransitionActionFactory.Create(WarriorEvent.idle) : ReactiveMachineCoreAction.Empty
+                    _ => warriorReactiveMachine.groundChecker.isGrounded ? ReactiveMachineCoreAction.TransitionActionFactory.Create(WarriorEvent.idle) : ReactiveMachineCoreAction.Empty
                 );
         }
 
@@ -30,13 +30,13 @@ namespace ND25.Character.Warrior.Actor
                 .Select(
                     _ =>
                     {
-                        if (!warriorMonoBehavior.groundChecker.isGrounded)
+                        if (!warriorReactiveMachine.groundChecker.isGrounded)
                         {
                             return ReactiveMachineCoreAction.Empty;
                         }
 
-                        Vector2 jumpForceVector = Vector2.up * warriorMonoBehavior.jumpForce;
-                        warriorMonoBehavior.rb.AddForce(jumpForceVector, ForceMode2D.Impulse);
+                        Vector2 jumpForceVector = Vector2.up * warriorReactiveMachine.jumpForce;
+                        warriorReactiveMachine.rb.AddForce(jumpForceVector, ForceMode2D.Impulse);
 
                         return ReactiveMachineCoreAction.Empty;
                     }
@@ -51,12 +51,12 @@ namespace ND25.Character.Warrior.Actor
                 .Select(
                     _ =>
                     {
-                        if (!Input.GetKeyDown(KeyCode.Space) || !warriorMonoBehavior.groundChecker.isGrounded)
+                        if (!Input.GetKeyDown(KeyCode.Space) || !warriorReactiveMachine.groundChecker.isGrounded)
                         {
                             return ReactiveMachineCoreAction.Empty;
                         }
 
-                        warriorMonoBehavior.machine.SetContext(
+                        warriorReactiveMachine.machine.SetContext(
                             context =>
                             {
                                 context.lastJumpTime = Time.time;

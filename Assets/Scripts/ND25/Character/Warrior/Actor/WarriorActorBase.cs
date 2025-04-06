@@ -2,10 +2,10 @@
 {
     public abstract class WarriorActorBase
     {
-        protected readonly WarriorMonoBehavior warriorMonoBehavior;
-        protected WarriorActorBase(WarriorMonoBehavior warriorMonoBehavior)
+        protected readonly WarriorReactiveMachine warriorReactiveMachine;
+        protected WarriorActorBase(WarriorReactiveMachine warriorReactiveMachine)
         {
-            this.warriorMonoBehavior = warriorMonoBehavior;
+            this.warriorReactiveMachine = warriorReactiveMachine;
         }
     }
 }

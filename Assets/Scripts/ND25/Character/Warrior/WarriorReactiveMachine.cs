@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 namespace ND25.Character.Warrior
 {
-    public class WarriorMonoBehavior : ReactiveMachineMono<WarriorContext>
+    public class WarriorReactiveMachine : ReactiveMachineMono<WarriorContext>
     {
 
         #region Property

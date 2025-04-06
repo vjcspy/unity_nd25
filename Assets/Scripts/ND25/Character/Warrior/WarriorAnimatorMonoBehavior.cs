@@ -5,20 +5,20 @@ namespace ND25.Character.Warrior
 {
     public class WarriorAnimatorMonoBehavior : MonoBehaviour
     {
-        WarriorMonoBehavior warriorMonoBehavior;
+        WarriorReactiveMachine warriorReactiveMachine;
         void Awake()
         {
-            warriorMonoBehavior = GetComponentInParent<WarriorMonoBehavior>();
+            warriorReactiveMachine = GetComponentInParent<WarriorReactiveMachine>();
         }
         public void OnFinishPrimaryAttack(int primaryCombo)
         {
-            warriorMonoBehavior.machine.SetContext(context =>
+            warriorReactiveMachine.machine.SetContext(context =>
             {
                 context.lastPrimaryAttackTime = Time.time;
 
                 return context;
             });
-            warriorMonoBehavior.machine.DispatchEvent(WarriorEvent.idle);
+            warriorReactiveMachine.machine.DispatchEvent(WarriorEvent.idle);
         }
     }
 }

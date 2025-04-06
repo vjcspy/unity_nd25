@@ -10,31 +10,31 @@ namespace ND25.Character.Warrior.Actor
     {
 
         float xInput;
-        public WarriorCommonActor(WarriorMonoBehavior warriorMonoBehavior) : base(warriorMonoBehavior)
+        public WarriorCommonActor(WarriorReactiveMachine warriorReactiveMachine) : base(warriorReactiveMachine)
         {
             HandleContextChange();
         }
 
         void Flip()
         {
-            warriorMonoBehavior.transform.localScale = warriorMonoBehavior.rb.linearVelocity.x switch
+            warriorReactiveMachine.transform.localScale = warriorReactiveMachine.rb.linearVelocity.x switch
             {
                 > 0 => new Vector3(1, 1, 1),
                 < 0 => new Vector3(-1, 1, 1),
-                _ => warriorMonoBehavior.transform.localScale
+                _ => warriorReactiveMachine.transform.localScale
             };
         }
 
         void HandleContextChange()
         {
-            warriorMonoBehavior.machine.ContextChangeHandler(context => context
+            warriorReactiveMachine.machine.ContextChangeHandler(context => context
                 .ThrottleLast(TimeSpan.FromMilliseconds(150))
                 .Select(warriorContext =>
                 {
-                    warriorMonoBehavior.warriorAnimator.UpdateParam(WarriorAnimator.Param.yVelocity, warriorContext.yVelocity);
-                    if (!warriorMonoBehavior.groundChecker.isGrounded)
+                    warriorReactiveMachine.warriorAnimator.UpdateParam(WarriorAnimator.Param.yVelocity, warriorContext.yVelocity);
+                    if (!warriorReactiveMachine.groundChecker.isGrounded)
                     {
-                        warriorMonoBehavior.machine.DispatchEvent(WarriorEvent.air);
+                        warriorReactiveMachine.machine.DispatchEvent(WarriorEvent.air);
                     }
 
                     return Unit.Default;
@@ -59,9 +59,9 @@ namespace ND25.Character.Warrior.Actor
                 .Select(
                     _ =>
                     {
-                        float yVelocity = warriorMonoBehavior.rb.linearVelocity.y;
+                        float yVelocity = warriorReactiveMachine.rb.linearVelocity.y;
                         Vector2 newVelocity = new Vector2(0, yVelocity);
-                        warriorMonoBehavior.rb.linearVelocity = newVelocity;
+                        warriorReactiveMachine.rb.linearVelocity = newVelocity;
 
                         return ReactiveMachineCoreAction.Empty;
                     }
@@ -77,12 +77,12 @@ namespace ND25.Character.Warrior.Actor
                     _ =>
                     {
                         xInput = Input.GetAxis("Horizontal");
-                        float yVelocity = warriorMonoBehavior.rb.linearVelocity.y;
-                        Vector2 newVelocity = new Vector2(xInput * warriorMonoBehavior.moveSpeed, yVelocity);
-                        warriorMonoBehavior.rb.linearVelocity = newVelocity;
+                        float yVelocity = warriorReactiveMachine.rb.linearVelocity.y;
+                        Vector2 newVelocity = new Vector2(xInput * warriorReactiveMachine.moveSpeed, yVelocity);
+                        warriorReactiveMachine.rb.linearVelocity = newVelocity;
                         Flip();
 
-                        warriorMonoBehavior.machine.SetContext(
+                        warriorReactiveMachine.machine.SetContext(
                             context =>
                             {
                                 context.yVelocity = yVelocity;
@@ -116,13 +116,13 @@ namespace ND25.Character.Warrior.Actor
                             switch (value)
                             {
                                 case bool boolVal:
-                                    warriorMonoBehavior.warriorAnimator.UpdateParam(keyString, boolVal);
+                                    warriorReactiveMachine.warriorAnimator.UpdateParam(keyString, boolVal);
                                     break;
                                 case float floatVal:
-                                    warriorMonoBehavior.warriorAnimator.UpdateParam(keyString, floatVal);
+                                    warriorReactiveMachine.warriorAnimator.UpdateParam(keyString, floatVal);
                                     break;
                                 case double doubleVal:
-                                    warriorMonoBehavior.warriorAnimator.UpdateParam(keyString, (float)doubleVal);
+                                    warriorReactiveMachine.warriorAnimator.UpdateParam(keyString, (float)doubleVal);
                                     break;
                                 default:
                                     Debug.Log("Unsupported type: " + value.GetType());

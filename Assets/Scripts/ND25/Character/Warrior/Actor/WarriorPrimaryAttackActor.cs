@@ -8,17 +8,17 @@ namespace ND25.Character.Warrior.Actor
     public class WarriorPrimaryAttackActor : WarriorActorBase
     {
 
-        public WarriorPrimaryAttackActor(WarriorMonoBehavior warriorMonoBehavior) : base(warriorMonoBehavior)
+        public WarriorPrimaryAttackActor(WarriorReactiveMachine warriorReactiveMachine) : base(warriorReactiveMachine)
         {
             HandleContextChange();
         }
 
         void HandleContextChange()
         {
-            warriorMonoBehavior.machine.ContextChangeHandler(context => context
+            warriorReactiveMachine.machine.ContextChangeHandler(context => context
                 .Select(warriorContext =>
                 {
-                    warriorMonoBehavior.warriorAnimator.UpdateParam(WarriorAnimator.Param.primaryCombo, warriorContext.primaryCombo);
+                    warriorReactiveMachine.warriorAnimator.UpdateParam(WarriorAnimator.Param.primaryCombo, warriorContext.primaryCombo);
 
                     return Unit.Default;
                 }));
@@ -34,7 +34,7 @@ namespace ND25.Character.Warrior.Actor
                     {
                         if (!Input.GetKeyDown(KeyCode.J)) return ReactiveMachineCoreAction.Empty;
 
-                        var machine = warriorMonoBehavior.machine;
+                        var machine = warriorReactiveMachine.machine;
                         machine.SetContext(
                             context =>
                             {
