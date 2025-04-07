@@ -13,6 +13,7 @@ namespace ND25.Component.Character.Warrior
         internal ObjectChecker ObjectChecker;
         internal Rigidbody2D rb;
         internal WarriorAnimatorParam animatorParam;
+        internal PCControls pcControls;
 
         #endregion
 
@@ -26,6 +27,7 @@ namespace ND25.Component.Character.Warrior
             rb = GetComponent<Rigidbody2D>();
             ObjectChecker = GetComponent<ObjectChecker>();
             animatorParam = new WarriorAnimatorParam(animator);
+            pcControls = new PCControls();
         }
 
         protected override void RegisterCustomerHandler()
@@ -61,5 +63,7 @@ namespace ND25.Component.Character.Warrior
 
         #endregion
 
+        void OnEnable() => pcControls.GamePlay.Enable();
+        void OnDisable() => pcControls.GamePlay.Disable();
     }
 }

@@ -30,7 +30,7 @@ namespace ND25.Component.Character.Warrior.Actor
                 .Select(
                     _ =>
                     {
-                        if (!Input.GetKeyDown(KeyCode.J)) return ReactiveMachineCoreAction.Empty;
+                        if (!warriorReactiveMachine.pcControls.GamePlay.PrimaryAttack.triggered) return ReactiveMachineCoreAction.Empty;
 
                         var machine = warriorReactiveMachine.machine;
                         machine.SetContext(

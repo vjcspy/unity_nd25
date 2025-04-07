@@ -74,3 +74,5 @@ crashlytics-build.properties
 
 /Assets/Packages/
 /Assets/XLua/Gen
+Assets/Scripts/ND25/Input/Gen
+.utmp

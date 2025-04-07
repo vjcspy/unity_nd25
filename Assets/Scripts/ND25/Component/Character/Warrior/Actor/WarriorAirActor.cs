@@ -50,7 +50,7 @@ namespace ND25.Component.Character.Warrior.Actor
                 .Select(
                     _ =>
                     {
-                        if (!Input.GetKeyDown(KeyCode.Space) || !warriorReactiveMachine.ObjectChecker.isGrounded)
+                        if (!warriorReactiveMachine.pcControls.GamePlay.Jump.triggered || !warriorReactiveMachine.ObjectChecker.isGrounded)
                         {
                             return ReactiveMachineCoreAction.Empty;
                         }

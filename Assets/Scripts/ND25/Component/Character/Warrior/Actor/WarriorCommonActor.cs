@@ -2,17 +2,29 @@
 using R3;
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 namespace ND25.Component.Character.Warrior.Actor
 {
 
     public class WarriorCommonActor : WarriorActorBase
     {
 
-        float xInput;
+        Vector2 xInput;
         public WarriorCommonActor(WarriorReactiveMachine warriorReactiveMachine) : base(warriorReactiveMachine)
         {
             HandleContextChange();
+            warriorReactiveMachine.pcControls.GamePlay.Move.performed += OnMove;
+            warriorReactiveMachine.pcControls.GamePlay.Jump.performed += OnJump;
         }
+        void OnJump(InputAction.CallbackContext obj)
+        {
+            Debug.Log("Jump");
+        }
+        void OnMove(InputAction.CallbackContext obj)
+        {
+            Debug.Log("Move");
+        }
+        
 
         void Flip()
         {
@@ -46,7 +58,7 @@ namespace ND25.Component.Character.Warrior.Actor
             return upstream => upstream
                 .OfAction(WarriorActionType.XInputChangeTransition)
                 .Select(
-                    _ => ReactiveMachineCoreAction.TransitionActionFactory.Create(xInput != 0 ? WarriorEvent.run : WarriorEvent.idle)
+                    _ => ReactiveMachineCoreAction.TransitionActionFactory.Create(xInput.x != 0 ? WarriorEvent.run : WarriorEvent.idle)
                 );
         }
 
@@ -75,9 +87,9 @@ namespace ND25.Component.Character.Warrior.Actor
                 .Select(
                     _ =>
                     {
-                        xInput = Input.GetAxis("Horizontal");
+                        xInput = warriorReactiveMachine.pcControls.GamePlay.Move.ReadValue<Vector2>();
                         float yVelocity = warriorReactiveMachine.rb.linearVelocity.y;
-                        Vector2 newVelocity = new Vector2(xInput * warriorReactiveMachine.moveSpeed, yVelocity);
+                        Vector2 newVelocity = new Vector2(xInput.x * warriorReactiveMachine.moveSpeed, yVelocity);
                         warriorReactiveMachine.rb.linearVelocity = newVelocity;
                         Flip();
 
