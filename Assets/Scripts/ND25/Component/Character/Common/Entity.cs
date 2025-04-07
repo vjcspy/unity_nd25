@@ -2,7 +2,7 @@
 using UnityEngine;
 namespace ND25.Component.Character.Common
 {
-    public abstract class Entity<T> : ReactiveMachineComponent<T>
+    public abstract class Entity<T> : ReactiveMachineWrapper<T>
     {
         ObjectChecker objectChecker;
 

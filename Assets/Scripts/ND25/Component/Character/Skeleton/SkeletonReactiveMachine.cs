@@ -4,7 +4,7 @@ using R3;
 using UnityEngine;
 namespace ND25.Component.Character.Skeleton
 {
-    public class SkeletonReactiveMachine : ReactiveMachineComponent<SkeletonContext>
+    public class SkeletonReactiveMachine : ReactiveMachineWrapper<SkeletonContext>
     {
         Animator animator;
         SkeletonAnimatorParam animatorParam;

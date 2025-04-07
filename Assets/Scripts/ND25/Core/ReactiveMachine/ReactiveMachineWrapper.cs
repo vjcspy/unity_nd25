@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 namespace ND25.Core.ReactiveMachine
 {
-    public abstract class ReactiveMachineComponent<T> : MonoBehaviour
+    public abstract class ReactiveMachineWrapper<T> : MonoBehaviour
     {
         public ReactiveMachine<T> machine;
 

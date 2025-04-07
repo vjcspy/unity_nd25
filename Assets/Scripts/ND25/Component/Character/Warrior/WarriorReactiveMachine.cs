@@ -4,7 +4,7 @@ using ND25.Core.ReactiveMachine;
 using UnityEngine;
 namespace ND25.Component.Character.Warrior
 {
-    public class WarriorReactiveMachine : ReactiveMachineComponent<WarriorContext>
+    public class WarriorReactiveMachine : ReactiveMachineWrapper<WarriorContext>
     {
 
         #region Property
@@ -16,7 +16,7 @@ namespace ND25.Component.Character.Warrior
 
         #endregion
 
-        #region ReactiveMachineComponent
+        #region ReactiveMachineWrapper
 
         protected override void Awake()
         {
