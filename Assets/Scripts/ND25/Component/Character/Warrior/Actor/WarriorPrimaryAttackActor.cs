@@ -16,7 +16,7 @@ namespace ND25.Component.Character.Warrior.Actor
             warriorReactiveMachine.machine.ContextChangeHandler(context => context
                 .Select(warriorContext =>
                 {
-                    warriorReactiveMachine.warriorAnimator.UpdateParam(WarriorAnimator.Param.primaryCombo, warriorContext.primaryCombo);
+                    warriorReactiveMachine.animatorParam.UpdateParam(WarriorAnimatorParamName.primaryCombo, warriorContext.primaryCombo);
 
                     return Unit.Default;
                 }));
@@ -26,7 +26,7 @@ namespace ND25.Component.Character.Warrior.Actor
         public ReactiveMachineActionHandler PrimaryAttackTransition()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.PrimaryAttackTransition)
+                .OfAction(WarriorActionType.PrimaryAttackTransition)
                 .Select(
                     _ =>
                     {

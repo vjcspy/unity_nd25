@@ -13,7 +13,7 @@ namespace ND25.Component.Character.Warrior.Actor
         public ReactiveMachineActionHandler FallGroundTransition()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.FallGroundTransition)
+                .OfAction(WarriorActionType.FallGroundTransition)
                 .ThrottleLast(TimeSpan.FromMilliseconds(200))
                 .Where(_ => warriorReactiveMachine.machine.context.Value.lastJumpTime < Time.time - 0.2f)
                 .Select(
@@ -25,7 +25,7 @@ namespace ND25.Component.Character.Warrior.Actor
         public ReactiveMachineActionHandler ForceJump()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.ForceJump)
+                .OfAction(WarriorActionType.ForceJump)
                 .Select(
                     _ =>
                     {
@@ -46,7 +46,7 @@ namespace ND25.Component.Character.Warrior.Actor
         public ReactiveMachineActionHandler YInputChangeTransition()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.YInputChangeTransition)
+                .OfAction(WarriorActionType.YInputChangeTransition)
                 .Select(
                     _ =>
                     {
@@ -64,7 +64,7 @@ namespace ND25.Component.Character.Warrior.Actor
                             }
                         );
 
-                        return ReactiveMachineAction.Create(WarriorAction.ForceJump);
+                        return ReactiveMachineAction.Create(WarriorActionType.ForceJump);
                     }
                 );
         }

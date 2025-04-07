@@ -30,7 +30,7 @@ namespace ND25.Component.Character.Warrior.Actor
                 .ThrottleLast(TimeSpan.FromMilliseconds(150))
                 .Select(warriorContext =>
                 {
-                    warriorReactiveMachine.warriorAnimator.UpdateParam(WarriorAnimator.Param.yVelocity, warriorContext.yVelocity);
+                    warriorReactiveMachine.animatorParam.UpdateParam(WarriorAnimatorParamName.yVelocity, warriorContext.yVelocity);
                     if (!warriorReactiveMachine.groundChecker.isGrounded)
                     {
                         warriorReactiveMachine.machine.DispatchEvent(WarriorEvent.air);
@@ -44,7 +44,7 @@ namespace ND25.Component.Character.Warrior.Actor
         public ReactiveMachineActionHandler XInputChangeTransition()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.XInputChangeTransition)
+                .OfAction(WarriorActionType.XInputChangeTransition)
                 .Select(
                     _ => ReactiveMachineCoreAction.TransitionActionFactory.Create(xInput != 0 ? WarriorEvent.run : WarriorEvent.idle)
                 );
@@ -54,7 +54,7 @@ namespace ND25.Component.Character.Warrior.Actor
         public ReactiveMachineActionHandler ForceStopRun()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.ForceStopRun)
+                .OfAction(WarriorActionType.ForceStopRun)
                 .Select(
                     _ =>
                     {
@@ -71,7 +71,7 @@ namespace ND25.Component.Character.Warrior.Actor
         public ReactiveMachineActionHandler XInputHandler()
         {
             return upstream => upstream
-                .OfAction(WarriorAction.XInputHandler)
+                .OfAction(WarriorActionType.XInputHandler)
                 .Select(
                     _ =>
                     {
@@ -89,45 +89,6 @@ namespace ND25.Component.Character.Warrior.Actor
                                 return context;
                             }
                         );
-
-                        return ReactiveMachineCoreAction.Empty;
-                    }
-                );
-        }
-
-        [ReactiveMachineEffect]
-        public ReactiveMachineActionHandler UpdateAnimatorParams()
-        {
-            return upstream => upstream
-                .OfAction(WarriorAction.UpdateAnimatorParams)
-                .Select(
-                    action =>
-                    {
-
-                        if (action.payload == null)
-                        {
-                            return ReactiveMachineCoreAction.Empty;
-                        }
-
-                        foreach ((string keyString, object value) in action.payload)
-                        {
-                            // Debug.Log("Update animator key: " + keyString);
-                            switch (value)
-                            {
-                                case bool boolVal:
-                                    warriorReactiveMachine.warriorAnimator.UpdateParam(keyString, boolVal);
-                                    break;
-                                case float floatVal:
-                                    warriorReactiveMachine.warriorAnimator.UpdateParam(keyString, floatVal);
-                                    break;
-                                case double doubleVal:
-                                    warriorReactiveMachine.warriorAnimator.UpdateParam(keyString, (float)doubleVal);
-                                    break;
-                                default:
-                                    Debug.Log("Unsupported type: " + value.GetType());
-                                    break;
-                            }
-                        }
 
                         return ReactiveMachineCoreAction.Empty;
                     }

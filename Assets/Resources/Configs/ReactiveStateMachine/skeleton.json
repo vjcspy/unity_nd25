@@ -1,0 +1,18 @@
+﻿{
+  "id": "Skeleton",
+  "initial": "Idle",
+  "states": {
+    "Idle": {
+      "on": {
+        "move": [
+          {
+            "target": "Move",
+            "actions": [],
+            "meta": {}
+          }
+        ]
+      }
+    },
+    "Move": {}
+  }
+}

@@ -131,7 +131,7 @@ namespace ND25.Core.ReactiveMachine
                 .Entry();
         }
 
-        void RegisterAction(ReactiveMachineActionHandler eventHandler)
+        public void RegisterAction(ReactiveMachineActionHandler eventHandler)
         {
             // Truyền trực tiếp subject vào handler để nhận stream xử lý
             eventHandler(sharedActionStream)

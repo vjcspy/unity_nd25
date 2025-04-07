@@ -8,6 +8,5 @@
         public int primaryCombo = 0;
         public float lastPrimaryAttackTime = 0f;
 
-
     }
 }

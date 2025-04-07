@@ -1,9 +1,10 @@
-﻿using ND25.Component.Character.Warrior.Actor;
+﻿using ND25.Component.Character.Common;
+using ND25.Component.Character.Warrior.Actor;
 using ND25.Core.ReactiveMachine;
 using UnityEngine;
 namespace ND25.Component.Character.Warrior
 {
-    public class WarriorReactiveMachine : ReactiveMachineMono<WarriorContext>
+    public class WarriorReactiveMachine : ReactiveMachineComponent<WarriorContext>
     {
 
         #region Property
@@ -11,11 +12,11 @@ namespace ND25.Component.Character.Warrior
         Animator animator;
         internal GroundChecker groundChecker;
         internal Rigidbody2D rb;
-        internal WarriorAnimator warriorAnimator;
+        internal WarriorAnimatorParam animatorParam;
 
         #endregion
 
-        #region ReactiveMachineMono
+        #region ReactiveMachineComponent
 
         protected override void Awake()
         {
@@ -24,13 +25,17 @@ namespace ND25.Component.Character.Warrior
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody2D>();
             groundChecker = GetComponent<GroundChecker>();
-            warriorAnimator = new WarriorAnimator(animator);
-
-            // machine.currentStateName.Subscribe((_name) => { currentState = _name; }, _ => { });
+            animatorParam = new WarriorAnimatorParam(animator);
         }
+
+        protected override void RegisterCustomerHandler()
+        {
+            machine.RegisterAction(CommonActor.UpdateAnimatorParams(animatorParam));
+        }
+
         protected override string GetJsonFileName()
         {
-            return "warrior_config";
+            return "warrior";
         }
         protected override object[] GetActionHandlers()
         {

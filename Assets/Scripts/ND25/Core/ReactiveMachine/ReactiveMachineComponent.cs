@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 namespace ND25.Core.ReactiveMachine
 {
-    public abstract class ReactiveMachineMono<T> : MonoBehaviour
+    public abstract class ReactiveMachineComponent<T> : MonoBehaviour
     {
         public ReactiveMachine<T> machine;
 
@@ -15,6 +15,7 @@ namespace ND25.Core.ReactiveMachine
         {
             machine.Start();
             machine.RegisterActionHandler(GetActionHandlers());
+            RegisterCustomerHandler();
         }
 
         void Update()
@@ -25,6 +26,11 @@ namespace ND25.Core.ReactiveMachine
         void OnDestroy()
         {
             machine.OnDestroy();
+        }
+
+        protected virtual void RegisterCustomerHandler()
+        {
+            // Register custom handlers here if needed
         }
 
         protected abstract string GetJsonFileName();

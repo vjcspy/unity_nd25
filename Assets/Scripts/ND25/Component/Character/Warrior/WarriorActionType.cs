@@ -1,6 +1,6 @@
 ﻿namespace ND25.Component.Character.Warrior
 {
-    internal enum WarriorAction
+    internal enum WarriorActionType
     {
         XInputHandler,
 
@@ -13,5 +13,9 @@
         UpdateAnimatorParams,
         ForceJump,
         ForceStopRun,
+    }
+
+    public class WarriorAction
+    {
     }
 }
