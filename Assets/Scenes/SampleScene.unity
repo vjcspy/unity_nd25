@@ -1331,7 +1331,7 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 0
-  drawDebugRay: 0
+  drawDebugRay: 1
   drawGizmos: 1
 --- !u!1 &1451597026
 GameObject:
