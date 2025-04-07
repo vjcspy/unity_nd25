@@ -13,18 +13,7 @@ namespace ND25.Component.Character.Warrior.Actor
         public WarriorCommonActor(WarriorReactiveMachine warriorReactiveMachine) : base(warriorReactiveMachine)
         {
             HandleContextChange();
-            warriorReactiveMachine.pcControls.GamePlay.Move.performed += OnMove;
-            warriorReactiveMachine.pcControls.GamePlay.Jump.performed += OnJump;
         }
-        void OnJump(InputAction.CallbackContext obj)
-        {
-            Debug.Log("Jump");
-        }
-        void OnMove(InputAction.CallbackContext obj)
-        {
-            Debug.Log("Move");
-        }
-        
 
         void Flip()
         {
