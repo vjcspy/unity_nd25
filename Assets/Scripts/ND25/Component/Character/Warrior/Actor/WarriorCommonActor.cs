@@ -31,7 +31,7 @@ namespace ND25.Component.Character.Warrior.Actor
                 .Select(warriorContext =>
                 {
                     warriorReactiveMachine.animatorParam.UpdateParam(WarriorAnimatorParamName.yVelocity, warriorContext.yVelocity);
-                    if (!warriorReactiveMachine.groundChecker.isGrounded)
+                    if (!warriorReactiveMachine.ObjectChecker.isGrounded)
                     {
                         warriorReactiveMachine.machine.DispatchEvent(WarriorEvent.air);
                     }

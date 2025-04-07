@@ -17,7 +17,7 @@ namespace ND25.Component.Character.Warrior.Actor
                 .ThrottleLast(TimeSpan.FromMilliseconds(200))
                 .Where(_ => warriorReactiveMachine.machine.context.Value.lastJumpTime < Time.time - 0.2f)
                 .Select(
-                    _ => warriorReactiveMachine.groundChecker.isGrounded ? ReactiveMachineCoreAction.TransitionActionFactory.Create(WarriorEvent.idle) : ReactiveMachineCoreAction.Empty
+                    _ => warriorReactiveMachine.ObjectChecker.isGrounded ? ReactiveMachineCoreAction.TransitionActionFactory.Create(WarriorEvent.idle) : ReactiveMachineCoreAction.Empty
                 );
         }
 
@@ -29,7 +29,7 @@ namespace ND25.Component.Character.Warrior.Actor
                 .Select(
                     _ =>
                     {
-                        if (!warriorReactiveMachine.groundChecker.isGrounded)
+                        if (!warriorReactiveMachine.ObjectChecker.isGrounded)
                         {
                             return ReactiveMachineCoreAction.Empty;
                         }
@@ -50,7 +50,7 @@ namespace ND25.Component.Character.Warrior.Actor
                 .Select(
                     _ =>
                     {
-                        if (!Input.GetKeyDown(KeyCode.Space) || !warriorReactiveMachine.groundChecker.isGrounded)
+                        if (!Input.GetKeyDown(KeyCode.Space) || !warriorReactiveMachine.ObjectChecker.isGrounded)
                         {
                             return ReactiveMachineCoreAction.Empty;
                         }

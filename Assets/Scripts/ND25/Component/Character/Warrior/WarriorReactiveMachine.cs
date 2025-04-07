@@ -10,7 +10,7 @@ namespace ND25.Component.Character.Warrior
         #region Property
 
         Animator animator;
-        internal GroundChecker groundChecker;
+        internal ObjectChecker ObjectChecker;
         internal Rigidbody2D rb;
         internal WarriorAnimatorParam animatorParam;
 
@@ -24,7 +24,7 @@ namespace ND25.Component.Character.Warrior
 
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody2D>();
-            groundChecker = GetComponent<GroundChecker>();
+            ObjectChecker = GetComponent<ObjectChecker>();
             animatorParam = new WarriorAnimatorParam(animator);
         }
 

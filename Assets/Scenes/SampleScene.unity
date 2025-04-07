@@ -119,6 +119,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &250362441
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 250362442}
+  m_Layer: 0
+  m_Name: ObjectChecker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &250362442
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 250362441}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1232909388}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &419544519
 GameObject:
   m_ObjectHideFlags: 0
@@ -713,6 +744,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &871147489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 871147490}
+  m_Layer: 0
+  m_Name: ObjectChecker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &871147490
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871147489}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1281836263}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &944157965
 GameObject:
   m_ObjectHideFlags: 0
@@ -725,7 +787,7 @@ GameObject:
   - component: {fileID: 944157968}
   - component: {fileID: 944157967}
   - component: {fileID: 944157969}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Animator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -995,6 +1057,7 @@ GameObject:
   - component: {fileID: 1232909389}
   - component: {fileID: 1232909391}
   - component: {fileID: 1232909390}
+  - component: {fileID: 1232909392}
   m_Layer: 0
   m_Name: EnemySkeleton
   m_TagString: Untagged
@@ -1016,6 +1079,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1813594608}
+  - {fileID: 250362442}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1232909389
@@ -1094,6 +1158,36 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.55, y: 1.65}
   m_Direction: 0
+--- !u!114 &1232909392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232909387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12cba85a5ff6e3741ae286bf0c1ebbe6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundCheckMethod: 0
+  groundCheckPoint: {fileID: 250362442}
+  checkDistance: 0.2
+  overlapRadius: 0.25
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  sideObstacleDistance: 0.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  playerCheckMethod: 0
+  playerDetectDistance: 1
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  drawDebugRay: 0
+  drawGizmos: 1
 --- !u!1 &1281836262
 GameObject:
   m_ObjectHideFlags: 0
@@ -1107,7 +1201,7 @@ GameObject:
   - component: {fileID: 1281836266}
   - component: {fileID: 1281836267}
   - component: {fileID: 1281836268}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: WarriorPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1128,6 +1222,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1451597027}
+  - {fileID: 871147490}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1281836265
@@ -1220,13 +1315,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12cba85a5ff6e3741ae286bf0c1ebbe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  method: 0
-  groundCheckPoint: {fileID: 0}
+  groundCheckMethod: 0
+  groundCheckPoint: {fileID: 871147490}
   checkDistance: 1.5
   overlapRadius: 0.25
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  sideObstacleDistance: 0.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  playerCheckMethod: 0
+  playerDetectDistance: 1
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
   drawDebugRay: 0
   drawGizmos: 1
 --- !u!1 &1451597026
@@ -1238,7 +1342,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1451597027}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: OffsetContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

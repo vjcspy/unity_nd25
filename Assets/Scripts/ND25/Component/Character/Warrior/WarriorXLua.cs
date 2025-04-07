@@ -14,7 +14,7 @@ namespace ND25.Component.Character.Warrior
         [SerializeField] float jumpForce = 2f;
 
         Animator animator;
-        GroundChecker groundChecker;
+        ObjectChecker objectChecker;
 
         float horizontalInput;
         Rigidbody2D rb;
@@ -33,7 +33,7 @@ namespace ND25.Component.Character.Warrior
 
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody2D>();
-            groundChecker = GetComponent<GroundChecker>();
+            objectChecker = GetComponent<ObjectChecker>();
 
         }
 
@@ -86,7 +86,7 @@ namespace ND25.Component.Character.Warrior
         [LuaCallable]
         public void HandleActionJump()
         {
-            if (Input.GetKeyDown(KeyCode.Space) && groundChecker.isGrounded)
+            if (Input.GetKeyDown(KeyCode.Space) && objectChecker.isGrounded)
             {
                 luaStateMachineMono.Dispatch("jump");
             }
@@ -94,9 +94,8 @@ namespace ND25.Component.Character.Warrior
         [LuaCallable]
         public void ForceJump()
         {
-            if (groundChecker.isGrounded)
+            if (objectChecker.isGrounded)
             {
-                groundChecker.ForceCheck(); // Reset ground check
                 Vector2 jumpForceVector = Vector2.up * jumpForce;
                 rb.AddForce(jumpForceVector, ForceMode2D.Impulse);
             }
@@ -106,7 +105,7 @@ namespace ND25.Component.Character.Warrior
         public void HandleFall()
         {
             // TODO: Should not check by compare y velocity
-            if (rb.linearVelocity.y < 0 && groundChecker.isGrounded)
+            if (rb.linearVelocity.y < 0 && objectChecker.isGrounded)
             {
                 luaStateMachineMono.Dispatch("grounded");
             }
@@ -115,7 +114,7 @@ namespace ND25.Component.Character.Warrior
         [LuaCallable]
         public void CheckAndUpdateGroundedInfo()
         {
-            animator.SetBool("jump", !groundChecker.isGrounded);
+            animator.SetBool("jump", !objectChecker.isGrounded);
             animator.SetFloat("yVelocity", rb.linearVelocity.y);
         }
     }
