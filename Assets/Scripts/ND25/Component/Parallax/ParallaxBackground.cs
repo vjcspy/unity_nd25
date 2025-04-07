@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 namespace ND25.Component.Parallax
 {
-
     [ExecuteAlways]
     [DisallowMultipleComponent]
-    public class ParallaxLayer : MonoBehaviour
+    public class ParallaxBackground : MonoBehaviour
     {
         [Header("Parallax Settings")]
         [Tooltip("Tốc độ parallax của layer này (0 = đứng yên, 1 = theo sát camera).")]
@@ -19,32 +18,39 @@ namespace ND25.Component.Parallax
         public Camera referenceCamera;
 
         Transform camTransform;
+        bool isInitialized;
         Vector3 lastCamPosition;
-
 
         void Start()
         {
             InitCamera();
-
-            if (camTransform != null)
-            {
-                lastCamPosition = camTransform.position;
-            }
+            if (camTransform == null) return;
+            lastCamPosition = camTransform.position;
+            isInitialized = true;
         }
 
-        void Update()
+        void LateUpdate()
         {
-            if (!camTransform) return;
+            if (!isInitialized) return;
 
             Vector3 deltaMovement = camTransform.position - lastCamPosition;
 
+            // Tính toán offset dựa trên multiplier
             float moveX = deltaMovement.x * parallaxMultiplier;
             float moveY = affectY ? deltaMovement.y * parallaxMultiplier : 0f;
 
             transform.position += new Vector3(moveX, moveY, 0);
+
             lastCamPosition = camTransform.position;
         }
 
+#if UNITY_EDITOR
+        void OnValidate()
+        {
+            // Đảm bảo multiplier luôn nằm trong khoảng cho phép
+            parallaxMultiplier = Mathf.Clamp01(parallaxMultiplier);
+        }
+#endif
 
         void InitCamera()
         {
@@ -58,7 +64,7 @@ namespace ND25.Component.Parallax
             }
             else
             {
-                Debug.LogWarning("[ParallaxLayer] Could not find a camera. Please assign one in the inspector or ensure there is a Camera in the scene.");
+                Debug.LogWarning("[ParallaxLayer] Không tìm thấy camera.");
                 camTransform = null;
             }
         }

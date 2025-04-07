@@ -313,7 +313,7 @@ Camera:
   far clip plane: 1
   field of view: 34
   orthographic: 1
-  orthographic size: 7.86
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -338,7 +338,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.25, z: -1}
+  m_LocalPosition: {x: 0, y: 7.3900003, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -408,11 +408,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TrackerSettings:
     BindingMode: 3
-    PositionDamping: {x: 0, y: 0, z: 0}
+    PositionDamping: {x: 2, y: 0, z: 0}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  FollowOffset: {x: 0, y: 2.36, z: -1}
+  FollowOffset: {x: 0, y: 4.5, z: -1}
 --- !u!114 &585678916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,7 +438,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 34
-    OrthographicSize: 7.86
+    OrthographicSize: 8
     NearClipPlane: 0.22
     FarClipPlane: 1
     Dutch: 0
@@ -465,7 +465,7 @@ Transform:
   m_GameObject: {fileID: 585678914}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.25, z: -1}
+  m_LocalPosition: {x: 0, y: 7.3900003, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -598,7 +598,6 @@ GameObject:
   - component: {fileID: 735759430}
   - component: {fileID: 735759432}
   - component: {fileID: 735759431}
-  - component: {fileID: 735759433}
   m_Layer: 0
   m_Name: Sky
   m_TagString: Untagged
@@ -691,18 +690,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &735759433
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 735759429}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6e042c5f7724050a1a64b11fa7c3caa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &944157965
 GameObject:
   m_ObjectHideFlags: 0
