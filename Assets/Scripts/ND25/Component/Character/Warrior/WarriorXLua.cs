@@ -1,7 +1,7 @@
 using ND25.Core.XLua;
 using UnityEngine;
 using XLua;
-namespace ND25.Character.Warrior
+namespace ND25.Component.Character.Warrior
 {
     // [System.Obsolete("This class is obsolete. Use ReactiveMachine instead.")]
     [LuaCallCSharp]

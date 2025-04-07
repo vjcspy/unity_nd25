@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
-using ND25.Character.Warrior;
 using Newtonsoft.Json;
 using R3;
 using System;
@@ -29,7 +28,7 @@ namespace ND25.Core.ReactiveMachine
         {
             this.initialContext = initialContext;
             this.jsonFileName = jsonFileName;
-            sharedActionStream = R3.ObservableExtensions.Share(actionSubject);
+            sharedActionStream = actionSubject.Share();
         }
         public ReactiveProperty<T> context { get; private set; }
         public ReactiveProperty<string> currentStateName { get; } = new ReactiveProperty<string>(null);

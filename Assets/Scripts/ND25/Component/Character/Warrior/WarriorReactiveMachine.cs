@@ -1,9 +1,7 @@
-﻿using ND25.Character.Warrior.Actor;
+﻿using ND25.Component.Character.Warrior.Actor;
 using ND25.Core.ReactiveMachine;
-using R3;
 using UnityEngine;
-using UnityEngine.Serialization;
-namespace ND25.Character.Warrior
+namespace ND25.Component.Character.Warrior
 {
     public class WarriorReactiveMachine : ReactiveMachineMono<WarriorContext>
     {

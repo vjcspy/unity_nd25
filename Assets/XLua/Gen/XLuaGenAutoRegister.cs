@@ -8,7 +8,7 @@ using RealStatePtr = System.IntPtr;
 using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 #endif
 
-using ND25.Character.Warrior;
+using ND25.Component.Character.Warrior;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

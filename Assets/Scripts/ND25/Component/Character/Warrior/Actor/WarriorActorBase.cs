@@ -1,4 +1,4 @@
-﻿namespace ND25.Character.Warrior.Actor
+﻿namespace ND25.Component.Character.Warrior.Actor
 {
     public abstract class WarriorActorBase
     {

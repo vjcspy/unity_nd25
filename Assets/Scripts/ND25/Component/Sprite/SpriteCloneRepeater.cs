@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-namespace ND25.Utils.MonoBehavior
+namespace ND25.Component.Sprite
 {
     /// <summary>
     ///     SpriteCloneRepeater là một MonoBehaviour dùng để tạo ra các bản sao của sprite trong Unity.
@@ -25,7 +25,7 @@ namespace ND25.Utils.MonoBehavior
                 return;
             }
 
-            Sprite sprite = mainRenderer.sprite;
+            UnityEngine.Sprite sprite = mainRenderer.sprite;
 
             float unitWidth = sprite.rect.width / sprite.pixelsPerUnit;
             spriteWidth = unitWidth * transform.lossyScale.x; // Tính chính xác theo scale hiện tại

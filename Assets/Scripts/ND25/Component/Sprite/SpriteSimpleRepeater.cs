@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-namespace ND25.Utils.MonoBehavior
+namespace ND25.Component.Sprite
 {
     /// <summary>
     ///     Với những sprite cần có config phải manually create thì dùng SpriteSimpleRepeater
@@ -25,7 +25,7 @@ namespace ND25.Utils.MonoBehavior
             }
 
             // Tính chiều rộng thực tế theo scale
-            Sprite sprite = sr.sprite;
+            UnityEngine.Sprite sprite = sr.sprite;
             float unitWidth = sprite.rect.width / sprite.pixelsPerUnit;
             spriteWidth = unitWidth * transform.lossyScale.x;
             Debug.Log("Sprite Width: " + spriteWidth);

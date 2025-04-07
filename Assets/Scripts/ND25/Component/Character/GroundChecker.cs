@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-namespace ND25.Character
+namespace ND25.Component.Character
 {
     internal enum CheckMethod
     {

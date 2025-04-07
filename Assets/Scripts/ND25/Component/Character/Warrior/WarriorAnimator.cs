@@ -1,6 +1,6 @@
 ﻿using ND25.Core.Utils;
 using UnityEngine;
-namespace ND25.Character.Warrior
+namespace ND25.Component.Character.Warrior
 {
     public class WarriorAnimator : AnimatorParamMap<WarriorAnimator.Param>
     {

@@ -1,7 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
-using System;
-using UnityEngine;
-namespace ND25.Character.Warrior
+﻿using UnityEngine;
+namespace ND25.Component.Character.Warrior
 {
     public class WarriorAnimatorListener : MonoBehaviour
     {

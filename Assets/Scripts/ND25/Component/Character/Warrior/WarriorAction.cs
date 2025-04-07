@@ -1,4 +1,4 @@
-﻿namespace ND25.Character.Warrior
+﻿namespace ND25.Component.Character.Warrior
 {
     internal enum WarriorAction
     {

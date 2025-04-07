@@ -1,9 +1,7 @@
-﻿using Cysharp.Threading.Tasks;
-using ND25.Core.ReactiveMachine;
+﻿using ND25.Core.ReactiveMachine;
 using R3;
-using System;
 using UnityEngine;
-namespace ND25.Character.Warrior.Actor
+namespace ND25.Component.Character.Warrior.Actor
 {
     public class WarriorPrimaryAttackActor : WarriorActorBase
     {
