@@ -1,5 +1,6 @@
 ﻿using ND25.Component.Character.Common;
 using ND25.Core.ReactiveMachine;
+using R3;
 using UnityEngine;
 namespace ND25.Component.Character.Skeleton
 {
@@ -36,6 +37,20 @@ namespace ND25.Component.Character.Skeleton
         protected override void RegisterCustomerHandler()
         {
             machine.RegisterAction(CommonActor.UpdateAnimatorParams(animatorParam));
+            HandleAnimation();
+        }
+
+        void HandleAnimation()
+        {
+            machine.context.CombineLatest(machine.currentStateName, (context, stateName) => new
+                {
+                    context,
+                    stateName
+                })
+                .Subscribe(result =>
+                {
+                    animatorParam.UpdateParam(SkeletonAnimatorParamName.state, animatorParam.paramValueMap[result.stateName]);
+                });
         }
     }
 }

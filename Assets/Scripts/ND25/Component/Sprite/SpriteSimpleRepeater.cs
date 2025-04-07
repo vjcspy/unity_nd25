@@ -28,7 +28,7 @@ namespace ND25.Component.Sprite
             UnityEngine.Sprite sprite = sr.sprite;
             float unitWidth = sprite.rect.width / sprite.pixelsPerUnit;
             spriteWidth = unitWidth * transform.lossyScale.x;
-            Debug.Log("Sprite Width: " + spriteWidth);
+            // Debug.Log("Sprite Width: " + spriteWidth);
         }
         void Start()
         {

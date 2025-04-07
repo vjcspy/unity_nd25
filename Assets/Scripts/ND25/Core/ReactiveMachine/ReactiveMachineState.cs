@@ -28,7 +28,7 @@ namespace ND25.Core.ReactiveMachine
 
         public void Entry()
         {
-            Debug.Log($"[ReactiveMachineState] Entry state: {name}");
+            // Debug.Log($"[ReactiveMachineState] Entry state: {name}");
 
             foreach (ReactiveMachineAction action in config.entry)
             {
