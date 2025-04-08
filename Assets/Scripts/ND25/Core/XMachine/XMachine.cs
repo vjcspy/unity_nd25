@@ -8,6 +8,10 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 namespace ND25.Core.XMachine
 {
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    public class XMachineEffectAttribute : Attribute
+    {
+    }
     public delegate Observable<XMachineAction> XMachineActionHandler(Observable<XMachineAction> upstream);
 
     public class XMachineAction
@@ -57,14 +61,13 @@ namespace ND25.Core.XMachine
         }
     }
 
-    public abstract class XMachineContext
+    public interface XMachineContext
     {
     }
 
     public abstract class XMachineState
     {
-
-        protected XMachineState(int id, XMachine<XMachineContext> machine)
+        protected XMachineState(Enum id, XMachine<XMachineContext> machine)
         {
             this.machine = machine;
             this.id = id;
@@ -75,7 +78,7 @@ namespace ND25.Core.XMachine
             get;
         }
 
-        public int id
+        public Enum id
         {
             get;
         }
@@ -111,13 +114,13 @@ namespace ND25.Core.XMachine
         readonly Observable<XMachineAction> sharedActionStream;
         DisposableBag disposable;
 
-        Dictionary<int, XMachineState> states;
+        Dictionary<Enum, XMachineState> states;
         public XMachine(ContextType initialContext)
         {
             context = new ReactiveProperty<ContextType>(initialContext);
             sharedActionStream = actionSubject.Share();
         }
-        ReactiveProperty<int> currentStateId { get; } = new ReactiveProperty<int>();
+        ReactiveProperty<Enum> currentStateId { get; } = new ReactiveProperty<Enum>();
 
         public ContextType GetContext()
         {
@@ -134,11 +137,11 @@ namespace ND25.Core.XMachine
             return GetCurrentState().allowedEvents.Contains(eventName);
         }
 
-        public int GetCurrentStateId()
+        public Enum GetCurrentStateId()
         {
             return currentStateId.Value;
         }
-        public XMachineState GetState(int id)
+        public XMachineState GetState(Enum id)
         {
             return states.GetValueOrDefault(id);
         }
@@ -148,12 +151,9 @@ namespace ND25.Core.XMachine
             return states[GetCurrentStateId()];
         }
 
-        public XMachine<ContextType> Enable(int initialStateId = -1)
+        public XMachine<ContextType> Enable(Enum initialStateId = null)
         {
-            if (initialStateId == -1)
-            {
-                initialStateId = states.First().Key;
-            }
+            initialStateId ??= states.First().Key;
 
             currentStateId.Value = initialStateId;
             GetCurrentState().Entry();
@@ -181,7 +181,7 @@ namespace ND25.Core.XMachine
             return this;
         }
 
-        public void Transition(int toStateId)
+        public void Transition(Enum toStateId)
         {
             GetCurrentState().Exit();
             currentStateId.Value = toStateId;
@@ -231,17 +231,30 @@ namespace ND25.Core.XMachine
             sw.Stop();
             Debug.Log($"Time to register actions: {sw.ElapsedMilliseconds} ms");
         }
+
+
+        public void SetContext(Func<ContextType, ContextType> contextUpdater)
+        {
+            // context.OnNext(contextUpdater(context.Value));
+            contextUpdater(context.Value);
+        }
     }
 
     public abstract class XMachineEffect<ContextType> where ContextType : XMachineContext
     {
         protected readonly XMachine<ContextType> machine;
 
-        protected ContextType context => machine.GetContext();
-
         protected XMachineEffect(XMachine<ContextType> machine)
         {
             this.machine = machine;
+        }
+
+        protected ContextType context
+        {
+            get
+            {
+                return machine.GetContext();
+            }
         }
     }
 
@@ -273,6 +286,6 @@ namespace ND25.Core.XMachine
 
         protected abstract ContextType ConfigureInitialContext();
         protected abstract XMachineState[] ConfigureMachineStates();
-        protected abstract int ConfigureInitialStateId();
+        protected abstract Enum ConfigureInitialStateId();
     }
 }

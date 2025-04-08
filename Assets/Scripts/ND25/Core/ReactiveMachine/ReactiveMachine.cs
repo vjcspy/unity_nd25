@@ -70,7 +70,7 @@ namespace ND25.Core.ReactiveMachine
 
         public void SetContext(Func<T, T> contextUpdater)
         {
-            context.OnNext(contextUpdater(initialContext));
+            context.OnNext(contextUpdater(context.Value));
         }
 
         public void ContextChangeHandler(ReactiveMachineContextHandler eventHandler)
