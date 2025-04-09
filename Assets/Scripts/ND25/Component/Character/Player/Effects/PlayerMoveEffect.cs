@@ -14,8 +14,10 @@ namespace ND25.Component.Character.Player.Effects
         public XMachineActionHandler MoveHandler()
         {
             return upstream => upstream
-                .OfAction(PlayerAction.MoveHandler)
-                // .ThrottleLast(timeSpan: TimeSpan.FromMilliseconds(value: 100))
+                .OfAction(actions: new[]
+                {
+                    PlayerAction.MoveHandler
+                })
                 .Select(
                     selector: _ =>
                     {

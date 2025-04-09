@@ -99,6 +99,7 @@ namespace ND25.Core.XMachine
         // </summary>
         public abstract void Entry();
 
+        public abstract void FixedUpdate();
         public abstract void Update();
 
         public abstract void Exit();
@@ -190,7 +191,7 @@ namespace ND25.Core.XMachine
 
         public XMachine<ContextType> RegisterAction(XMachineActionHandler eventHandler)
         {
-            Debug.Log("Registering action: " + eventHandler.GetMethodInfo().Name);
+            // Debug.Log("Registering action: " + eventHandler.GetMethodInfo().Name);
             // Truyền trực tiếp subject vào handler để nhận stream xử lý
             eventHandler(upstream: sharedActionStream)
                 .Where(predicate: handledEvent => handledEvent != XMachineAction.Empty)
@@ -284,6 +285,11 @@ namespace ND25.Core.XMachine
         protected void Update()
         {
             machine.GetCurrentState().Update();
+        }
+
+        protected void FixedUpdate()
+        {
+            machine.GetCurrentState().FixedUpdate();
         }
 
         protected void OnDestroy()

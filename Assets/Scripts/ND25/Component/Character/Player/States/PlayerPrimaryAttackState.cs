@@ -16,15 +16,15 @@ namespace ND25.Component.Character.Player.States
 
         public override void Entry()
         {
-            throw new NotImplementedException();
+        }
+        public override void FixedUpdate()
+        {
         }
         public override void Update()
         {
-            throw new NotImplementedException();
         }
         public override void Exit()
         {
-            throw new NotImplementedException();
         }
     }
 }

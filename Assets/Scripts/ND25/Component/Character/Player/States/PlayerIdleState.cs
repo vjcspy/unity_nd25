@@ -19,9 +19,13 @@ namespace ND25.Component.Character.Player.States
         public override void Entry()
         {
         }
-        public override void Update()
+        public override void FixedUpdate()
         {
             InvokeAction(PlayerAction.MoveHandler);
+        }
+        public override void Update()
+        {
+
         }
         public override void Exit()
         {
