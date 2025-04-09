@@ -15,14 +15,14 @@ namespace ND25.Component.Character.Player
         {
             return new XMachineState<PlayerContext>[]
             {
-                new PlayerIdleState(PlayerState.Idle, machine), new PlayerWalkState(PlayerState.Idle, machine), new PlayerPrimaryAttackState(PlayerState.Idle, machine)
+                new PlayerIdleState(id: PlayerState.Idle, machine: machine), new PlayerMoveState(id: PlayerState.Idle, machine: machine), new PlayerPrimaryAttackState(id: PlayerState.Idle, machine: machine)
             };
         }
         protected override XMachineEffect<PlayerContext>[] ConfigureMachineEffects()
         {
             return new XMachineEffect<PlayerContext>[]
             {
-                new PlayerCommonEffect(machine)
+                new PlayerCommonEffect(machine: machine)
             };
         }
         protected override Enum ConfigureInitialStateId()
