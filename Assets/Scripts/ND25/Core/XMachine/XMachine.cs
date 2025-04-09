@@ -64,13 +64,13 @@ namespace ND25.Core.XMachine
 
     public abstract class XMachineState<T>
     {
-        protected XMachineState(Enum id, XMachine<T> machine)
+        protected XMachineState(Enum id, XMachineActor<T> actor)
         {
-            this.machine = machine;
+            this.actor = actor;
             this.id = id;
         }
 
-        XMachine<T> machine
+        XMachineActor<T> actor
         {
             get;
         }
@@ -85,7 +85,7 @@ namespace ND25.Core.XMachine
 
         protected void InvokeAction(XMachineAction action)
         {
-            machine.InvokeAction(action);
+            actor.machine.InvokeAction(action);
         }
 
         #region Logic
@@ -239,18 +239,18 @@ namespace ND25.Core.XMachine
 
     public abstract class XMachineEffect<ContextType>
     {
-        protected readonly XMachine<ContextType> machine;
+        protected readonly XMachineActor<ContextType> actor;
 
-        protected XMachineEffect(XMachine<ContextType> machine)
+        protected XMachineEffect(XMachineActor<ContextType> actor)
         {
-            this.machine = machine;
+            this.actor = actor;
         }
 
         protected ContextType context
         {
             get
             {
-                return machine.GetContext();
+                return actor.machine.GetContext();
             }
         }
     }
