@@ -15,7 +15,9 @@ namespace ND25.Component.Character.Player
         {
             return new XMachineState<PlayerContext>[]
             {
-                new PlayerIdleState(id: PlayerState.Idle, machine: machine), new PlayerMoveState(id: PlayerState.Idle, machine: machine), new PlayerPrimaryAttackState(id: PlayerState.Idle, machine: machine)
+                new PlayerIdleState(id: PlayerState.Idle, machine: machine),
+                new PlayerMoveState(id: PlayerState.Idle, machine: machine),
+                new PlayerPrimaryAttackState(id: PlayerState.Idle, machine: machine)
             };
         }
         protected override XMachineEffect<PlayerContext>[] ConfigureMachineEffects()
