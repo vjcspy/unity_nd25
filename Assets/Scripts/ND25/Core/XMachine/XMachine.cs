@@ -8,7 +8,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 namespace ND25.Core.XMachine
 {
-    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    [AttributeUsage(validOn: AttributeTargets.Method, Inherited = false)]
     public class XMachineEffectAttribute : Attribute
     {
     }
@@ -16,7 +16,7 @@ namespace ND25.Core.XMachine
 
     public class XMachineAction
     {
-        public static readonly XMachineAction Empty = new XMachineAction("Empty");
+        public static readonly XMachineAction Empty = new XMachineAction(type: "Empty");
         public XMachineAction(string type, Dictionary<string, object> payload = null)
         {
             this.type = type;
@@ -35,7 +35,7 @@ namespace ND25.Core.XMachine
 
         public static XMachineAction Create(Enum type, Dictionary<string, object> payload = null)
         {
-            return new XMachineAction(type, payload);
+            return new XMachineAction(type: type, payload: payload);
         }
     }
 
@@ -52,25 +52,23 @@ namespace ND25.Core.XMachine
         {
             var payloadDict = new Dictionary<string, object>
             {
-                {
-                    "data", payload
-                }
+                { "data", payload }
             };
 
-            return new XMachineAction(type, payloadDict);
+            return new XMachineAction(type: type, payload: payloadDict);
         }
     }
 
 
-    public abstract class XMachineState<T>
+    public abstract class XMachineState<ContextType>
     {
-        protected XMachineState(Enum id, XMachineActor<T> actor)
+        protected XMachineState(Enum id, XMachineActor<ContextType> actor)
         {
             this.actor = actor;
             this.id = id;
         }
 
-        XMachineActor<T> actor
+        private XMachineActor<ContextType> actor
         {
             get;
         }
@@ -85,7 +83,12 @@ namespace ND25.Core.XMachine
 
         protected void InvokeAction(XMachineAction action)
         {
-            actor.machine.InvokeAction(action);
+            actor.machine.InvokeAction(action: action);
+        }
+
+        public void SetContext(Func<ContextType, ContextType> contextUpdater)
+        {
+            actor.machine.SetContext(contextUpdater: contextUpdater);
         }
 
         #region Logic
@@ -106,18 +109,18 @@ namespace ND25.Core.XMachine
 
     public class XMachine<ContextType>
     {
-        readonly Subject<XMachineAction> actionSubject = new Subject<XMachineAction>();
-        readonly ReactiveProperty<ContextType> context;
-        readonly Observable<XMachineAction> sharedActionStream;
-        DisposableBag disposable;
+        private readonly Subject<XMachineAction> actionSubject = new Subject<XMachineAction>();
+        private readonly ReactiveProperty<ContextType> context;
+        private readonly Observable<XMachineAction> sharedActionStream;
+        private DisposableBag disposable;
 
-        Dictionary<Enum, XMachineState<ContextType>> states;
+        private Dictionary<Enum, XMachineState<ContextType>> states;
         public XMachine(ContextType initialContext)
         {
-            context = new ReactiveProperty<ContextType>(initialContext);
+            context = new ReactiveProperty<ContextType>(value: initialContext);
             sharedActionStream = actionSubject.Share();
         }
-        ReactiveProperty<Enum> currentStateId { get; } = new ReactiveProperty<Enum>();
+        private ReactiveProperty<Enum> currentStateId { get; } = new ReactiveProperty<Enum>();
 
         public ContextType GetContext()
         {
@@ -126,12 +129,12 @@ namespace ND25.Core.XMachine
 
         public void InvokeAction(XMachineAction action)
         {
-            actionSubject.OnNext(action);
+            actionSubject.OnNext(value: action);
         }
 
         public bool IsEventAllowed(int eventName)
         {
-            return GetCurrentState().allowedEvents.Contains(eventName);
+            return GetCurrentState().allowedEvents.Contains(item: eventName);
         }
 
         public Enum GetCurrentStateId()
@@ -140,25 +143,26 @@ namespace ND25.Core.XMachine
         }
         public XMachineState<ContextType> GetState(Enum id)
         {
-            return states.GetValueOrDefault(id);
+            return states.GetValueOrDefault(key: id);
         }
 
         public XMachineState<ContextType> GetCurrentState()
         {
-            return states[GetCurrentStateId()];
+            return states[key: GetCurrentStateId()];
         }
 
-        public XMachine<ContextType> Enable(Enum initialStateId = null)
+        public XMachine<ContextType> Start(Enum initialStateId = null)
         {
             initialStateId ??= states.First().Key;
 
             currentStateId.Value = initialStateId;
+            Debug.Log("Entering initial state: " + initialStateId);
             GetCurrentState().Entry();
 
             return this;
         }
 
-        public void Disable()
+        public void Stop()
         {
             disposable.Dispose();
         }
@@ -167,73 +171,79 @@ namespace ND25.Core.XMachine
         {
             if (machineStates == null || machineStates.Length == 0)
             {
-                throw new ArgumentException("States cannot be null or empty");
+                throw new ArgumentException(message: "States cannot be null or empty");
             }
 
-            states = machineStates.ToDictionary(state =>
-            {
-                return state.id;
-            });
+            states = machineStates.ToDictionary(keySelector: state => state.id);
 
             return this;
         }
 
         public void Transition(Enum toStateId)
         {
+            Debug.Log("Exiting state: " + GetCurrentStateId());
             GetCurrentState().Exit();
             currentStateId.Value = toStateId;
+            Debug.Log("Entering state: " + toStateId);
             GetCurrentState().Entry();
         }
 
-        public void RegisterAction(XMachineActionHandler eventHandler)
+        public XMachine<ContextType> RegisterAction(XMachineActionHandler eventHandler)
         {
+            Debug.Log("Registering action: " + eventHandler.GetMethodInfo().Name);
             // Truyền trực tiếp subject vào handler để nhận stream xử lý
-            eventHandler(sharedActionStream)
-                .Where(handledEvent => handledEvent != XMachineAction.Empty)
+            eventHandler(upstream: sharedActionStream)
+                .Where(predicate: handledEvent => handledEvent != XMachineAction.Empty)
                 .Subscribe(
-                    InvokeAction,
-                    HandleError
+                    onNext: InvokeAction,
+                    onCompleted: HandleError
                 )
-                .AddTo(ref disposable);
+                .AddTo(bag: ref disposable);
+
+            return this;
         }
-        void HandleError(Result error)
+        private void HandleError(Result error)
         {
-            Debug.LogError($"[ReactiveMachine] Error in event stream: {error}");
+            Debug.LogError(message: $"[ReactiveMachine] Error in event stream: {error}");
         }
 
-        void RegisterActionHandler(XMachineEffect<ContextType> eventEffectInstance)
+        private XMachine<ContextType> RegisterActionHandler(XMachineEffect<ContextType> eventEffectInstance)
         {
             var methods = eventEffectInstance
                 .GetType()
                 .GetMethods()
-                .Where(m => m.GetCustomAttribute<XMachineEffectAttribute>() != null && m.ReturnType == typeof(XMachineActionHandler))
+                .Where(predicate: m => m.GetCustomAttribute<XMachineEffectAttribute>() != null && m.ReturnType == typeof(XMachineActionHandler))
                 .ToList();
 
             foreach (XMachineActionHandler eventHandler in methods.Select(
-                method =>
-                    (XMachineActionHandler)method.Invoke(eventEffectInstance, null)!
+                selector: method =>
+                    (XMachineActionHandler)method.Invoke(obj: eventEffectInstance, parameters: null)!
             ))
             {
-                RegisterAction(eventHandler);
+                RegisterAction(eventHandler: eventHandler);
             }
+
+            return this;
         }
 
-        public void RegisterActionHandler(XMachineEffect<ContextType>[] actionEffectInstances)
+        public XMachine<ContextType> RegisterActionHandler(XMachineEffect<ContextType>[] actionEffectInstances)
         {
             Stopwatch sw = Stopwatch.StartNew();
             foreach (var eventEffectInstance in actionEffectInstances)
             {
-                RegisterActionHandler(eventEffectInstance);
+                RegisterActionHandler(eventEffectInstance: eventEffectInstance);
             }
             sw.Stop();
-            Debug.Log($"Time to register actions: {sw.ElapsedMilliseconds} ms");
+            Debug.Log(message: $"Time to register actions: {sw.ElapsedMilliseconds} ms");
+
+            return this;
         }
 
 
         public void SetContext(Func<ContextType, ContextType> contextUpdater)
         {
             // context.OnNext(contextUpdater(context.Value));
-            contextUpdater(context.Value);
+            contextUpdater(arg: context.Value);
         }
     }
 
@@ -261,14 +271,14 @@ namespace ND25.Core.XMachine
 
         protected virtual void Awake()
         {
-            machine = new XMachine<ContextType>(ConfigureInitialContext())
-                .RegisterStates(ConfigureMachineStates());
-
+            machine = new XMachine<ContextType>(initialContext: ConfigureInitialContext())
+                .RegisterStates(machineStates: ConfigureMachineStates())
+                .RegisterActionHandler(actionEffectInstances: ConfigureMachineEffects());
         }
 
         protected virtual void Start()
         {
-            machine.Enable(ConfigureInitialStateId());
+            machine.Start(initialStateId: ConfigureInitialStateId());
         }
 
         protected void Update()
@@ -278,7 +288,7 @@ namespace ND25.Core.XMachine
 
         protected void OnDestroy()
         {
-            machine.Disable();
+            machine.Stop();
         }
 
         protected abstract ContextType ConfigureInitialContext();

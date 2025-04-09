@@ -3,5 +3,6 @@ namespace ND25.Component.Character.Player
 {
     public struct PlayerContext
     {
+
     }
 }

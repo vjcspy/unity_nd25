@@ -5,7 +5,7 @@ namespace ND25.Component.Character.Player.States
 {
     public class PlayerPrimaryAttackState : XMachineState<PlayerContext>
     {
-        public PlayerPrimaryAttackState(Enum id, XMachine<PlayerContext> machine) : base(id, machine)
+        public PlayerPrimaryAttackState(Enum id, PlayerActor actor) : base(id, actor)
         {
         }
 

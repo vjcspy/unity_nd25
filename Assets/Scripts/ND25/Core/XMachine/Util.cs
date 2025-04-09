@@ -1,14 +1,14 @@
 ﻿using R3;
 using System;
 using System.Linq;
+using UnityEngine;
 namespace ND25.Core.XMachine
 {
     public static class ObservableExtensions
     {
         public static Observable<XMachineAction> OfAction(
             this Observable<XMachineAction> source,
-            params string[] actions
-        )
+            params string[] actions)
         {
             return source.Where(
                 predicate: action => actions
@@ -35,7 +35,7 @@ namespace ND25.Core.XMachine
         )
         {
             string[] actionStrings = actions
-                .Select(selector: action => action.ToString())
+                .Select(selector: action => action.type)
                 .ToArray();
             return source.Where(
                 predicate: action => actionStrings

@@ -10,7 +10,7 @@ namespace ND25.Component.Character.Common
         public static ReactiveMachineActionHandler UpdateAnimatorParams<T>(AnimatorParamMap<T> paramMap) where T : Enum
         {
             return upstream => upstream
-                .OfAction("UpdateAnimatorParams")
+                // .OfAction("UpdateAnimatorParams")
                 .Select(
                     action =>
                     {

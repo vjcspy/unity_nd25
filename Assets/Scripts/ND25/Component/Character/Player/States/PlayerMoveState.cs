@@ -5,7 +5,7 @@ namespace ND25.Component.Character.Player.States
 {
     public class PlayerMoveState : XMachineState<PlayerContext>
     {
-        public PlayerMoveState(Enum id, XMachine<PlayerContext> machine) : base(id, machine)
+        public PlayerMoveState(Enum id, PlayerActor actor) : base(id, actor)
         {
         }
 
@@ -16,15 +16,13 @@ namespace ND25.Component.Character.Player.States
 
         public override void Entry()
         {
-            throw new NotImplementedException();
         }
         public override void Update()
         {
-            throw new NotImplementedException();
+            InvokeAction(PlayerAction.MoveHandler);
         }
         public override void Exit()
         {
-            throw new NotImplementedException();
         }
     }
 }

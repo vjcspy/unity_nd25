@@ -1,12 +1,24 @@
-﻿namespace ND25.Component.Character.Player
+﻿using ND25.Core.Utils;
+using UnityEngine;
+namespace ND25.Component.Character.Player
 {
-    public enum PlayerAnimatorState
+    internal enum PlayerAnimatorState
     {
-        Idle =0,
-        Move = 1,
+        Idle = 0,
+        Move = 1
     }
-    public class PlayerAnimatorParam
+
+    internal enum PlayerAnimatorParamType
     {
-        
+        state = 0,
+        yVelocity = 1,
+        primaryCount = 2
+    }
+
+    internal class PlayerAnimatorParam : AnimatorParamMap<PlayerAnimatorParamType>
+    {
+        public PlayerAnimatorParam(Animator animator) : base(animator: animator)
+        {
+        }
     }
 }

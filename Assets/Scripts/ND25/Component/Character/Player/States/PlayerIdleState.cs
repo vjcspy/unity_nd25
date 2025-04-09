@@ -1,12 +1,13 @@
 ﻿using ND25.Core.XMachine;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 namespace ND25.Component.Character.Player.States
 {
     public class PlayerIdleState : XMachineState<PlayerContext>
     {
 
-        public PlayerIdleState(Enum id, XMachine<PlayerContext> machine) : base(id, machine)
+        public PlayerIdleState(Enum id, PlayerActor actor) : base(id, actor)
         {
         }
 
@@ -20,6 +21,7 @@ namespace ND25.Component.Character.Player.States
         }
         public override void Update()
         {
+            InvokeAction(PlayerAction.MoveHandler);
         }
         public override void Exit()
         {

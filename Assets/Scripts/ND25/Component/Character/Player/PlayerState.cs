@@ -3,6 +3,7 @@
     public enum PlayerState
     {
         Idle,
-        Walk,
+        Move,
+        PrimaryAttack,
     }
 }
