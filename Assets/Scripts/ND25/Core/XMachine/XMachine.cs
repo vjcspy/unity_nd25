@@ -61,19 +61,16 @@ namespace ND25.Core.XMachine
         }
     }
 
-    public interface XMachineContext
-    {
-    }
 
-    public abstract class XMachineState
+    public abstract class XMachineState<T>
     {
-        protected XMachineState(Enum id, XMachine<XMachineContext> machine)
+        protected XMachineState(Enum id, XMachine<T> machine)
         {
             this.machine = machine;
             this.id = id;
         }
 
-        XMachine<XMachineContext> machine
+        XMachine<T> machine
         {
             get;
         }
@@ -107,14 +104,14 @@ namespace ND25.Core.XMachine
 
     }
 
-    public class XMachine<ContextType> where ContextType : XMachineContext
+    public class XMachine<ContextType>
     {
         readonly Subject<XMachineAction> actionSubject = new Subject<XMachineAction>();
         readonly ReactiveProperty<ContextType> context;
         readonly Observable<XMachineAction> sharedActionStream;
         DisposableBag disposable;
 
-        Dictionary<Enum, XMachineState> states;
+        Dictionary<Enum, XMachineState<ContextType>> states;
         public XMachine(ContextType initialContext)
         {
             context = new ReactiveProperty<ContextType>(initialContext);
@@ -141,12 +138,12 @@ namespace ND25.Core.XMachine
         {
             return currentStateId.Value;
         }
-        public XMachineState GetState(Enum id)
+        public XMachineState<ContextType> GetState(Enum id)
         {
             return states.GetValueOrDefault(id);
         }
 
-        public XMachineState GetCurrentState()
+        public XMachineState<ContextType> GetCurrentState()
         {
             return states[GetCurrentStateId()];
         }
@@ -166,7 +163,7 @@ namespace ND25.Core.XMachine
             disposable.Dispose();
         }
 
-        public XMachine<ContextType> RegisterStates(XMachineState[] machineStates)
+        public XMachine<ContextType> RegisterStates(XMachineState<ContextType>[] machineStates)
         {
             if (machineStates == null || machineStates.Length == 0)
             {
@@ -240,7 +237,7 @@ namespace ND25.Core.XMachine
         }
     }
 
-    public abstract class XMachineEffect<ContextType> where ContextType : XMachineContext
+    public abstract class XMachineEffect<ContextType>
     {
         protected readonly XMachine<ContextType> machine;
 
@@ -258,7 +255,7 @@ namespace ND25.Core.XMachine
         }
     }
 
-    public abstract class XMachineActor<ContextType> : MonoBehaviour where ContextType : XMachineContext
+    public abstract class XMachineActor<ContextType> : MonoBehaviour
     {
         public XMachine<ContextType> machine { private set; get; }
 
@@ -285,7 +282,8 @@ namespace ND25.Core.XMachine
         }
 
         protected abstract ContextType ConfigureInitialContext();
-        protected abstract XMachineState[] ConfigureMachineStates();
+        protected abstract XMachineState<ContextType>[] ConfigureMachineStates();
+        protected abstract XMachineEffect<ContextType>[] ConfigureMachineEffects();
         protected abstract Enum ConfigureInitialStateId();
     }
 }
