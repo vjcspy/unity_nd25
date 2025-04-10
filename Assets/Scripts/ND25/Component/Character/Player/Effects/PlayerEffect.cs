@@ -8,7 +8,7 @@ namespace ND25.Component.Character.Player.Effects
         {
         }
 
-        [XMachineSubscribe(PlayerAction.SYNC_RIGID_CONTEXT)]
+        [XMachineSubscribe(PlayerAction.SYNC_RIGID_CONTEXT_ACTION_TYPE)]
         public void SyncContext(XMachineAction _)
         {
             PlayerActor playerActor = (PlayerActor)actor;
@@ -21,7 +21,7 @@ namespace ND25.Component.Character.Player.Effects
             });
         }
 
-        [XMachineSubscribe(PlayerAction.FORCE_JUMP)]
+        [XMachineSubscribe(PlayerAction.FORCE_JUMP_ACTION_TYPE)]
         public void ForceJump(XMachineAction _)
         {
             PlayerActor playerActor = (PlayerActor)actor;
@@ -33,7 +33,7 @@ namespace ND25.Component.Character.Player.Effects
             playerActor.ForceJump();
         }
 
-        [XMachineSubscribe(PlayerAction.MOVE_TRANSITION)]
+        [XMachineSubscribe(PlayerAction.MOVE_TRANSITION_ACTION_TYPE)]
         public void MoveTransition(XMachineAction _)
         {
             PlayerActor playerActor = (PlayerActor)actor;

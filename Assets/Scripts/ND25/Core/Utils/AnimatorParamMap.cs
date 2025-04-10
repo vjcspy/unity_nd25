@@ -9,65 +9,37 @@ namespace ND25.Core.Utils
     /// </summary>
     public abstract class AnimatorParamMap<TEnum> where TEnum : Enum
     {
-        readonly Animator animator;
-        readonly Dictionary<string, int> _nameToHash = new Dictionary<string, int>();
+        private readonly Dictionary<TEnum, int> _nameToHash = new Dictionary<TEnum, int>();
+        private readonly Animator animator;
 
         protected AnimatorParamMap(Animator animator)
         {
             this.animator = animator;
-            foreach (TEnum value in Enum.GetValues(typeof(TEnum)))
+            foreach (TEnum value in Enum.GetValues(enumType: typeof(TEnum)))
             {
                 string name = value.ToString();
-                int hash = Animator.StringToHash(name);
-                _nameToHash[name] = hash;
+                int hash = Animator.StringToHash(name: name);
+                _nameToHash[key: value] = hash;
             }
         }
-
-        /// <summary>
-        ///     Truy cập bằng enum an toàn.
-        /// </summary>
-        public int Get(TEnum param)
+        private int Get(TEnum param)
         {
-            return _nameToHash[param.ToString()];
+            return _nameToHash[key: param];
         }
 
-        /// <summary>
-        ///     Truy cập bằng string. Có fallback nếu không tìm thấy.
-        /// </summary>
-        public int Get(string name)
+        public void UpdateIntParam(TEnum param, int value)
         {
-            // return _nameToHash.TryGetValue(name, out int hash) ? hash : Animator.StringToHash(name); // fallback để không crash
-            return _nameToHash[name];
+            animator.SetInteger(id: Get(param: param), value: value);
         }
 
-        public void UpdateParam(TEnum param, int value)
+        public void UpdateFloatParam(TEnum param, float value)
         {
-            animator.SetInteger(Get(param), value);
+            animator.SetFloat(id: Get(param: param), value: value);
         }
 
-        public void UpdateParam(TEnum param, float value)
+        public void UpdateBoolParam(TEnum param, bool value)
         {
-            animator.SetFloat(Get(param), value);
-        }
-
-        public void UpdateParam(TEnum param, bool value)
-        {
-            animator.SetBool(Get(param), value);
-        }
-
-        public void UpdateParam(string param, bool value)
-        {
-            animator.SetBool(Get(param), value);
-        }
-
-        public void UpdateParam(string param, float value)
-        {
-            animator.SetFloat(Get(param), value);
-        }
-
-        public void UpdateParam(string param, int value)
-        {
-            animator.SetInteger(Get(param), value);
+            animator.SetBool(id: Get(param: param), value: value);
         }
     }
 }

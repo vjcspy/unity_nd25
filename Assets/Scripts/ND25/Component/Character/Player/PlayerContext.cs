@@ -1,10 +1,10 @@
 ﻿namespace ND25.Component.Character.Player
 {
-    public struct PlayerContext
+    public class PlayerContext
     {
-        public float xInput;
-        public float xVelocity;
-        public float yVelocity;
-        public float lastJumpTime;
+        public float lastJumpTime = 0f;
+        public float xInput = 0f;
+        public float xVelocity = 0f;
+        public float yVelocity = 0f;
     }
 }

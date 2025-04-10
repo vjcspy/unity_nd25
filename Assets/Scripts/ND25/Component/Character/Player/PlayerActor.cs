@@ -1,8 +1,10 @@
 ﻿using ND25.Component.Character.Player.Effects;
 using ND25.Component.Character.Player.States;
 using ND25.Core.XMachine;
+using ND25.Util.Common.Enum;
 using R3;
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 namespace ND25.Component.Character.Player
 {
@@ -18,22 +20,23 @@ namespace ND25.Component.Character.Player
         private void HandleAnimation()
         {
             machine.reactiveContext.CombineLatest(source2: machine.reactiveCurrentStateId, resultSelector: (context, stateId) => (Context: context, StateId: stateId))
-                .ThrottleLast(timeSpan: TimeSpan.FromMilliseconds(value: 50))
+                .ThrottleLast(timeSpan: TimeSpan.FromMilliseconds(value: 100))
                 .Subscribe(
                     onNext: x =>
                     {
                         Flip(xVelocity: x.Context.xVelocity);
-                        animatorParam.UpdateParam(param: PlayerAnimatorParamType.yVelocity, value: x.Context.yVelocity);
+
                         switch (x.StateId)
                         {
                             case PlayerState.Idle:
-                                animatorParam.UpdateParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Idle);
+                                animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Idle);
                                 break;
                             case PlayerState.Move:
-                                animatorParam.UpdateParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Move);
+                                animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Move);
                                 break;
                             case PlayerState.Air:
-                                animatorParam.UpdateParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Air);
+                                animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Air);
+                                animatorParam.UpdateFloatParam(param: PlayerAnimatorParamType.yVelocity, value: x.Context.yVelocity);
                                 break;
                         }
                     }
@@ -60,12 +63,20 @@ namespace ND25.Component.Character.Player
 
         public void Flip(float xVelocity)
         {
+            if (Mathf.Approximately(a: xVelocity, b: 0f)) return;
+
             transform.localScale = xVelocity switch
             {
-                > 0 => new Vector3(x: 1, y: 1, z: 1),
-                < 0 => new Vector3(x: -1, y: 1, z: 1),
+                > 0 => FacingDirection.FacingRight,
+                < 0 => FacingDirection.FacingLeft,
                 _ => transform.localScale
             };
+        }
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.AggressiveInlining)]
+        private static bool ApproximatelyEqual(float a, float b)
+        {
+            return Mathf.Abs(f: a - b) < 0.001f;
         }
 
         #endregion

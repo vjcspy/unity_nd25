@@ -59,46 +59,32 @@ namespace ND25.Core.XMachine
     public class XMachineAction
     {
         public static readonly XMachineAction Empty = new XMachineAction(type: "Empty");
-        public static readonly XMachineAction Transition = new XMachineAction(type: "Transition");
-        public XMachineAction(string type, object payload = null)
+        public XMachineAction(string type)
         {
             this.type = type;
-            this.payload = payload;
         }
-
-        public XMachineAction(Enum type, object payload = null)
-        {
-            this.type = type.ToString();
-            this.payload = payload;
-        }
-
-        public object payload { get; }
 
         public string type { get; }
-
-        public XMachineAction Factory(object data)
-        {
-            return new XMachineAction(type: type, payload: data);
-        }
     }
 
-    public class XMachineActionFactory<PayloadType>
+    public class XMachineActionWithPayload<PayloadType> : XMachineAction
     {
-        public readonly string type;
-
-        public XMachineActionFactory(string type)
+        public XMachineActionWithPayload(string type, PayloadType payload) : base(type: type)
         {
-            this.type = type;
+            this.payload = payload;
         }
 
-        public XMachineAction Create(PayloadType payload)
-        {
-            var payloadDict = new Dictionary<string, object>
-            {
-                { "data", payload }
-            };
+        public PayloadType payload { get; private set; }
 
-            return new XMachineAction(type: type, payload: payloadDict);
+        public XMachineActionWithPayload<PayloadType> Create(PayloadType payload)
+        {
+            return new XMachineActionWithPayload<PayloadType>(type: type, payload: payload);
+        }
+
+        public XMachineActionWithPayload<PayloadType> WithPayload(PayloadType payload)
+        {
+            this.payload = payload;
+            return this;
         }
     }
 
@@ -121,12 +107,12 @@ namespace ND25.Core.XMachine
             get;
         }
 
-        public abstract HashSet<int> allowedEvents { get; }
+        public virtual HashSet<int> allowedEvents { get; } = new HashSet<int>();
 
 
         protected void InvokeAction(XMachineAction action)
         {
-            actor.machine.InvokeAction(action: action);
+            actor.machine.InvokeAction(action: action, callFromStateId: id);
         }
 
         public void SetContext(Func<ContextType, ContextType> contextUpdater)
@@ -176,13 +162,18 @@ namespace ND25.Core.XMachine
             return reactiveContext.Value;
         }
 
-        public void InvokeAction(XMachineAction action)
+        public void InvokeAction(XMachineAction action, Enum callFromStateId)
         {
-            if (action.type == XMachineAction.Transition.type)
+            if (!Equals(objA: callFromStateId, objB: GetCurrentStateId()))
             {
-                Transition(toStateId: (Enum)action.payload);
                 return;
             }
+
+            InvokeAction(action: action);
+        }
+
+        private void InvokeAction(XMachineAction action)
+        {
             actionSubject.OnNext(value: action);
         }
 
@@ -352,7 +343,7 @@ namespace ND25.Core.XMachine
 
         public void SetContext(Func<ContextType, ContextType> contextUpdater)
         {
-            reactiveContext.Value = contextUpdater(arg: reactiveContext.Value);
+            reactiveContext.OnNext(value: contextUpdater(arg: reactiveContext.Value));
         }
     }
 

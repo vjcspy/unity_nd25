@@ -9,14 +9,14 @@ namespace ND25.Component.Character.Player.States
         public PlayerAirState(Enum id, XMachineActor<PlayerContext> actor) : base(id: id, actor: actor)
         {
         }
-        public override HashSet<int> allowedEvents { get; } = new HashSet<int>();
         public override void Entry()
         {
         }
         public override void FixedUpdate()
         {
             InvokeAction(action: PlayerAction.SyncRigidContextAction);
-            InvokeAction(action: PlayerAction.MoveHandlerAction);
+            InvokeAction(action: PlayerAction.XInputListenAction);
+            InvokeAction(action: PlayerAction.CheckFallGroundAction);
         }
         public override void Update()
         {
