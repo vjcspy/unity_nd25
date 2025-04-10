@@ -60,31 +60,25 @@ namespace ND25.Core.XMachine
     {
         public static readonly XMachineAction Empty = new XMachineAction(type: "Empty");
         public static readonly XMachineAction Transition = new XMachineAction(type: "Transition");
-        public XMachineAction(string type, Dictionary<string, object> payload = null)
+        public XMachineAction(string type, object payload = null)
         {
             this.type = type;
             this.payload = payload;
         }
 
-        public XMachineAction(Enum type, Dictionary<string, object> payload = null)
+        public XMachineAction(Enum type, object payload = null)
         {
             this.type = type.ToString();
             this.payload = payload;
         }
 
-        public Dictionary<string, object> payload { get; private set; }
+        public object payload { get; }
 
         public string type { get; }
 
-        public XMachineAction WithPayload(Dictionary<string, object> payload)
+        public XMachineAction Factory(object data)
         {
-            this.payload = payload;
-            return this;
-        }
-
-        public static XMachineAction Create(Enum type, Dictionary<string, object> payload = null)
-        {
-            return new XMachineAction(type: type, payload: payload);
+            return new XMachineAction(type: type, payload: data);
         }
     }
 
@@ -165,25 +159,30 @@ namespace ND25.Core.XMachine
     public class XMachine<ContextType>
     {
         private readonly Subject<XMachineAction> actionSubject = new Subject<XMachineAction>();
-        public readonly ReactiveProperty<ContextType> context;
+        public readonly ReactiveProperty<ContextType> reactiveContext;
         private readonly Observable<XMachineAction> sharedActionStream;
         private DisposableBag disposable;
 
         private Dictionary<Enum, XMachineState<ContextType>> states;
         public XMachine(ContextType initialContext)
         {
-            context = new ReactiveProperty<ContextType>(value: initialContext);
+            reactiveContext = new ReactiveProperty<ContextType>(value: initialContext);
             sharedActionStream = actionSubject.Share();
         }
-        public ReactiveProperty<Enum> currentStateId { get; } = new ReactiveProperty<Enum>();
+        public ReactiveProperty<Enum> reactiveCurrentStateId { get; } = new ReactiveProperty<Enum>();
 
         public ContextType GetContextValue()
         {
-            return context.Value;
+            return reactiveContext.Value;
         }
 
         public void InvokeAction(XMachineAction action)
         {
+            if (action.type == XMachineAction.Transition.type)
+            {
+                Transition(toStateId: (Enum)action.payload);
+                return;
+            }
             actionSubject.OnNext(value: action);
         }
 
@@ -194,7 +193,7 @@ namespace ND25.Core.XMachine
 
         public Enum GetCurrentStateId()
         {
-            return currentStateId.Value;
+            return reactiveCurrentStateId.Value;
         }
         public XMachineState<ContextType> GetState(Enum id)
         {
@@ -210,7 +209,7 @@ namespace ND25.Core.XMachine
         {
             initialStateId ??= states.First().Key;
 
-            currentStateId.Value = initialStateId;
+            reactiveCurrentStateId.Value = initialStateId;
             Debug.Log(message: "Entering initial state: " + initialStateId);
             GetCurrentState().Entry();
 
@@ -241,10 +240,8 @@ namespace ND25.Core.XMachine
                 return;
             }
 
-            Debug.Log(message: "Exiting state: " + GetCurrentStateId());
             GetCurrentState().Exit();
-            currentStateId.Value = toStateId;
-            Debug.Log(message: "Entering state: " + toStateId);
+            reactiveCurrentStateId.Value = toStateId;
             GetCurrentState().Entry();
         }
 
@@ -355,8 +352,7 @@ namespace ND25.Core.XMachine
 
         public void SetContext(Func<ContextType, ContextType> contextUpdater)
         {
-            // context.OnNext(contextUpdater(context.Value));
-            contextUpdater(arg: context.Value);
+            reactiveContext.Value = contextUpdater(arg: reactiveContext.Value);
         }
     }
 
@@ -407,6 +403,11 @@ namespace ND25.Core.XMachine
         protected void OnDestroy()
         {
             machine.Stop();
+        }
+
+        protected void LogStateChange()
+        {
+            machine.reactiveCurrentStateId.Subscribe(onNext: state => Debug.Log(message: "State changed to: " + state));
         }
 
         protected abstract ContextType ConfigureInitialContext();

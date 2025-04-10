@@ -17,12 +17,12 @@ namespace ND25.Component.Character.Player
 
         private void HandleAnimation()
         {
-            machine.context.CombineLatest(source2: machine.currentStateId, resultSelector: (context, stateId) => (Context: context, StateId: stateId))
-                .ThrottleLast(timeSpan: TimeSpan.FromMilliseconds(value: 100))
+            machine.reactiveContext.CombineLatest(source2: machine.reactiveCurrentStateId, resultSelector: (context, stateId) => (Context: context, StateId: stateId))
+                .ThrottleLast(timeSpan: TimeSpan.FromMilliseconds(value: 50))
                 .Subscribe(
                     onNext: x =>
                     {
-                        Flip();
+                        Flip(xVelocity: x.Context.xVelocity);
                         animatorParam.UpdateParam(param: PlayerAnimatorParamType.yVelocity, value: x.Context.yVelocity);
                         switch (x.StateId)
                         {
@@ -58,9 +58,9 @@ namespace ND25.Component.Character.Player
             rb.AddForce(force: jumpForceVector, mode: ForceMode2D.Impulse);
         }
 
-        public void Flip()
+        public void Flip(float xVelocity)
         {
-            transform.localScale = rb.linearVelocity.x switch
+            transform.localScale = xVelocity switch
             {
                 > 0 => new Vector3(x: 1, y: 1, z: 1),
                 < 0 => new Vector3(x: -1, y: 1, z: 1),
@@ -97,6 +97,7 @@ namespace ND25.Component.Character.Player
         {
             base.Start();
             HandleAnimation();
+            LogStateChange();
         }
 
         protected override PlayerContext ConfigureInitialContext()
@@ -137,7 +138,7 @@ namespace ND25.Component.Character.Player
         [SerializeField]
         private float moveSpeed = 5f;
         [SerializeField]
-        private float jumpForce = 2f;
+        private float jumpForce = 5f;
 
         #endregion
 

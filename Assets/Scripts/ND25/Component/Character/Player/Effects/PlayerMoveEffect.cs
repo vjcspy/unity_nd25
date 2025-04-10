@@ -14,14 +14,12 @@ namespace ND25.Component.Character.Player.Effects
         {
             PlayerActor playerActor = (PlayerActor)actor;
             Vector2 moveInput = playerActor.pcControls.GamePlay.Move.ReadValue<Vector2>();
-            playerActor.SetVelocity(moveInput);
+            playerActor.SetVelocity(moveInput: moveInput);
             playerActor.machine.SetContext(contextUpdater: playerContext =>
             {
                 playerContext.xInput = moveInput.x;
                 return playerContext;
             });
-
-            playerActor.machine.Transition(toStateId: moveInput.x != 0 ? PlayerState.Move : PlayerState.Idle);
         }
     }
 }

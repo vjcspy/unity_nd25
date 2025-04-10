@@ -19,12 +19,13 @@ namespace ND25.Component.Character.Player.States
         }
         public override void FixedUpdate()
         {
+            InvokeAction(action: PlayerAction.SyncRigidContextAction);
             InvokeAction(action: PlayerAction.MoveHandlerAction);
-            InvokeAction(action: PlayerAction.JumpHandlerAction);
+            InvokeAction(action: PlayerAction.MoveTransitionAction);
         }
         public override void Update()
         {
-
+            InvokeAction(action: PlayerAction.JumpHandlerAction);
         }
         public override void Exit()
         {

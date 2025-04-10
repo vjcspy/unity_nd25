@@ -1,5 +1,5 @@
 ﻿using ND25.Core.XMachine;
-using R3;
+using UnityEngine;
 namespace ND25.Component.Character.Player.Effects
 {
     public class PlayerEffect : XMachineEffect<PlayerContext>
@@ -7,23 +7,37 @@ namespace ND25.Component.Character.Player.Effects
         public PlayerEffect(XMachineActor<PlayerContext> actor) : base(actor: actor)
         {
         }
-        [XMachineEffect]
-        public XMachineActionHandler SyncContext()
+
+        [XMachineSubscribe(PlayerAction.SYNC_RIGID_CONTEXT)]
+        public void SyncContext(XMachineAction _)
         {
-            return upstream => upstream.OfAction(actions: new[]
+            PlayerActor playerActor = (PlayerActor)actor;
+            playerActor.machine.SetContext(contextUpdater: playerContext =>
             {
-                PlayerAction.SyncRigidContextAction
-            }).Select(selector: _ =>
-            {
-                PlayerActor playerActor = (PlayerActor)actor;
-                playerActor.machine.SetContext(contextUpdater: playerContext =>
-                {
-                    playerContext.xVelocity = playerActor.rb.linearVelocityX;
-                    playerContext.yVelocity = playerActor.rb.linearVelocityY;
-                    return playerContext;
-                });
-                return XMachineAction.Empty;
+                playerContext.xVelocity = playerActor.rb.linearVelocityX;
+                playerContext.yVelocity = playerActor.rb.linearVelocityY;
+
+                return playerContext;
             });
+        }
+
+        [XMachineSubscribe(PlayerAction.FORCE_JUMP)]
+        public void ForceJump(XMachineAction _)
+        {
+            PlayerActor playerActor = (PlayerActor)actor;
+            playerActor.machine.SetContext(contextUpdater: context =>
+            {
+                context.lastJumpTime = Time.time;
+                return context;
+            });
+            playerActor.ForceJump();
+        }
+
+        [XMachineSubscribe(PlayerAction.MOVE_TRANSITION)]
+        public void MoveTransition(XMachineAction _)
+        {
+            PlayerActor playerActor = (PlayerActor)actor;
+            playerActor.machine.Transition(toStateId: playerActor.machine.GetContextValue().xInput != 0 ? PlayerState.Move : PlayerState.Idle);
         }
     }
 }

@@ -3,28 +3,26 @@ using System;
 using System.Collections.Generic;
 namespace ND25.Component.Character.Player.States
 {
-    public class PlayerAirState: XMachineState<PlayerContext>
+    public class PlayerAirState : XMachineState<PlayerContext>
     {
 
-        public PlayerAirState(Enum id, XMachineActor<PlayerContext> actor) : base(id, actor)
+        public PlayerAirState(Enum id, XMachineActor<PlayerContext> actor) : base(id: id, actor: actor)
         {
         }
         public override HashSet<int> allowedEvents { get; } = new HashSet<int>();
         public override void Entry()
         {
-            throw new NotImplementedException();
         }
         public override void FixedUpdate()
         {
-            throw new NotImplementedException();
+            InvokeAction(action: PlayerAction.SyncRigidContextAction);
+            InvokeAction(action: PlayerAction.MoveHandlerAction);
         }
         public override void Update()
         {
-            throw new NotImplementedException();
         }
         public override void Exit()
         {
-            throw new NotImplementedException();
         }
     }
 }
