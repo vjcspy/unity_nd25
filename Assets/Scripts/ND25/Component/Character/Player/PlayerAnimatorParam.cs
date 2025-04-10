@@ -5,14 +5,16 @@ namespace ND25.Component.Character.Player
     internal enum PlayerAnimatorState
     {
         Idle = 0,
-        Move = 1
+        Move = 1,
+        Air = 2,
+        PrimaryAttack = 3
     }
 
     internal enum PlayerAnimatorParamType
     {
-        state = 0,
-        yVelocity = 1,
-        primaryCount = 2
+        state,
+        yVelocity,
+        primaryCount
     }
 
     internal class PlayerAnimatorParam : AnimatorParamMap<PlayerAnimatorParamType>

@@ -12,11 +12,54 @@ namespace ND25.Core.XMachine
     public class XMachineEffectAttribute : Attribute
     {
     }
+
+    [AttributeUsage(validOn: AttributeTargets.Method, Inherited = false)]
+    public class XMachineSubscribeAttribute : Attribute
+    {
+
+        public XMachineSubscribeAttribute(params object[] subscribedTypes)
+        {
+            SubscribedTypes = new HashSet<string>(collection: subscribedTypes.Select(selector: type =>
+            {
+                switch (type)
+                {
+                    case Enum enumValue:
+                        return enumValue.ToString();
+
+                    case string str:
+                        return str;
+
+                    case Type t when typeof(XMachineAction).IsAssignableFrom(c: t):
+                        {
+                            // Tạo một instance giả định để lấy giá trị "type"
+                            try
+                            {
+                                XMachineAction instance = Activator.CreateInstance(type: t) as XMachineAction;
+                                if (instance == null || string.IsNullOrEmpty(value: instance.type))
+                                    throw new ArgumentException(message: $"Class '{t.Name}' must have non-null type property.");
+                                return instance.type;
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new ArgumentException(message: $"Failed to instantiate or extract 'type' from {t.Name}: {ex.Message}");
+                            }
+                        }
+
+                    default:
+                        throw new ArgumentException(message: "Subscribed types must be Enum, string, or subclass of XMachineAction.");
+                }
+            }));
+        }
+        public HashSet<string> SubscribedTypes { get; }
+    }
+
     public delegate Observable<XMachineAction> XMachineActionHandler(Observable<XMachineAction> upstream);
+    public delegate void XMachineActionSubscriber(XMachineAction action);
 
     public class XMachineAction
     {
         public static readonly XMachineAction Empty = new XMachineAction(type: "Empty");
+        public static readonly XMachineAction Transition = new XMachineAction(type: "Transition");
         public XMachineAction(string type, Dictionary<string, object> payload = null)
         {
             this.type = type;
@@ -29,9 +72,15 @@ namespace ND25.Core.XMachine
             this.payload = payload;
         }
 
-        public Dictionary<string, object> payload { get; }
+        public Dictionary<string, object> payload { get; private set; }
 
         public string type { get; }
+
+        public XMachineAction WithPayload(Dictionary<string, object> payload)
+        {
+            this.payload = payload;
+            return this;
+        }
 
         public static XMachineAction Create(Enum type, Dictionary<string, object> payload = null)
         {
@@ -104,6 +153,11 @@ namespace ND25.Core.XMachine
 
         public abstract void Exit();
 
+        public virtual bool SelfTransition()
+        {
+            return false;
+        }
+
         #endregion
 
     }
@@ -111,7 +165,7 @@ namespace ND25.Core.XMachine
     public class XMachine<ContextType>
     {
         private readonly Subject<XMachineAction> actionSubject = new Subject<XMachineAction>();
-        private readonly ReactiveProperty<ContextType> context;
+        public readonly ReactiveProperty<ContextType> context;
         private readonly Observable<XMachineAction> sharedActionStream;
         private DisposableBag disposable;
 
@@ -121,9 +175,9 @@ namespace ND25.Core.XMachine
             context = new ReactiveProperty<ContextType>(value: initialContext);
             sharedActionStream = actionSubject.Share();
         }
-        private ReactiveProperty<Enum> currentStateId { get; } = new ReactiveProperty<Enum>();
+        public ReactiveProperty<Enum> currentStateId { get; } = new ReactiveProperty<Enum>();
 
-        public ContextType GetContext()
+        public ContextType GetContextValue()
         {
             return context.Value;
         }
@@ -157,7 +211,7 @@ namespace ND25.Core.XMachine
             initialStateId ??= states.First().Key;
 
             currentStateId.Value = initialStateId;
-            Debug.Log("Entering initial state: " + initialStateId);
+            Debug.Log(message: "Entering initial state: " + initialStateId);
             GetCurrentState().Entry();
 
             return this;
@@ -182,10 +236,15 @@ namespace ND25.Core.XMachine
 
         public void Transition(Enum toStateId)
         {
-            Debug.Log("Exiting state: " + GetCurrentStateId());
+            if (Equals(objA: toStateId, objB: GetCurrentStateId()) && !GetCurrentState().SelfTransition())
+            {
+                return;
+            }
+
+            Debug.Log(message: "Exiting state: " + GetCurrentStateId());
             GetCurrentState().Exit();
             currentStateId.Value = toStateId;
-            Debug.Log("Entering state: " + toStateId);
+            Debug.Log(message: "Entering state: " + toStateId);
             GetCurrentState().Entry();
         }
 
@@ -227,15 +286,68 @@ namespace ND25.Core.XMachine
             return this;
         }
 
-        public XMachine<ContextType> RegisterActionHandler(XMachineEffect<ContextType>[] actionEffectInstances)
+        public XMachine<ContextType> RegisterEffects(XMachineEffect<ContextType>[] actionEffectInstances)
         {
             Stopwatch sw = Stopwatch.StartNew();
             foreach (var eventEffectInstance in actionEffectInstances)
             {
                 RegisterActionHandler(eventEffectInstance: eventEffectInstance);
+                RegisterActionSubscriber(eventEffectInstance: eventEffectInstance);
             }
             sw.Stop();
             Debug.Log(message: $"Time to register actions: {sw.ElapsedMilliseconds} ms");
+
+            return this;
+        }
+
+        private XMachine<ContextType> RegisterActionSubscriber(XMachineEffect<ContextType> eventEffectInstance)
+        {
+            var methods = eventEffectInstance
+                .GetType()
+                .GetMethods(bindingAttr: BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(predicate: m =>
+                    m.GetCustomAttribute<XMachineSubscribeAttribute>() != null &&
+                    m.ReturnType == typeof(void) &&
+                    m.GetParameters().Length == 1 &&
+                    m.GetParameters()[0].ParameterType == typeof(XMachineAction))
+                .ToList();
+
+            foreach (MethodInfo method in methods)
+            {
+                XMachineSubscribeAttribute attr = method.GetCustomAttribute<XMachineSubscribeAttribute>();
+                var subscribedTypes = attr.SubscribedTypes;
+
+                // Tạo delegate runtime từ MethodInfo
+                Action<XMachineAction> actionDelegate = action =>
+                {
+                    try
+                    {
+                        method.Invoke(obj: eventEffectInstance, parameters: new object[]
+                        {
+                            action
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError(message: $"Error invoking handler '{method.Name}': {ex}");
+                    }
+                };
+
+                RegisterSubscriber(actionSubscriber: actionDelegate, filterTypes: subscribedTypes);
+            }
+
+            return this;
+        }
+
+        public XMachine<ContextType> RegisterSubscriber(Action<XMachineAction> actionSubscriber, HashSet<string> filterTypes)
+        {
+            sharedActionStream
+                .Where(predicate: action => action != XMachineAction.Empty && filterTypes.Contains(item: action.type))
+                .Subscribe(
+                    onNext: actionSubscriber,
+                    onCompleted: HandleError
+                )
+                .AddTo(bag: ref disposable);
 
             return this;
         }
@@ -257,11 +369,11 @@ namespace ND25.Core.XMachine
             this.actor = actor;
         }
 
-        protected ContextType context
+        protected ContextType contextValue
         {
             get
             {
-                return actor.machine.GetContext();
+                return actor.machine.GetContextValue();
             }
         }
     }
@@ -274,7 +386,7 @@ namespace ND25.Core.XMachine
         {
             machine = new XMachine<ContextType>(initialContext: ConfigureInitialContext())
                 .RegisterStates(machineStates: ConfigureMachineStates())
-                .RegisterActionHandler(actionEffectInstances: ConfigureMachineEffects());
+                .RegisterEffects(actionEffectInstances: ConfigureMachineEffects());
         }
 
         protected virtual void Start()

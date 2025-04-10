@@ -4,6 +4,7 @@
     {
         Idle,
         Move,
+        Air,
         PrimaryAttack,
     }
 }

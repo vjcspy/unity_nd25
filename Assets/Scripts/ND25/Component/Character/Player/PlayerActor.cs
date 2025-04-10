@@ -1,7 +1,7 @@
 ﻿using ND25.Component.Character.Player.Effects;
 using ND25.Component.Character.Player.States;
-using ND25.Component.Character.Warrior;
 using ND25.Core.XMachine;
+using R3;
 using System;
 using UnityEngine;
 namespace ND25.Component.Character.Player
@@ -10,10 +10,66 @@ namespace ND25.Component.Character.Player
     {
 
         private Animator animator;
-        internal WarriorAnimatorParam animatorParam;
+        private PlayerAnimatorParam animatorParam;
         internal ObjectChecker objectChecker;
         internal PCControls pcControls;
         internal Rigidbody2D rb;
+
+        private void HandleAnimation()
+        {
+            machine.context.CombineLatest(source2: machine.currentStateId, resultSelector: (context, stateId) => (Context: context, StateId: stateId))
+                .ThrottleLast(timeSpan: TimeSpan.FromMilliseconds(value: 100))
+                .Subscribe(
+                    onNext: x =>
+                    {
+                        Flip();
+                        animatorParam.UpdateParam(param: PlayerAnimatorParamType.yVelocity, value: x.Context.yVelocity);
+                        switch (x.StateId)
+                        {
+                            case PlayerState.Idle:
+                                animatorParam.UpdateParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Idle);
+                                break;
+                            case PlayerState.Move:
+                                animatorParam.UpdateParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Move);
+                                break;
+                            case PlayerState.Air:
+                                animatorParam.UpdateParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Air);
+                                break;
+                        }
+                    }
+                );
+        }
+
+        #region ActorCapability
+
+        public void SetVelocity(Vector2 moveInput)
+        {
+            Vector2 velocity = new Vector2(x: moveInput.x * moveSpeed, y: rb.linearVelocity.y);
+            rb.linearVelocity = velocity;
+        }
+        public void ForceJump()
+        {
+            if (!objectChecker.isGrounded)
+            {
+                return;
+            }
+
+            Vector2 jumpForceVector = Vector2.up * jumpForce;
+            rb.AddForce(force: jumpForceVector, mode: ForceMode2D.Impulse);
+        }
+
+        public void Flip()
+        {
+            transform.localScale = rb.linearVelocity.x switch
+            {
+                > 0 => new Vector3(x: 1, y: 1, z: 1),
+                < 0 => new Vector3(x: -1, y: 1, z: 1),
+                _ => transform.localScale
+            };
+        }
+
+        #endregion
+
 
         #region Configuration
 
@@ -34,8 +90,15 @@ namespace ND25.Component.Character.Player
             rb = GetComponent<Rigidbody2D>();
             objectChecker = GetComponent<ObjectChecker>();
             pcControls = new PCControls();
-            animatorParam = new WarriorAnimatorParam(animator: animator);
+            animatorParam = new PlayerAnimatorParam(animator: animator);
         }
+
+        protected override void Start()
+        {
+            base.Start();
+            HandleAnimation();
+        }
+
         protected override PlayerContext ConfigureInitialContext()
         {
             return new PlayerContext();
@@ -47,6 +110,7 @@ namespace ND25.Component.Character.Player
             {
                 new PlayerIdleState(id: PlayerState.Idle, actor: this),
                 new PlayerMoveState(id: PlayerState.Move, actor: this),
+                new PlayerAirState(id: PlayerState.Air, actor: this),
                 new PlayerPrimaryAttackState(id: PlayerState.PrimaryAttack, actor: this)
             };
         }
@@ -54,7 +118,9 @@ namespace ND25.Component.Character.Player
         {
             return new XMachineEffect<PlayerContext>[]
             {
-                new PlayerMoveEffect(actor: this)
+                new PlayerEffect(actor: this),
+                new PlayerMoveEffect(actor: this),
+                new PlayerAirEffect(actor: this)
             };
         }
 
@@ -69,9 +135,9 @@ namespace ND25.Component.Character.Player
 
         [Header(header: "Movement Settings")]
         [SerializeField]
-        internal float moveSpeed = 5f;
+        private float moveSpeed = 5f;
         [SerializeField]
-        internal float jumpForce = 2f;
+        private float jumpForce = 2f;
 
         #endregion
 

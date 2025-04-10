@@ -19,7 +19,8 @@ namespace ND25.Component.Character.Player.States
         }
         public override void FixedUpdate()
         {
-            InvokeAction(action: PlayerAction.MoveHandler);
+            InvokeAction(action: PlayerAction.MoveHandlerAction);
+            InvokeAction(action: PlayerAction.JumpHandlerAction);
         }
         public override void Update()
         {

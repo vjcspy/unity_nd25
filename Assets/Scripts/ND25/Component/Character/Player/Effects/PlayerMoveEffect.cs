@@ -1,5 +1,4 @@
 ﻿using ND25.Core.XMachine;
-using R3;
 using UnityEngine;
 namespace ND25.Component.Character.Player.Effects
 {
@@ -10,24 +9,19 @@ namespace ND25.Component.Character.Player.Effects
         {
         }
 
-        [XMachineEffect]
-        public XMachineActionHandler MoveHandler()
+        [XMachineSubscribe(PlayerAction.MOVE_HANDLER)]
+        public void MoveHandler(XMachineAction _)
         {
-            return upstream => upstream
-                .OfAction(actions: new[]
-                {
-                    PlayerAction.MoveHandler
-                })
-                .Select(
-                    selector: _ =>
-                    {
-                        PlayerActor playerActor = (PlayerActor)actor;
-                        Vector2 xInput = playerActor.pcControls.GamePlay.Move.ReadValue<Vector2>();
-                        Vector2 newVelocity = new Vector2(x: xInput.x * playerActor.moveSpeed, y: playerActor.rb.linearVelocity.y);
-                        playerActor.rb.linearVelocity = newVelocity;
-                        return XMachineAction.Empty;
-                    }
-                );
+            PlayerActor playerActor = (PlayerActor)actor;
+            Vector2 moveInput = playerActor.pcControls.GamePlay.Move.ReadValue<Vector2>();
+            playerActor.SetVelocity(moveInput);
+            playerActor.machine.SetContext(contextUpdater: playerContext =>
+            {
+                playerContext.xInput = moveInput.x;
+                return playerContext;
+            });
+
+            playerActor.machine.Transition(toStateId: moveInput.x != 0 ? PlayerState.Move : PlayerState.Idle);
         }
     }
 }
