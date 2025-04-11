@@ -1,14 +1,26 @@
 ﻿using UnityEngine;
 namespace ND25.Util.Common.Enum
 {
-    public enum HorizontalDirection : sbyte
+    public class Direction
+    {
+        public static XDirection ConvertToXDirection(float velocity)
+        {
+            return velocity > 0 ? XDirection.Right : velocity < 0 ? XDirection.Left : XDirection.None;
+        }
+
+        public static YDirection ConvertToYDirection(float velocity)
+        {
+            return velocity > 0 ? YDirection.Up : velocity < 0 ? YDirection.Down : YDirection.None;
+        }
+    }
+    public enum XDirection : sbyte
     {
         Left = -1,
         None = 0,
         Right = 1
     }
 
-    public enum VerticalDirection : sbyte
+    public enum YDirection : sbyte
     {
         Down = -1,
         None = 0,

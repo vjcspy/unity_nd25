@@ -1,4 +1,5 @@
 ﻿using ND25.Core.XMachine;
+using ND25.Util.Common.Enum;
 using R3;
 using UnityEngine;
 namespace ND25.Component.Character.Player.Effects
@@ -20,7 +21,7 @@ namespace ND25.Component.Character.Player.Effects
                     Vector2 moveInput = playerActor.pcControls.GamePlay.Move.ReadValue<Vector2>();
                     playerActor.machine.SetContext(contextUpdater: playerContext =>
                     {
-                        playerContext.xInput = moveInput.x;
+                        playerContext.xInput = Direction.ConvertToXDirection(moveInput.x);
                         return playerContext;
                     });
                     playerActor.SetVelocity(moveInput: moveInput);

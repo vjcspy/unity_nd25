@@ -34,8 +34,7 @@ namespace ND25.Core.XMachine
                             // Tạo một instance giả định để lấy giá trị "type"
                             try
                             {
-                                XMachineAction instance = Activator.CreateInstance(type: t) as XMachineAction;
-                                if (instance == null || string.IsNullOrEmpty(value: instance.type))
+                                if (Activator.CreateInstance(type: t) is not XMachineAction instance || string.IsNullOrEmpty(value: instance.type))
                                     throw new ArgumentException(message: $"Class '{t.Name}' must have non-null type property.");
                                 return instance.type;
                             }

@@ -36,7 +36,7 @@ namespace ND25.Component.Character.Player
                                 break;
                             case PlayerState.Air:
                                 animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Air);
-                                animatorParam.UpdateFloatParam(param: PlayerAnimatorParamType.yVelocity, value: x.Context.yVelocity);
+                                animatorParam.UpdateFloatParam(param: PlayerAnimatorParamType.yVelocity, value: (float)x.Context.yVelocity);
                                 break;
                         }
                     }
@@ -61,26 +61,24 @@ namespace ND25.Component.Character.Player
             rb.AddForce(force: jumpForceVector, mode: ForceMode2D.Impulse);
         }
 
-        public void Flip(float xVelocity)
+        public void Flip(XDirection xVelocity)
         {
-            if (Mathf.Approximately(a: xVelocity, b: 0f)) return;
+            if (xVelocity == XDirection.None)
+            {
+                return;
+            }
 
             transform.localScale = xVelocity switch
             {
-                > 0 => FacingDirection.FacingRight,
-                < 0 => FacingDirection.FacingLeft,
+                XDirection.Right => FacingDirection.FacingRight,
+                XDirection.Left => FacingDirection.FacingLeft,
                 _ => transform.localScale
             };
         }
 
         [MethodImpl(methodImplOptions: MethodImplOptions.AggressiveInlining)]
-        private static bool ApproximatelyEqual(float a, float b)
-        {
-            return Mathf.Abs(f: a - b) < 0.001f;
-        }
 
         #endregion
-
 
         #region Configuration
 

@@ -1,4 +1,5 @@
 ﻿using ND25.Core.XMachine;
+using ND25.Util.Common.Enum;
 using UnityEngine;
 namespace ND25.Component.Character.Player.Effects
 {
@@ -14,8 +15,8 @@ namespace ND25.Component.Character.Player.Effects
             PlayerActor playerActor = (PlayerActor)actor;
             playerActor.machine.SetContext(contextUpdater: playerContext =>
             {
-                playerContext.xVelocity = playerActor.rb.linearVelocityX;
-                playerContext.yVelocity = playerActor.rb.linearVelocityY;
+                playerContext.xVelocity = Direction.ConvertToXDirection(playerActor.rb.linearVelocityX);
+                playerContext.yVelocity = Direction.ConvertToYDirection(playerActor.rb.linearVelocityY);
 
                 return playerContext;
             });
