@@ -23,9 +23,8 @@ namespace ND25.Component.Character.Player.Effects
             {
                 return action.OfAction(xAction: PlayerAction.JumpInputListenAction).Select(selector: _ =>
                 {
-                    PlayerActor playerActor = (PlayerActor)actor;
 
-                    if (!playerActor.pcControls.GamePlay.Jump.triggered || !playerActor.objectChecker.isGrounded)
+                    if (!actor.pcControls.GamePlay.Jump.triggered || !actor.objectChecker.isGrounded)
                     {
                         return XMachineAction.Empty;
                     }
@@ -42,10 +41,9 @@ namespace ND25.Component.Character.Player.Effects
                 .ThrottleLast(timeSpan: TimeSpan.FromMilliseconds(value: 100))
                 .Select(selector: _ =>
                 {
-                    PlayerActor playerActor = (PlayerActor)actor;
-                    if (playerActor.objectChecker.isGrounded)
+                    if (actor.objectChecker.isGrounded)
                     {
-                        playerActor.machine.Transition(toStateId: PlayerState.Idle);
+                        actor.machine.Transition(toStateId: PlayerState.Idle);
                     }
 
                     return XMachineAction.Empty;
@@ -59,10 +57,9 @@ namespace ND25.Component.Character.Player.Effects
                 .ThrottleLast(timeSpan: TimeSpan.FromMilliseconds(value: 100))
                 .Select(selector: _ =>
                 {
-                    PlayerActor playerActor = (PlayerActor)actor;
-                    if (!playerActor.objectChecker.isGrounded)
+                    if (!actor.objectChecker.isGrounded)
                     {
-                        playerActor.machine.Transition(toStateId: PlayerState.Air);
+                        actor.machine.Transition(toStateId: PlayerState.Air);
                     }
 
                     return XMachineAction.Empty;

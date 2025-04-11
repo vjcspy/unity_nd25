@@ -22,7 +22,6 @@ namespace ND25.Component.Character.Player.Effects
                     playerActor.machine.SetContext(contextUpdater: playerContext =>
                     {
                         playerContext.xInput = Direction.ConvertToXDirection(moveInput.x);
-                        return playerContext;
                     });
                     playerActor.SetVelocity(moveInput: moveInput);
                     return XMachineAction.Empty;

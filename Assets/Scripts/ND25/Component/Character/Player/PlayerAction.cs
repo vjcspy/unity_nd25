@@ -17,6 +17,6 @@ namespace ND25.Component.Character.Player
         public static readonly XMachineAction CheckFallGroundAction = new XMachineAction(type: "CheckFallGroundAction");
         public static readonly XMachineAction CheckNotInGroundAction = new XMachineAction(type: "CheckNotInGroundAction");
 
-        public static readonly XMachineAction PrimaryAttackListenAction = new XMachineAction(type: "PrimaryAttackListenAction");
+        public static readonly XMachineAction PrimaryAttackTriggerAction = new XMachineAction(type: "PrimaryAttackTriggerAction");
     }
 }

@@ -1,4 +1,5 @@
-﻿using R3;
+﻿using ND25.Component.Character;
+using R3;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -96,7 +97,7 @@ namespace ND25.Core.XMachine
             this.id = id;
         }
 
-        private XMachineActor<ContextType> actor
+        protected XMachineActor<ContextType> actor
         {
             get;
         }
@@ -106,7 +107,7 @@ namespace ND25.Core.XMachine
             get;
         }
 
-        public virtual HashSet<int> allowedEvents { get; } = new HashSet<int>();
+        public virtual HashSet<int> allowedEvents { get; } = null;
 
 
         protected void InvokeAction(XMachineAction action)
@@ -114,7 +115,7 @@ namespace ND25.Core.XMachine
             actor.machine.InvokeAction(action: action, callFromStateId: id);
         }
 
-        public void SetContext(Func<ContextType, ContextType> contextUpdater)
+        public void SetContext(Action<ContextType> contextUpdater)
         {
             actor.machine.SetContext(contextUpdater: contextUpdater);
         }
@@ -135,6 +136,11 @@ namespace ND25.Core.XMachine
         public virtual bool SelfTransition()
         {
             return false;
+        }
+
+        public virtual void OnAnimationFinish()
+        {
+            // Do nothing
         }
 
         #endregion
@@ -225,14 +231,17 @@ namespace ND25.Core.XMachine
 
         public void Transition(Enum toStateId)
         {
-            if (Equals(objA: toStateId, objB: GetCurrentStateId()) && !GetCurrentState().SelfTransition())
+            if (
+                Equals(objA: toStateId, objB: GetCurrentStateId())
+                // && !GetCurrentState().SelfTransition()
+                )
             {
                 return;
             }
 
             GetCurrentState().Exit();
+            states[key: toStateId].Entry();
             reactiveCurrentStateId.Value = toStateId;
-            GetCurrentState().Entry();
         }
 
         public XMachine<ContextType> RegisterAction(XMachineActionHandler eventHandler)
@@ -340,9 +349,10 @@ namespace ND25.Core.XMachine
         }
 
 
-        public void SetContext(Func<ContextType, ContextType> contextUpdater)
+        public void SetContext(Action<ContextType> contextUpdater)
         {
-            reactiveContext.OnNext(value: contextUpdater(arg: reactiveContext.Value));
+            contextUpdater(obj: reactiveContext.Value);
+            reactiveContext.OnNext(value: reactiveContext.Value);
         }
     }
 
@@ -366,6 +376,10 @@ namespace ND25.Core.XMachine
 
     public abstract class XMachineActor<ContextType> : MonoBehaviour
     {
+        public Rigidbody2D rb;
+        public ObjectChecker objectChecker;
+        public PCControls pcControls;
+        public Animator animator;
         public XMachine<ContextType> machine { private set; get; }
 
         protected virtual void Awake()

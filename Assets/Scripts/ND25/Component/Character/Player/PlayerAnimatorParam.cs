@@ -14,7 +14,7 @@ namespace ND25.Component.Character.Player
     {
         state,
         yVelocity,
-        primaryCount
+        primaryAttackCount
     }
 
     internal class PlayerAnimatorParam : AnimatorParamMap<PlayerAnimatorParamType>

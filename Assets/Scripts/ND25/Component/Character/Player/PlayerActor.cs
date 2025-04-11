@@ -6,25 +6,20 @@ using R3;
 using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.InputSystem;
 namespace ND25.Component.Character.Player
 {
     public class PlayerActor : XMachineActor<PlayerContext>
     {
-
-        private Animator animator;
         private PlayerAnimatorParam animatorParam;
-        internal ObjectChecker objectChecker;
-        internal PCControls pcControls;
-        internal Rigidbody2D rb;
-
         private void HandleAnimation()
         {
             machine.reactiveContext.CombineLatest(source2: machine.reactiveCurrentStateId, resultSelector: (context, stateId) => (Context: context, StateId: stateId))
-                .ThrottleLast(timeSpan: TimeSpan.FromMilliseconds(value: 100))
                 .Subscribe(
                     onNext: x =>
                     {
                         Flip(xVelocity: x.Context.xVelocity);
+                        animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.primaryAttackCount, value: x.Context.primaryAttackCount);
 
                         switch (x.StateId)
                         {
@@ -37,6 +32,9 @@ namespace ND25.Component.Character.Player
                             case PlayerState.Air:
                                 animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Air);
                                 animatorParam.UpdateFloatParam(param: PlayerAnimatorParamType.yVelocity, value: (float)x.Context.yVelocity);
+                                break;
+                            case PlayerState.PrimaryAttack:
+                                animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.PrimaryAttack);
                                 break;
                         }
                     }
@@ -76,6 +74,11 @@ namespace ND25.Component.Character.Player
             };
         }
 
+        private void PrimaryAttackInputListen(InputAction.CallbackContext context)
+        {
+            machine.Transition(toStateId: PlayerState.PrimaryAttack);
+        }
+
         [MethodImpl(methodImplOptions: MethodImplOptions.AggressiveInlining)]
 
         #endregion
@@ -85,10 +88,12 @@ namespace ND25.Component.Character.Player
         private void OnEnable()
         {
             pcControls.GamePlay.Enable();
+            pcControls.GamePlay.PrimaryAttack.performed += PrimaryAttackInputListen;
         }
         private void OnDisable()
         {
             pcControls.GamePlay.Disable();
+            pcControls.GamePlay.PrimaryAttack.performed -= PrimaryAttackInputListen;
         }
 
         protected override void Awake()
@@ -130,7 +135,8 @@ namespace ND25.Component.Character.Player
             {
                 new PlayerEffect(actor: this),
                 new PlayerMoveEffect(actor: this),
-                new PlayerAirEffect(actor: this)
+                new PlayerAirEffect(actor: this),
+                new PlayerPrimaryAttackEffect(actor: this)
             };
         }
 
