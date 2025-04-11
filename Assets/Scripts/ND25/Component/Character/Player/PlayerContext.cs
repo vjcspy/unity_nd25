@@ -7,7 +7,7 @@ namespace ND25.Component.Character.Player
         public int primaryAttackCount = 0;
 
         public XDirection xInput = XDirection.None;
-        public XDirection xVelocity = XDirection.None;
+        // public XDirection xVelocity = XDirection.None;
         public YDirection yVelocity = YDirection.None;
     }
 }

@@ -5,6 +5,7 @@
         Idle,
         Move,
         Air,
+        Jump,
         PrimaryAttack,
     }
 }

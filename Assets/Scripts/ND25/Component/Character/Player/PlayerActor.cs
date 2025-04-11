@@ -18,9 +18,6 @@ namespace ND25.Component.Character.Player
                 .Subscribe(
                     onNext: x =>
                     {
-                        Flip(xVelocity: x.Context.xVelocity);
-                        animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.primaryAttackCount, value: x.Context.primaryAttackCount);
-
                         switch (x.StateId)
                         {
                             case PlayerState.Idle:
@@ -30,13 +27,18 @@ namespace ND25.Component.Character.Player
                                 animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Move);
                                 break;
                             case PlayerState.Air:
+                            case PlayerState.Jump:
                                 animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Air);
                                 animatorParam.UpdateFloatParam(param: PlayerAnimatorParamType.yVelocity, value: (float)x.Context.yVelocity);
                                 break;
                             case PlayerState.PrimaryAttack:
                                 animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.PrimaryAttack);
+                                animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.primaryAttackCount, value: x.Context.primaryAttackCount);
                                 break;
                         }
+
+                        // Because flip depend on xInput and it's in context
+                        Flip();
                     }
                 );
         }
@@ -50,23 +52,18 @@ namespace ND25.Component.Character.Player
         }
         public void ForceJump()
         {
-            if (!objectChecker.isGrounded)
-            {
-                return;
-            }
-
             Vector2 jumpForceVector = Vector2.up * jumpForce;
             rb.AddForce(force: jumpForceVector, mode: ForceMode2D.Impulse);
         }
 
-        public void Flip(XDirection xVelocity)
+        private void Flip()
         {
-            if (xVelocity == XDirection.None)
+            if (machine.GetContextValue().xInput == XDirection.None)
             {
                 return;
             }
 
-            transform.localScale = xVelocity switch
+            transform.localScale = machine.GetContextValue().xInput switch
             {
                 XDirection.Right => FacingDirection.FacingRight,
                 XDirection.Left => FacingDirection.FacingLeft,
@@ -74,27 +71,39 @@ namespace ND25.Component.Character.Player
             };
         }
 
-        private void PrimaryAttackInputListen(InputAction.CallbackContext context)
-        {
-            machine.Transition(toStateId: PlayerState.PrimaryAttack);
-        }
+
 
         [MethodImpl(methodImplOptions: MethodImplOptions.AggressiveInlining)]
 
         #endregion
 
-        #region Configuration
+        #region InputListener
 
         private void OnEnable()
         {
             pcControls.GamePlay.Enable();
-            pcControls.GamePlay.PrimaryAttack.performed += PrimaryAttackInputListen;
+            pcControls.GamePlay.PrimaryAttack.performed += PrimaryAttackInputListener;
+            pcControls.GamePlay.Jump.performed += JumpInputListener;
         }
         private void OnDisable()
         {
             pcControls.GamePlay.Disable();
-            pcControls.GamePlay.PrimaryAttack.performed -= PrimaryAttackInputListen;
+            pcControls.GamePlay.PrimaryAttack.performed -= PrimaryAttackInputListener;
+            pcControls.GamePlay.Jump.performed -= JumpInputListener;
         }
+        private void PrimaryAttackInputListener(InputAction.CallbackContext context)
+        {
+            machine.Transition(toStateId: PlayerState.PrimaryAttack);
+        }
+
+        private void JumpInputListener(InputAction.CallbackContext context)
+        {
+            machine.Transition(toStateId: PlayerState.Jump);
+        }
+
+        #endregion
+
+        #region Configuration
 
         protected override void Awake()
         {
@@ -126,7 +135,8 @@ namespace ND25.Component.Character.Player
                 new PlayerIdleState(id: PlayerState.Idle, actor: this),
                 new PlayerMoveState(id: PlayerState.Move, actor: this),
                 new PlayerAirState(id: PlayerState.Air, actor: this),
-                new PlayerPrimaryAttackState(id: PlayerState.PrimaryAttack, actor: this)
+                new PlayerPrimaryAttackState(id: PlayerState.PrimaryAttack, actor: this),
+                new PlayerJumpState(id: PlayerState.Jump, actor: this)
             };
         }
         protected override XMachineEffect<PlayerContext>[] ConfigureMachineEffects()

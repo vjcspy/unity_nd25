@@ -12,24 +12,6 @@ namespace ND25.Component.Character.Player.Effects
         }
 
         [XMachineEffect]
-        public XMachineActionHandler JumpInputListenAction()
-        {
-            return action =>
-            {
-                return action.OfAction(xAction: PlayerAction.JumpInputListenAction).Select(selector: _ =>
-                {
-
-                    if (!actor.pcControls.GamePlay.Jump.triggered || !actor.objectChecker.isGrounded)
-                    {
-                        return XMachineAction.Empty;
-                    }
-
-                    return PlayerAction.ForceJumpAction;
-                });
-            };
-        }
-
-        [XMachineEffect]
         public XMachineActionHandler CheckFallGround()
         {
             return action => action.OfAction(xAction: PlayerAction.CheckFallGroundAction)

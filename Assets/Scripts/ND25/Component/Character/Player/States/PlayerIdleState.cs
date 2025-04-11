@@ -1,6 +1,5 @@
 ﻿using ND25.Core.XMachine;
 using System;
-using System.Collections.Generic;
 namespace ND25.Component.Character.Player.States
 {
     public class PlayerIdleState : XMachineState<PlayerContext>
@@ -10,20 +9,21 @@ namespace ND25.Component.Character.Player.States
         {
         }
 
-
+        internal override bool Guard()
+        {
+            return actor.objectChecker.isGrounded;
+        }
         internal override void Entry()
         {
         }
         internal override void FixedUpdate()
         {
-            InvokeAction(action: PlayerAction.SyncRigidContextAction);
+            InvokeAction(action: PlayerAction.SyncVelocityContextAction);
             InvokeAction(action: PlayerAction.CheckNotInGroundAction);
-            InvokeAction(action: PlayerAction.MoveTransitionAction);
         }
         internal override void Update()
         {
-            InvokeAction(action: PlayerAction.XInputListenAction);
-            InvokeAction(action: PlayerAction.JumpInputListenAction);
+            InvokeAction(action: PlayerAction.MoveAction.SetBool(PlayerAction.DataKey.Transtion, true));
         }
         internal override void Exit()
         {

@@ -8,18 +8,5 @@ namespace ND25.Component.Character.Player.Effects
         public PlayerPrimaryAttackEffect(PlayerActor actor) : base(actor: actor)
         {
         }
-
-        [XMachineEffect]
-        public XMachineActionHandler PrimaryAttackHandler()
-        {
-            return upstream => upstream.OfAction(xAction: PlayerAction.PrimaryAttackTriggerAction)
-                .Select(selector: _ =>
-                {
-                    actor.machine.Transition(toStateId: PlayerState.PrimaryAttack);
-
-                    return XMachineAction.Empty;
-                });
-        }
-
     }
 }

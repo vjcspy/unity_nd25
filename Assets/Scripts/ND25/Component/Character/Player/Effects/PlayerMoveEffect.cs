@@ -14,16 +14,22 @@ namespace ND25.Component.Character.Player.Effects
         [XMachineEffect]
         public XMachineActionHandler MoveHandler()
         {
-            return upstream => upstream.OfAction(xAction: PlayerAction.XInputListenAction)
-                .Select(selector: _ =>
+            return upstream => upstream.OfAction(xAction: PlayerAction.MoveAction)
+                .Select(selector: action =>
                 {
                     PlayerActor playerActor = (PlayerActor)actor;
                     Vector2 moveInput = playerActor.pcControls.GamePlay.Move.ReadValue<Vector2>();
                     playerActor.machine.SetContext(contextUpdater: playerContext =>
                     {
-                        playerContext.xInput = Direction.ConvertToXDirection(moveInput.x);
+                        playerContext.xInput = Direction.ConvertToXDirection(velocity: moveInput.x);
                     });
                     playerActor.SetVelocity(moveInput: moveInput);
+
+                    if (action.GetBool(key: PlayerAction.DataKey.Transtion))
+                    {
+                        playerActor.machine.Transition(toStateId: moveInput.x != 0 ? PlayerState.Move : PlayerState.Idle);
+                    }
+
                     return XMachineAction.Empty;
                 });
         }

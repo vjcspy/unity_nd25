@@ -73,25 +73,31 @@ namespace ND25.Core.XMachine
             return intValues.GetValueOrDefault(key: key);
         }
 
-        public void SetInt(Enum key, int value)
+        public XMachineAction SetInt(Enum key, int value)
         {
             intValues[key: key] = value;
+
+            return this;
         }
         public float GetFloat(Enum key)
         {
             return floatValues.GetValueOrDefault(key: key);
         }
-        public void SetFloat(Enum key, float value)
+        public XMachineAction SetFloat(Enum key, float value)
         {
             floatValues[key: key] = value;
+
+            return this;
         }
         public bool GetBool(Enum key)
         {
             return boolValues.GetValueOrDefault(key: key);
         }
-        public void SetBool(Enum key, bool value)
+        public XMachineAction SetBool(Enum key, bool value)
         {
             boolValues[key: key] = value;
+
+            return this;
         }
 
         public string GetString(Enum key)
@@ -411,6 +417,7 @@ namespace ND25.Core.XMachine
         public Animator animator;
         public PCControls pcControls;
         public XMachine<ContextType> machine { private set; get; }
+
 
         protected virtual void Awake()
         {

@@ -1,6 +1,5 @@
 ﻿using ND25.Core.XMachine;
 using System;
-using System.Collections.Generic;
 namespace ND25.Component.Character.Player.States
 {
     public class PlayerAirState : XMachineState<PlayerContext>
@@ -14,8 +13,8 @@ namespace ND25.Component.Character.Player.States
         }
         internal override void FixedUpdate()
         {
-            InvokeAction(action: PlayerAction.SyncRigidContextAction);
-            InvokeAction(action: PlayerAction.XInputListenAction);
+            InvokeAction(action: PlayerAction.SyncVelocityContextAction);
+            InvokeAction(action: PlayerAction.MoveAction);
             InvokeAction(action: PlayerAction.CheckFallGroundAction);
         }
         internal override void Update()
