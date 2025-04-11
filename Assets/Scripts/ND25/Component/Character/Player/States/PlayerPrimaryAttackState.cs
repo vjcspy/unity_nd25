@@ -21,19 +21,10 @@ namespace ND25.Component.Character.Player.States
                 });
             }
 
-
-            // Just for test
-            if (actor.machine.GetContextValue().primaryAttackCount != 2) return;
-
-            Vector2 jumpForceVector = Vector2.up * 3;
-            actor.rb.AddForce(force: jumpForceVector, mode: ForceMode2D.Impulse);
-
-        }
-        internal override void FixedUpdate()
-        {
-        }
-        internal override void Update()
-        {
+            if (actor.machine.GetContextValue().primaryAttackCount == 2)
+            {
+                InvokeAction(action: PlayerAction.ForceJump.SetFloat(key: PlayerAction.DataKey.JumpForce, value: 3));
+            }
         }
         internal override void Exit()
         {

@@ -13,20 +13,14 @@ namespace ND25.Component.Character.Player.States
         {
             return actor.objectChecker.isGrounded;
         }
-        internal override void Entry()
-        {
-        }
         internal override void FixedUpdate()
         {
-            InvokeAction(action: PlayerAction.SyncVelocityContextAction);
-            InvokeAction(action: PlayerAction.CheckNotInGroundAction);
+            InvokeStateAction(action: PlayerAction.SyncVelocityContextAction);
+            InvokeStateAction(action: PlayerAction.CheckNotInGroundAction);
         }
         internal override void Update()
         {
-            InvokeAction(action: PlayerAction.MoveAction.SetBool(PlayerAction.DataKey.Transtion, true));
-        }
-        internal override void Exit()
-        {
+            InvokeStateAction(action: PlayerAction.MoveAction.SetBool(PlayerAction.DataKey.Transtion, true));
         }
     }
 }

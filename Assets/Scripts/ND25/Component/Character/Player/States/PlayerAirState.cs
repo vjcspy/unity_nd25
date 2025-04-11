@@ -8,20 +8,11 @@ namespace ND25.Component.Character.Player.States
         public PlayerAirState(Enum id, XMachineActor<PlayerContext> actor) : base(id: id, actor: actor)
         {
         }
-        internal override void Entry()
-        {
-        }
         internal override void FixedUpdate()
         {
-            InvokeAction(action: PlayerAction.SyncVelocityContextAction);
-            InvokeAction(action: PlayerAction.MoveAction);
-            InvokeAction(action: PlayerAction.CheckFallGroundAction);
-        }
-        internal override void Update()
-        {
-        }
-        internal override void Exit()
-        {
+            InvokeStateAction(action: PlayerAction.SyncVelocityContextAction);
+            InvokeStateAction(action: PlayerAction.MoveAction);
+            InvokeStateAction(action: PlayerAction.CheckFallGroundAction);
         }
     }
 }

@@ -135,9 +135,14 @@ namespace ND25.Core.XMachine
         public virtual HashSet<int> allowedEvents { get; } = null;
 
 
+        protected void InvokeStateAction(XMachineAction action)
+        {
+            actor.machine.InvokeStateAction(action: action, callFromStateId: id);
+        }
+
         protected void InvokeAction(XMachineAction action)
         {
-            actor.machine.InvokeAction(action: action, callFromStateId: id);
+            actor.machine.InvokeAction(action: action);
         }
 
         public void SetContext(Action<ContextType> contextUpdater)
@@ -151,22 +156,14 @@ namespace ND25.Core.XMachine
         // Instead of wrapping logic trong các method xử lý thì sẽ để các inheritance tự handle
         // Kiểu gì sau này cũng sẽ cần custom nên làm càng simple càng dễ mở rộng
         // </summary>
-        internal abstract void Entry();
+        internal virtual void Entry() { }
 
-        internal abstract void FixedUpdate();
-        internal abstract void Update();
+        internal virtual void FixedUpdate() { }
+        internal virtual void Update() { }
 
-        internal abstract void Exit();
+        internal virtual void Exit() { }
 
-        internal virtual bool SelfTransition()
-        {
-            return false;
-        }
-
-        internal virtual void OnAnimationFinish()
-        {
-            // Do nothing
-        }
+        internal virtual void OnAnimationFinish() { }
 
         internal virtual bool Guard()
         {
@@ -197,7 +194,7 @@ namespace ND25.Core.XMachine
             return reactiveContext.Value;
         }
 
-        public void InvokeAction(XMachineAction action, Enum callFromStateId)
+        public void InvokeStateAction(XMachineAction action, Enum callFromStateId)
         {
             if (!Equals(objA: callFromStateId, objB: GetCurrentStateId()))
             {
@@ -207,7 +204,7 @@ namespace ND25.Core.XMachine
             InvokeAction(action: action);
         }
 
-        private void InvokeAction(XMachineAction action)
+        public void InvokeAction(XMachineAction action)
         {
             actionSubject.OnNext(value: action);
         }

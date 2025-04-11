@@ -118,7 +118,7 @@ namespace ND25.Component.Character.Player
         {
             base.Start();
             HandleAnimation();
-            LogStateChange();
+            // LogStateChange();
         }
 
         protected override PlayerContext ConfigureInitialContext()

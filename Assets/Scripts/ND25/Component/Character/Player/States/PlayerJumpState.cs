@@ -10,9 +10,7 @@ namespace ND25.Component.Character.Player.States
         }
         internal override void Entry()
         {
-            base.Entry();
-            PlayerActor playerActor = (PlayerActor)actor;
-            playerActor.ForceJump();
+            InvokeAction(action: PlayerAction.ForceJump);
         }
         internal override bool Guard()
         {
