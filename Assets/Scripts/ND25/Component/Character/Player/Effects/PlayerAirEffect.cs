@@ -50,7 +50,6 @@ namespace ND25.Component.Character.Player.Effects
                 {
                     PlayerActor playerActor = (PlayerActor)actor;
                     float jumpForce = action.GetFloat(key: PlayerAction.DataKey.JumpForce);
-                    Debug.Log("Jump Force: " + jumpForce);
                     if (jumpForce == 0)
                     {
                         playerActor.ForceJump();
