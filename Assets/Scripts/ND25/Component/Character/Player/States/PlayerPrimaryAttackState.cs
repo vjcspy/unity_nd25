@@ -11,7 +11,7 @@ namespace ND25.Component.Character.Player.States
         {
         }
 
-        public override void Entry()
+        internal override void Entry()
         {
             if (actor.machine.GetContextValue().lastPrimaryAttackTime < Time.time - 0.2f || actor.machine.GetContextValue().primaryAttackCount > 2)
             {
@@ -29,13 +29,13 @@ namespace ND25.Component.Character.Player.States
             actor.rb.AddForce(force: jumpForceVector, mode: ForceMode2D.Impulse);
 
         }
-        public override void FixedUpdate()
+        internal override void FixedUpdate()
         {
         }
-        public override void Update()
+        internal override void Update()
         {
         }
-        public override void Exit()
+        internal override void Exit()
         {
             SetContext(contextUpdater: context =>
             {
@@ -44,7 +44,7 @@ namespace ND25.Component.Character.Player.States
             });
         }
 
-        public override void OnAnimationFinish()
+        internal override void OnAnimationFinish()
         {
             actor.machine.Transition(toStateId: PlayerState.Idle);
         }

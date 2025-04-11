@@ -52,9 +52,7 @@ namespace ND25.Core.XMachine
         }
         public HashSet<string> SubscribedTypes { get; }
     }
-
     public delegate Observable<XMachineAction> XMachineActionHandler(Observable<XMachineAction> upstream);
-    public delegate void XMachineActionSubscriber(XMachineAction action);
 
     public class XMachineAction
     {
@@ -147,21 +145,26 @@ namespace ND25.Core.XMachine
         // Instead of wrapping logic trong các method xử lý thì sẽ để các inheritance tự handle
         // Kiểu gì sau này cũng sẽ cần custom nên làm càng simple càng dễ mở rộng
         // </summary>
-        public abstract void Entry();
+        internal abstract void Entry();
 
-        public abstract void FixedUpdate();
-        public abstract void Update();
+        internal abstract void FixedUpdate();
+        internal abstract void Update();
 
-        public abstract void Exit();
+        internal abstract void Exit();
 
-        public virtual bool SelfTransition()
+        internal virtual bool SelfTransition()
         {
             return false;
         }
 
-        public virtual void OnAnimationFinish()
+        internal virtual void OnAnimationFinish()
         {
             // Do nothing
+        }
+
+        internal virtual bool Guard()
+        {
+            return true;
         }
 
         #endregion
@@ -256,6 +259,12 @@ namespace ND25.Core.XMachine
                 Equals(objA: toStateId, objB: GetCurrentStateId())
                 // && !GetCurrentState().SelfTransition()
                 )
+            {
+                // TODO: Currently, we don't allow self transition, so only need to check if the state is different
+                return;
+            }
+
+            if (!states[key: toStateId].Guard())
             {
                 return;
             }
