@@ -10,11 +10,6 @@ namespace ND25.Component.Character.Player.Effects
         public PlayerAirEffect(XMachineActor<PlayerContext> actor) : base(actor: actor)
         {
         }
-        private static IEnumerable<XMachineAction> GetJumpSequenceActions()
-        {
-            yield return PlayerAction.ForceJumpAction;
-            yield return new XMachineActionWithPayload<Enum>(type: "", payload: PlayerState.Air);
-        }
 
         [XMachineEffect]
         public XMachineActionHandler JumpInputListenAction()

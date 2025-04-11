@@ -59,35 +59,56 @@ namespace ND25.Core.XMachine
     public class XMachineAction
     {
         public static readonly XMachineAction Empty = new XMachineAction(type: "Empty");
+        private readonly Dictionary<Enum, bool> boolValues = new Dictionary<Enum, bool>();
+        private readonly Dictionary<Enum, float> floatValues = new Dictionary<Enum, float>();
+        private readonly Dictionary<Enum, int> intValues = new Dictionary<Enum, int>();
+        private readonly Dictionary<Enum, string> stringValues = new Dictionary<Enum, string>();
         public XMachineAction(string type)
         {
             this.type = type;
         }
 
         public string type { get; }
+
+        public int GetInt(Enum key)
+        {
+            return intValues.GetValueOrDefault(key: key);
+        }
+
+        public void SetInt(Enum key, int value)
+        {
+            intValues[key: key] = value;
+        }
+        public float GetFloat(Enum key)
+        {
+            return floatValues.GetValueOrDefault(key: key);
+        }
+        public void SetFloat(Enum key, float value)
+        {
+            floatValues[key: key] = value;
+        }
+        public bool GetBool(Enum key)
+        {
+            return boolValues.GetValueOrDefault(key: key);
+        }
+        public void SetBool(Enum key, bool value)
+        {
+            boolValues[key: key] = value;
+        }
+
+        public string GetString(Enum key)
+        {
+            return stringValues.GetValueOrDefault(key: key);
+        }
+
+        public void Clear()
+        {
+            intValues.Clear();
+            floatValues.Clear();
+            boolValues.Clear();
+            stringValues.Clear();
+        }
     }
-
-    public class XMachineActionWithPayload<PayloadType> : XMachineAction
-    {
-        public XMachineActionWithPayload(string type, PayloadType payload) : base(type: type)
-        {
-            this.payload = payload;
-        }
-
-        public PayloadType payload { get; private set; }
-
-        public XMachineActionWithPayload<PayloadType> Create(PayloadType payload)
-        {
-            return new XMachineActionWithPayload<PayloadType>(type: type, payload: payload);
-        }
-
-        public XMachineActionWithPayload<PayloadType> WithPayload(PayloadType payload)
-        {
-            this.payload = payload;
-            return this;
-        }
-    }
-
 
     public abstract class XMachineState<ContextType>
     {
@@ -378,8 +399,8 @@ namespace ND25.Core.XMachine
     {
         public Rigidbody2D rb;
         public ObjectChecker objectChecker;
-        public PCControls pcControls;
         public Animator animator;
+        public PCControls pcControls;
         public XMachine<ContextType> machine { private set; get; }
 
         protected virtual void Awake()
