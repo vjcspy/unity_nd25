@@ -71,8 +71,6 @@ namespace ND25.Component.Character.Player
             };
         }
 
-
-
         [MethodImpl(methodImplOptions: MethodImplOptions.AggressiveInlining)]
 
         #endregion

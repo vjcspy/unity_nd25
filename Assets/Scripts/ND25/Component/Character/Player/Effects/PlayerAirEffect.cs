@@ -1,7 +1,6 @@
 ﻿using ND25.Core.XMachine;
 using R3;
 using System;
-using System.Collections.Generic;
 namespace ND25.Component.Character.Player.Effects
 {
     public class PlayerAirEffect : XMachineEffect<PlayerContext>
@@ -28,10 +27,9 @@ namespace ND25.Component.Character.Player.Effects
         }
 
         [XMachineEffect]
-        public XMachineActionHandler CheckFalling()
+        public XMachineActionHandler CheckNotInGroundAction()
         {
             return action => action.OfAction(xAction: PlayerAction.CheckNotInGroundAction)
-                .ThrottleLast(timeSpan: TimeSpan.FromMilliseconds(value: 100))
                 .Select(selector: _ =>
                 {
                     if (!actor.objectChecker.isGrounded)
