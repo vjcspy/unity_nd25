@@ -1,4 +1,4 @@
-﻿using ND25.Component.Character;
+﻿using ND25.Gameplay.Character;
 using R3;
 using System;
 using System.Collections.Generic;
