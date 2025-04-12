@@ -7,5 +7,7 @@
         Air,
         Jump,
         PrimaryAttack,
+        AimSword,
+        CatchSword,
     }
 }

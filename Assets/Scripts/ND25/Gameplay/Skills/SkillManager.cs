@@ -63,13 +63,13 @@ namespace ND25.Gameplay.Skills
 
     public class SkillManager : MonoBehaviour
     {
-        [SerializeField] private List<SkillData> equippedSkills;
+        [SerializeField] private List<SkillData> availableSkills;
 
         private Dictionary<SkillId, Skill> skills = new Dictionary<SkillId, Skill>();
 
         private void Awake()
         {
-            foreach (SkillData skillData in equippedSkills)
+            foreach (SkillData skillData in availableSkills)
             {
                 Skill skill = new Skill(gameObject: gameObject, skillData: skillData);
                 skills.Add(skillData.id, skill);

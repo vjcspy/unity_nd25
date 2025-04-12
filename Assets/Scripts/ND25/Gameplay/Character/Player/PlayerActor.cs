@@ -35,6 +35,9 @@ namespace ND25.Gameplay.Character.Player
                                 animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.PrimaryAttack);
                                 animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.primaryAttackCount, value: x.Context.primaryAttackCount);
                                 break;
+                            case PlayerState.AimSword:
+                                animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.AimSword);
+                                break;
                         }
 
                         // Because flip depend on xInput and it's in context
@@ -80,14 +83,18 @@ namespace ND25.Gameplay.Character.Player
         private void OnEnable()
         {
             pcControls.GamePlay.Enable();
-            pcControls.GamePlay.PrimaryAttack.performed += PrimaryAttackInputListener;
-            pcControls.GamePlay.Jump.performed += JumpInputListener;
+            pcControls.GamePlay.PrimaryAttack.started += PrimaryAttackInputListener;
+            pcControls.GamePlay.Jump.started += JumpInputListener;
+            pcControls.GamePlay.ThrowSword.performed += ThrowSwordInputListener;
+            pcControls.GamePlay.ThrowSword.canceled += ThrowSwordInputReleaseListener;
         }
         private void OnDisable()
         {
             pcControls.GamePlay.Disable();
-            pcControls.GamePlay.PrimaryAttack.performed -= PrimaryAttackInputListener;
-            pcControls.GamePlay.Jump.performed -= JumpInputListener;
+            pcControls.GamePlay.PrimaryAttack.started -= PrimaryAttackInputListener;
+            pcControls.GamePlay.Jump.started -= JumpInputListener;
+            pcControls.GamePlay.ThrowSword.performed -= ThrowSwordInputListener;
+            pcControls.GamePlay.ThrowSword.canceled -= ThrowSwordInputReleaseListener;
         }
         private void PrimaryAttackInputListener(InputAction.CallbackContext context)
         {
@@ -97,6 +104,16 @@ namespace ND25.Gameplay.Character.Player
         private void JumpInputListener(InputAction.CallbackContext context)
         {
             machine.Transition(toStateId: PlayerState.Jump);
+        }
+
+        private void ThrowSwordInputListener(InputAction.CallbackContext context)
+        {
+            machine.Transition(toStateId: PlayerState.AimSword);
+        }
+
+        private void ThrowSwordInputReleaseListener(InputAction.CallbackContext context)
+        {
+            machine.Transition(toStateId: PlayerState.Idle);
         }
 
         #endregion
@@ -134,7 +151,9 @@ namespace ND25.Gameplay.Character.Player
                 new PlayerMoveState(id: PlayerState.Move, actor: this),
                 new PlayerAirState(id: PlayerState.Air, actor: this),
                 new PlayerPrimaryAttackState(id: PlayerState.PrimaryAttack, actor: this),
-                new PlayerJumpState(id: PlayerState.Jump, actor: this)
+                new PlayerJumpState(id: PlayerState.Jump, actor: this),
+                new PlayerAimSwordState(id: PlayerState.AimSword, actor: this),
+                new PlayerCatchSwordState(id: PlayerState.CatchSword, actor: this)
             };
         }
         protected override XMachineEffect<PlayerContext>[] ConfigureMachineEffects()

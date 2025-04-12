@@ -7,7 +7,10 @@ namespace ND25.Gameplay.Character.Player
         Idle = 0,
         Move = 1,
         Air = 2,
-        PrimaryAttack = 3
+        PrimaryAttack = 3,
+        AimSword = 4,
+        // ThrowSword = 5,
+        CatchSword = 6,
     }
 
     internal enum PlayerAnimatorParamType
