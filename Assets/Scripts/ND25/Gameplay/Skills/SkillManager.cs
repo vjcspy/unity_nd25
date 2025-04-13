@@ -1,4 +1,5 @@
-﻿using ND25.Gameplay.Skills.Base;
+﻿using ND25.Gameplay.Character.Entity;
+using ND25.Gameplay.Skills.Base;
 using System.Collections.Generic;
 using UnityEngine;
 namespace ND25.Gameplay.Skills
@@ -8,21 +9,25 @@ namespace ND25.Gameplay.Skills
         Fireball,
         SuperFireball,
         IceSpike,
-        LightningBolt
+        LightningBolt,
+        ThrowSword
         // Thêm các kỹ năng khác ở đây
     }
 
-    public class Skill
+    public class SkillInstance
     {
         private readonly GameObject gameObject;
         private readonly SkillData skillData;
         private float cooldownRemaining;
 
-        public Skill(GameObject gameObject, SkillData skillData)
+
+        public SkillInstance(GameObject gameObject, SkillData skillData)
         {
             this.gameObject = gameObject;
             this.skillData = skillData;
+            entityXDirection = gameObject.GetComponent<EntityXDirection>();
         }
+        public EntityXDirection entityXDirection { get; set; }
 
         public bool IsReady
         {
@@ -51,13 +56,11 @@ namespace ND25.Gameplay.Skills
             cooldownRemaining = skillData.cooldown;
         }
 
-        private void Activate()
+        public void Activate()
         {
-
-            // Nếu dùng Lua:
-            // LuaManager.Instance.Call(luaCallback, owner);
-
-            // Trigger animation/sound/fx ở đây nếu cần
+            Vector2 position = gameObject.transform.position;
+            Vector2 direction = gameObject.transform.rotation * new Vector2(x: (int)entityXDirection.GetCurrentFacingDirection(), y: 0); // Hoặc hướng mà bạn muốn kỹ năng bay
+            skillData.Activate(position: position, direction: direction);
         }
     }
 
@@ -65,14 +68,34 @@ namespace ND25.Gameplay.Skills
     {
         [SerializeField] private List<SkillData> availableSkills;
 
-        private Dictionary<SkillId, Skill> skills = new Dictionary<SkillId, Skill>();
+        private readonly Dictionary<SkillId, SkillInstance> skillInstances = new Dictionary<SkillId, SkillInstance>();
 
         private void Awake()
         {
             foreach (SkillData skillData in availableSkills)
             {
-                Skill skill = new Skill(gameObject: gameObject, skillData: skillData);
-                skills.Add(skillData.id, skill);
+                SkillInstance skillInstance = new SkillInstance(gameObject: gameObject, skillData: skillData);
+                skillInstances.Add(key: skillData.id, value: skillInstance);
+            }
+        }
+
+        private void Update()
+        {
+            foreach (SkillInstance skill in skillInstances.Values)
+            {
+                skill.Update(deltaTime: Time.deltaTime);
+            }
+        }
+
+        public void ActivateSkill(SkillId skillId)
+        {
+            if (skillInstances.TryGetValue(key: skillId, value: out SkillInstance skillInstance))
+            {
+                skillInstance.Activate();
+            }
+            else
+            {
+                Debug.LogWarning(message: $"Skill {skillId} not found.");
             }
         }
     }

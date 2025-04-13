@@ -21,7 +21,7 @@ namespace ND25.Gameplay.Character.Player.Effects
                     Vector2 moveInput = playerActor.pcControls.GamePlay.Move.ReadValue<Vector2>();
                     playerActor.machine.SetContext(contextUpdater: playerContext =>
                     {
-                        playerContext.xInput = Direction.ConvertToXDirection(velocity: moveInput.x);
+                        playerContext.xInputDirection = Direction.ConvertToXDirection(velocity: moveInput.x);
                     });
                     playerActor.SetVelocity(moveInput: moveInput);
 

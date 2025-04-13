@@ -6,14 +6,11 @@ namespace ND25.Gameplay.Skills.Data
     public class Fireball : SkillData
     {
         [Header(header: "Fireball Settings")]
-        public GameObject fireballPrefab;
         public float speed = 10f;
 
-        protected override void Activate()
+        public override void Activate(Vector2 position, Vector2 direction)
         {
-            GameObject fireball = Instantiate(original: fireballPrefab, position: owner.transform.position + Vector3.forward * 1.5f, rotation: Quaternion.identity);
-            // Gắn thêm logic bay / damage ở prefab fireball.
-            Debug.Log(message: "Fireball casted!");
+            throw new System.NotImplementedException();
         }
     }
 }

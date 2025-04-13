@@ -1,4 +1,5 @@
 ﻿using ND25.Core.XMachine;
+using ND25.Gameplay.Character.Entity;
 using ND25.Gameplay.Character.Player.Effects;
 using ND25.Gameplay.Character.Player.States;
 using ND25.Util.Common.Enum;
@@ -9,7 +10,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 namespace ND25.Gameplay.Character.Player
 {
-    public class PlayerActor : XMachineActor<PlayerContext>
+    public class PlayerActor : XMachineActor<PlayerContext>, EntityXDirection
     {
         private PlayerAnimatorParam animatorParam;
         private void HandleAnimation()
@@ -18,6 +19,8 @@ namespace ND25.Gameplay.Character.Player
                 .Subscribe(
                     onNext: x =>
                     {
+                        SetCurrentFacingDirection(direction: x.Context.xInputDirection);
+
                         switch (x.StateId)
                         {
                             case PlayerState.Idle:
@@ -29,7 +32,7 @@ namespace ND25.Gameplay.Character.Player
                             case PlayerState.Air:
                             case PlayerState.Jump:
                                 animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.Air);
-                                animatorParam.UpdateFloatParam(param: PlayerAnimatorParamType.yVelocity, value: (float)x.Context.yVelocity);
+                                animatorParam.UpdateFloatParam(param: PlayerAnimatorParamType.yVelocity, value: (float)x.Context.yVelocityDirection);
                                 break;
                             case PlayerState.PrimaryAttack:
                                 animatorParam.UpdateIntParam(param: PlayerAnimatorParamType.state, value: (int)PlayerAnimatorState.PrimaryAttack);
@@ -61,12 +64,12 @@ namespace ND25.Gameplay.Character.Player
 
         private void Flip()
         {
-            if (machine.GetContextValue().xInput == XDirection.None)
+            if (GetCurrentFacingDirection() == XDirection.None)
             {
                 return;
             }
 
-            transform.localScale = machine.GetContextValue().xInput switch
+            transform.localScale = GetCurrentFacingDirection() switch
             {
                 XDirection.Right => FacingDirection.FacingRight,
                 XDirection.Left => FacingDirection.FacingLeft,

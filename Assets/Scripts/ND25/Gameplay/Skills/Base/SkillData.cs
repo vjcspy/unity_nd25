@@ -3,14 +3,13 @@ namespace ND25.Gameplay.Skills.Base
 {
     public abstract class SkillData : ScriptableObject
     {
-        [Header("Skill Info")]
-        public SkillId id;
-        public string skillName;
-        public float cooldown;
-        protected float lastUsedTime = -999f;
+        [Header(header: "Skill Info")]
+        [SerializeField] public SkillId id;
+        [SerializeField] public string skillName;
+        [SerializeField] public float cooldown;
+        [SerializeField] public GameObject prefab;
 
-        protected GameObject owner;
+        public abstract void Activate(Vector2 position, Vector2 direction);
 
-        protected abstract void Activate();
     }
 }

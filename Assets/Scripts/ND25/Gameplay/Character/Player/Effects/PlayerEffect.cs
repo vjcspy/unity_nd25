@@ -18,7 +18,7 @@ namespace ND25.Gameplay.Character.Player.Effects
                     actor.machine.SetContext(contextUpdater: playerContext =>
                     {
                         // playerContext.xVelocity = Direction.ConvertToXDirection(velocity: actor.rb.linearVelocityX);
-                        playerContext.yVelocity = Direction.ConvertToYDirection(velocity: actor.rb.linearVelocityY);
+                        playerContext.yVelocityDirection = Direction.ConvertToYDirection(velocity: actor.rb.linearVelocityY);
                     });
                     return XMachineAction.Empty;
                 });

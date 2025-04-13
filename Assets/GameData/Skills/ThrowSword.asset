@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6228ab3f255487486509f942c89d228, type: 3}
+  m_Name: ThrowSword
+  m_EditorClassIdentifier: 
+  id: 4
+  skillName: Warrior Throw Sword
+  cooldown: 5
+  prefab: {fileID: 4234734991941582865, guid: b7047956dbbfb5047bd24f06718c69de, type: 3}
+  swordGravity: 9.8
