@@ -1,5 +1,5 @@
 ﻿using ND25.Core.XMachine;
-using ND25.Gameplay.Character.Entity;
+using ND25.Gameplay.Character.Common;
 using ND25.Gameplay.Character.Player.Effects;
 using ND25.Gameplay.Character.Player.States;
 using ND25.Util.Common.Enum;

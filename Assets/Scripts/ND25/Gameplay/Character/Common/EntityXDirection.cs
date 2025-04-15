@@ -1,5 +1,5 @@
 ﻿using ND25.Util.Common.Enum;
-namespace ND25.Gameplay.Character.Entity
+namespace ND25.Gameplay.Character.Common
 {
     public interface EntityXDirection
     {

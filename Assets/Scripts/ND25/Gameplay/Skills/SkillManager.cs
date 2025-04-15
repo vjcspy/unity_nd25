@@ -1,4 +1,4 @@
-﻿using ND25.Gameplay.Character.Entity;
+﻿using ND25.Gameplay.Character.Common;
 using ND25.Gameplay.Skills.Base;
 using System.Collections.Generic;
 using UnityEngine;
