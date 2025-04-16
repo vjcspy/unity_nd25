@@ -1,8 +1,8 @@
 ﻿using Unity.Entities;
 namespace ND25.Gameplay.Character.WarriorPlayer.Component
 {
-    public struct MoveComponentData : IComponentData
+    public struct MoveData : IComponentData
     {
-        public float moveSpeed;
+        public float speed;
     }
 }
