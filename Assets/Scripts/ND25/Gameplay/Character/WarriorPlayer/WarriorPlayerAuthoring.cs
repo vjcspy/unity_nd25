@@ -6,21 +6,28 @@ namespace ND25.Gameplay.Character.WarriorPlayer
 {
     public class WarriorPlayerAuthoring : MonoBehaviour
     {
-        [SerializeField] private float moveSpeed = 5f;
+        [Header(header: "Warrior Player Visual Prefab")]
+        [SerializeField] public GameObject playerVisualPrefab;
 
-        // Baker để chuyển GameObject thành Entity
-        private class WarriorPlayerAuthoringBaker : Baker<WarriorPlayerAuthoring>
+        [Header(header: "Movement")]
+        [SerializeField] public float moveSpeed = 5f;
+    }
+
+    public class WarriorPlayerAuthoringBaker : Baker<WarriorPlayerAuthoring>
+    {
+        public override void Bake(WarriorPlayerAuthoring authoring)
         {
-            public override void Bake(WarriorPlayerAuthoring authoring)
+            Entity entity = GetEntity(flags: TransformUsageFlags.Dynamic);
+            AddComponent(entity: entity, component: new PlayerInputData());
+            AddComponent(entity: entity, component: new WarriorPlayerMoveData
             {
-                Entity entity = GetEntity(flags: TransformUsageFlags.Dynamic);
-                AddComponent(entity: entity, component: new PlayerInputData());
-                AddComponent(entity: entity, component: new MoveData
-                {
-                    speed = authoring.moveSpeed
-                });
-                AddComponent<WarriorPlayerTag>(entity: entity);
-            }
+                speed = authoring.moveSpeed
+            });
+            AddComponentObject(entity: entity, component: new WarriorPlayerVisualizationRefData
+            {
+                gameObject = authoring.playerVisualPrefab
+            });
+            AddComponent<WarriorPlayerTag>(entity: entity);
         }
     }
 }

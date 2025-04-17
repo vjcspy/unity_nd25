@@ -12,7 +12,7 @@ namespace ND25.Gameplay.Character.WarriorPlayer.System
         {
             // Đăng ký các thành phần cần thiết
             state.RequireForUpdate<PlayerInputData>();
-            state.RequireForUpdate<MoveData>();
+            state.RequireForUpdate<WarriorPlayerMoveData>();
             state.RequireForUpdate<WarriorPlayerTag>();
         }
 
