@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-namespace ND25.Core.Utils
+namespace ND25.Util.Common
 {
     /// <summary>
     ///     Lớp cơ sở ánh xạ từ enum sang Animator parameter hash.
     ///     Không dùng singleton, mỗi subclass cần được khởi tạo riêng.
     /// </summary>
-    public abstract class AnimatorParamMap<TEnum> where TEnum : Enum
+    public abstract class AnimatorParamMap<TEnum> where TEnum : System.Enum
     {
         private readonly Dictionary<TEnum, int> _nameToHash = new Dictionary<TEnum, int>();
         private readonly Animator animator;
@@ -15,7 +14,7 @@ namespace ND25.Core.Utils
         protected AnimatorParamMap(Animator animator)
         {
             this.animator = animator;
-            foreach (TEnum value in Enum.GetValues(enumType: typeof(TEnum)))
+            foreach (TEnum value in System.Enum.GetValues(enumType: typeof(TEnum)))
             {
                 string name = value.ToString();
                 int hash = Animator.StringToHash(name: name);

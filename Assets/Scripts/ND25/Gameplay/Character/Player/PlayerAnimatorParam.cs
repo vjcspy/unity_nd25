@@ -1,4 +1,4 @@
-﻿using ND25.Core.Utils;
+﻿using ND25.Util.Common;
 using UnityEngine;
 namespace ND25.Gameplay.Character.Player
 {
