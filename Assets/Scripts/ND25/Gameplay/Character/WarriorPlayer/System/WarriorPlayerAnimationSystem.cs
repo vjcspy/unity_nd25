@@ -1,10 +1,12 @@
 ﻿using ND25.Gameplay.Character.Common.Component;
 using ND25.Gameplay.Character.Common.System;
 using ND25.Gameplay.Character.WarriorPlayer.Component;
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Transforms;
 namespace ND25.Gameplay.Character.WarriorPlayer.System
 {
+    [BurstCompile]
     [UpdateInGroup(groupType: typeof(SimulationSystemGroup))]
     [UpdateAfter(systemType: typeof(MoveSystem))]
     public partial struct WarriorPlayerAnimationSystem : ISystem
@@ -22,6 +24,7 @@ namespace ND25.Gameplay.Character.WarriorPlayer.System
             state.RequireForUpdate(query: _entityQuery);
         }
 
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
         }

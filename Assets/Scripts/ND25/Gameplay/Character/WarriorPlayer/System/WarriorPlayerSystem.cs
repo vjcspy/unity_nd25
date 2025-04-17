@@ -1,7 +1,8 @@
-﻿using Unity.Entities;
+﻿using Unity.Burst;
+using Unity.Entities;
 namespace ND25.Gameplay.Character.WarriorPlayer.System
 {
-    // [BurstCompile]                                 // Tạm gỡ dòng này nếu muốn log
+    [BurstCompile]                                            // Tạm gỡ dòng này nếu muốn log
     [UpdateInGroup(groupType: typeof(SimulationSystemGroup))] // Nhớ group này phải tồn tại
     public partial struct WarriorPlayerSystem : ISystem
     {
@@ -9,6 +10,7 @@ namespace ND25.Gameplay.Character.WarriorPlayer.System
         {
         }
 
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
         }

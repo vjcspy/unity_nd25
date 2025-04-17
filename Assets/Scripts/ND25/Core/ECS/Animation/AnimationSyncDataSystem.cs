@@ -1,6 +1,5 @@
 ﻿using ND25.Gameplay.Character.Common.Component;
 using ND25.Gameplay.Character.Common.System;
-using ND25.Gameplay.Character.WarriorPlayer.Component;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -14,9 +13,11 @@ namespace ND25.Core.ECS.Animation
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            // Query chỉ chọn những entity đã có đủ cả 3 component
             foreach (var (localTransform, moveData, animData) in
-                SystemAPI.Query<RefRO<LocalTransform>, RefRO<MoveData>, RefRW<AnimationSyncData>>())
+                SystemAPI.Query<RefRO<LocalTransform>, RefRO<MoveData>, RefRW<AnimationSyncData>>()
+                    .WithChangeFilter<LocalTransform>()
+                // .WithChangeFilter<MoveData>()
+                )
             {
                 animData.ValueRW.position = new float3(
                     x: localTransform.ValueRO.Position.x + 0.4f,
