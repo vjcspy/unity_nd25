@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 namespace ND25.Input.InputECS
 {
-    [UpdateInGroup(groupType: typeof(InitializationSystemGroup))]
+    [UpdateInGroup(groupType: typeof(SimulationSystemGroup))]
     public partial class PlayerInputSystem : SystemBase
     {
         private PCControls _pcControls;

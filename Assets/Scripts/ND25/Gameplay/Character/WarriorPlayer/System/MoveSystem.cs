@@ -3,14 +3,15 @@ using ND25.Gameplay.Character.WarriorPlayer.Component;
 using ND25.Input.InputECS;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Jobs;
 namespace ND25.Gameplay.Character.WarriorPlayer.System
 {
     [BurstCompile]
+    [UpdateInGroup(groupType: typeof(SimulationSystemGroup))]
     public partial struct MoveSystem : ISystem
     {
         public void OnCreate(ref SystemState state)
         {
-            // Đăng ký các thành phần cần thiết
             state.RequireForUpdate<PlayerInputData>();
             state.RequireForUpdate<WarriorPlayerMoveData>();
             state.RequireForUpdate<WarriorPlayerTag>();
@@ -20,11 +21,15 @@ namespace ND25.Gameplay.Character.WarriorPlayer.System
         public void OnUpdate(ref SystemState state)
         {
             float deltaTime = SystemAPI.Time.DeltaTime;
-            // Job để xử lý di chuyển
-            new PlayerMovementJob
+
+            PlayerMovementJob job = new PlayerMovementJob
             {
                 DeltaTime = deltaTime
-            }.ScheduleParallel();
+            };
+
+            // Lên lịch job và gán phụ thuộc
+            JobHandle jobHandle = job.ScheduleParallel(dependsOn: state.Dependency);
+            state.Dependency = jobHandle;
         }
     }
 

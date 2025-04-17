@@ -7,9 +7,9 @@ namespace ND25.Gameplay.Character.WarriorPlayer.Aspects
 {
     public readonly partial struct WarriorPlayerMoveAspect : IAspect
     {
-        public readonly RefRW<LocalTransform> transform;
-        public readonly RefRO<WarriorPlayerMoveData> movementData;
-        public readonly RefRO<PlayerInputData> inputData;
+        private readonly RefRW<LocalTransform> transform;
+        private readonly RefRO<WarriorPlayerMoveData> movementData;
+        private readonly RefRO<PlayerInputData> inputData;
 
         public void Move(float deltaTime)
         {
