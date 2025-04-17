@@ -1,4 +1,5 @@
-﻿using ND25.Gameplay.Character.WarriorPlayer.Component;
+﻿using ND25.Gameplay.Character.Common.Component;
+using ND25.Gameplay.Character.WarriorPlayer.Component;
 using ND25.Input.InputECS;
 using Unity.Entities;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace ND25.Gameplay.Character.WarriorPlayer
         {
             Entity entity = GetEntity(flags: TransformUsageFlags.Dynamic);
             AddComponent(entity: entity, component: new PlayerInputData());
-            AddComponent(entity: entity, component: new WarriorPlayerMoveData
+            AddComponent(entity: entity, component: new MoveData
             {
                 speed = authoring.moveSpeed
             });

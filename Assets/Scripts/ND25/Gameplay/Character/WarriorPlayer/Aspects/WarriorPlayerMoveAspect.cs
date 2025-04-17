@@ -1,4 +1,5 @@
-﻿using ND25.Gameplay.Character.WarriorPlayer.Component;
+﻿using ND25.Gameplay.Character.Common.Component;
+using ND25.Gameplay.Character.WarriorPlayer.Component;
 using ND25.Input.InputECS;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -8,7 +9,7 @@ namespace ND25.Gameplay.Character.WarriorPlayer.Aspects
     public readonly partial struct WarriorPlayerMoveAspect : IAspect
     {
         private readonly RefRW<LocalTransform> transform;
-        private readonly RefRO<WarriorPlayerMoveData> movementData;
+        private readonly RefRO<MoveData> movementData;
         private readonly RefRO<PlayerInputData> inputData;
 
         public void Move(float deltaTime)

@@ -1,4 +1,5 @@
-﻿using ND25.Gameplay.Character.WarriorPlayer.Component;
+﻿using ND25.Core.ECS.Animation;
+using ND25.Gameplay.Character.WarriorPlayer.Component;
 using Unity.Entities;
 using UnityEngine;
 namespace ND25.Gameplay.Character.WarriorPlayer.System
@@ -12,7 +13,7 @@ namespace ND25.Gameplay.Character.WarriorPlayer.System
         {
             _entityQuery = SystemAPI.QueryBuilder()
                 .WithAll<WarriorPlayerVisualizationRefData>()
-                .WithNone<WarriorPlayerAnimationRefData>()
+                .WithNone<WarriorPlayerAnimationData>()
                 .Build();
 
             state.RequireForUpdate(query: _entityQuery);
@@ -25,10 +26,18 @@ namespace ND25.Gameplay.Character.WarriorPlayer.System
             Entity playerEntity = _entityQuery.GetSingletonEntity();
             WarriorPlayerVisualizationRefData playerVisualizationRef = _entityQuery.GetSingleton<WarriorPlayerVisualizationRefData>();
             GameObject playerVisualizationObject = Object.Instantiate(original: playerVisualizationRef.gameObject);
-            ecb.AddComponent(e: playerEntity, component: new WarriorPlayerAnimationRefData
+            AnimationProxy proxy = playerVisualizationObject.GetComponent<AnimationProxy>();
+            if (proxy != null)
             {
-                animator = playerVisualizationObject.GetComponent<Animator>()
-            });
+                proxy.entity = playerEntity;
+            }
+            else
+            {
+                Debug.LogError(message: "AnimationProxy component not found on the player visualization object.");
+            }
+
+            ecb.AddComponent(e: playerEntity, component: new WarriorPlayerAnimationData());
+            ecb.AddComponent(e: playerEntity, component: new AnimationSyncData());
         }
 
         private EntityCommandBuffer CreateECB(ref SystemState state)

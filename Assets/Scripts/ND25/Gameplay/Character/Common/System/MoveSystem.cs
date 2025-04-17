@@ -1,10 +1,11 @@
-﻿using ND25.Gameplay.Character.WarriorPlayer.Aspects;
+﻿using ND25.Gameplay.Character.Common.Component;
+using ND25.Gameplay.Character.WarriorPlayer.Aspects;
 using ND25.Gameplay.Character.WarriorPlayer.Component;
 using ND25.Input.InputECS;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Jobs;
-namespace ND25.Gameplay.Character.WarriorPlayer.System
+namespace ND25.Gameplay.Character.Common.System
 {
     [BurstCompile]
     [UpdateInGroup(groupType: typeof(SimulationSystemGroup))]
@@ -13,7 +14,7 @@ namespace ND25.Gameplay.Character.WarriorPlayer.System
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<PlayerInputData>();
-            state.RequireForUpdate<WarriorPlayerMoveData>();
+            state.RequireForUpdate<MoveData>();
             state.RequireForUpdate<WarriorPlayerTag>();
         }
 
