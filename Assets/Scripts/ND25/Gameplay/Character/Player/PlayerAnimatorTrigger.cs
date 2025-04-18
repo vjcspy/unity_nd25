@@ -1,8 +1,9 @@
 ﻿using ND25.Gameplay.Skills;
+using ND25.Gameplay.Skills.Base;
 using UnityEngine;
 namespace ND25.Gameplay.Character.Player
 {
-    public class PlayerAnimatorTrigger: MonoBehaviour
+    public class PlayerAnimatorTrigger : MonoBehaviour
     {
         private PlayerActor playerActor;
         private SkillManager skillManager;
@@ -20,7 +21,7 @@ namespace ND25.Gameplay.Character.Player
 
         public void ThrowSword()
         {
-            skillManager.ActivateSkill(SkillId.ThrowSword);
+            skillManager.CastSkill(skillId: SkillId.ThrowSword, target: null);
         }
     }
 }

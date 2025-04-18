@@ -1,5 +1,6 @@
 ﻿using ND25.Gameplay.Character;
 using ND25.Gameplay.Character.Common;
+using ND25.Input;
 using ND25.Util.Common.Enum;
 using R3;
 using System;
@@ -416,13 +417,13 @@ namespace ND25.Core.XMachine
         public Animator animator;
         protected XDirection currentFacingDirection = XDirection.Right;
 
-        public InputSystemActions inputControls;
+        public InputSystemActions inputActions;
         public XMachine<ContextType> machine { private set; get; }
 
 
         protected virtual void Awake()
         {
-            inputControls = new InputSystemActions();
+            inputActions = InputManager.Instance.InputActions;
             machine = new XMachine<ContextType>(initialContext: ConfigureInitialContext())
                 .RegisterStates(machineStates: ConfigureMachineStates())
                 .RegisterEffects(actionEffectInstances: ConfigureMachineEffects());

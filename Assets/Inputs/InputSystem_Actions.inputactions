@@ -96,15 +96,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ThrowSword",
-                    "type": "Button",
-                    "id": "fad843db-c7d1-4239-bcba-64f45ed7cc18",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Skill1",
                     "type": "Button",
                     "id": "a29390d2-cc63-4093-ba1e-f4b3878b646c",
@@ -508,17 +499,6 @@
                     "processors": "",
                     "groups": ";Touch;Keyboard&Mouse",
                     "action": "PrimaryAttack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "442682c0-d79c-44dd-9e3b-bcd4722ebcd6",
-                    "path": "<Keyboard>/i",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Touch;Keyboard&Mouse",
-                    "action": "ThrowSword",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

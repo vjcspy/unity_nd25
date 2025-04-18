@@ -1,5 +1,6 @@
 ﻿using ND25.Core.XMachine;
 using ND25.Gameplay.Character.Common;
+using ND25.Gameplay.Character.Common.MethodInterface;
 using ND25.Gameplay.Character.Player.Effects;
 using ND25.Gameplay.Character.Player.States;
 using ND25.Util.Common.Enum;
@@ -8,15 +9,13 @@ using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using MethodInterface_XDirection = ND25.Gameplay.Character.Common.MethodInterface.XDirection;
-using XDirection = ND25.Gameplay.Character.Common.MethodInterface.XDirection;
 namespace ND25.Gameplay.Character.Player
 {
-    public class PlayerActor : XMachineActor<PlayerContext>, MethodInterface_XDirection
+    public class PlayerActor : XMachineActor<PlayerContext>, IFacingDirection
     {
         private PlayerAnimatorParam animatorParam;
 
-        public Util.Common.Enum.XDirection GetCurrentFacingDirection()
+        public XDirection GetCurrentFacingDirection()
         {
             return currentFacingDirection;
         }
@@ -71,15 +70,15 @@ namespace ND25.Gameplay.Character.Player
 
         private void Flip()
         {
-            if (GetCurrentFacingDirection() == Util.Common.Enum.XDirection.None)
+            if (GetCurrentFacingDirection() == XDirection.None)
             {
                 return;
             }
 
             transform.localScale = GetCurrentFacingDirection() switch
             {
-                Util.Common.Enum.XDirection.Right => FacingDirection.FacingRight,
-                Util.Common.Enum.XDirection.Left => FacingDirection.FacingLeft,
+                XDirection.Right => FacingDirection.FacingRight,
+                XDirection.Left => FacingDirection.FacingLeft,
                 _ => transform.localScale
             };
         }
@@ -92,23 +91,21 @@ namespace ND25.Gameplay.Character.Player
 
         private void OnEnable()
         {
-            inputControls.Player.Enable();
-            inputControls.Player.PrimaryAttack.started += PrimaryAttackInputListener;
-            inputControls.Player.Jump.started += JumpInputListener;
-            inputControls.Player.ThrowSword.performed += ThrowSwordInputListener;
-            inputControls.Player.Skill1.performed += ThrowSwordInputListener;
-            inputControls.Player.ThrowSword.canceled += ThrowSwordInputReleaseListener;
-            inputControls.Player.Skill1.canceled += ThrowSwordInputReleaseListener;
+            inputActions.Player.Enable();
+            inputActions.Player.PrimaryAttack.started += PrimaryAttackInputListener;
+            inputActions.Player.Jump.started += JumpInputListener;
+
+            inputActions.Player.Skill1.performed += ThrowSwordInputListener;
+            inputActions.Player.Skill1.canceled += ThrowSwordInputReleaseListener;
         }
         private void OnDisable()
         {
-            inputControls.Player.Disable();
-            inputControls.Player.PrimaryAttack.started -= PrimaryAttackInputListener;
-            inputControls.Player.Jump.started -= JumpInputListener;
-            inputControls.Player.ThrowSword.performed -= ThrowSwordInputListener;
-            inputControls.Player.Skill1.performed -= ThrowSwordInputListener;
-            inputControls.Player.ThrowSword.canceled -= ThrowSwordInputReleaseListener;
-            inputControls.Player.Skill1.canceled -= ThrowSwordInputReleaseListener;
+            inputActions.Player.Disable();
+            inputActions.Player.PrimaryAttack.started -= PrimaryAttackInputListener;
+            inputActions.Player.Jump.started -= JumpInputListener;
+
+            inputActions.Player.Skill1.performed -= ThrowSwordInputListener;
+            inputActions.Player.Skill1.canceled -= ThrowSwordInputReleaseListener;
         }
         private void PrimaryAttackInputListener(InputAction.CallbackContext context)
         {
