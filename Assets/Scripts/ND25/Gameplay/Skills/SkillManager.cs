@@ -176,7 +176,7 @@ namespace ND25.Gameplay.Skills
                     x: GetAimDirection().normalized.x * _preCaSkillData.launchForce.x,
                     y: GetAimDirection().normalized.y * _preCaSkillData.launchForce.y
                 ) * t
-                + _preCaSkillData.gravity * (0.5f * (t * t));
+                + Physics2D.gravity * (_preCaSkillData.gravityScale * (0.5f * (t * t)));
 
             return position;
         }

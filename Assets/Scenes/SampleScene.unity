@@ -1089,7 +1089,6 @@ GameObject:
   - component: {fileID: 1232909388}
   - component: {fileID: 1232909391}
   - component: {fileID: 1232909390}
-  - component: {fileID: 1232909392}
   - component: {fileID: 1232909393}
   m_Layer: 0
   m_Name: EnemySkeleton
@@ -1179,38 +1178,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.55, y: 1.65}
   m_Direction: 0
---- !u!114 &1232909392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1232909387}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12cba85a5ff6e3741ae286bf0c1ebbe6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  groundCheckMethod: 0
-  groundCheckPoint: {fileID: 250362442}
-  checkDistance: 1
-  overlapRadius: 0.25
-  groundLayer:
-    m_Bits: 64
-  sideObstacleDistance: 0.5
-  obstacleLayer:
-    m_Bits: 0
-  playerCheckMethod: 0
-  playerDetectDistance: 1
-  playerLayer:
-    m_Bits: 0
-  drawDebugRay: 0
-  drawGizmos: 1
-  <isGrounded>k__BackingField: 0
-  <isBlockedLeft>k__BackingField: 0
-  <isBlockedRight>k__BackingField: 0
-  <hasPlayerLeft>k__BackingField: 0
-  <hasPlayerRight>k__BackingField: 0
 --- !u!114 &1232909393
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -19,6 +19,7 @@ namespace ND25.Gameplay.Skills.Data
             Rigidbody2D rb = skillGO.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
+                rb.gravityScale = gravityScale;
                 rb.linearVelocity = direction.normalized * launchForce;
             }
         }

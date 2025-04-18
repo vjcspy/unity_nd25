@@ -27,7 +27,7 @@ namespace ND25.Gameplay.Skills.Base
 
         [Header(header: "Skill Physics")]
         [SerializeField] public Vector2 launchForce;
-        [SerializeField] public Vector2 gravity = new Vector2(x: 0, y: -9.81f);
+        [SerializeField] public float gravityScale = 1;
         [SerializeField] public Vector2 maxDistance;
         [SerializeField] public Vector2 aoeSize;
 
