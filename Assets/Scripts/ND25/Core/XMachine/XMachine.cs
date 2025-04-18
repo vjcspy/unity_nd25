@@ -415,12 +415,13 @@ namespace ND25.Core.XMachine
         public Animator animator;
         private XDirection currentFacingDirection = XDirection.Right;
 
-        public PCControls pcControls;
+        public InputSystemActions inputControls;
         public XMachine<ContextType> machine { private set; get; }
 
 
         protected virtual void Awake()
         {
+            inputControls = new InputSystemActions();
             machine = new XMachine<ContextType>(initialContext: ConfigureInitialContext())
                 .RegisterStates(machineStates: ConfigureMachineStates())
                 .RegisterEffects(actionEffectInstances: ConfigureMachineEffects());

@@ -85,19 +85,19 @@ namespace ND25.Gameplay.Character.Player
 
         private void OnEnable()
         {
-            pcControls.GamePlay.Enable();
-            pcControls.GamePlay.PrimaryAttack.started += PrimaryAttackInputListener;
-            pcControls.GamePlay.Jump.started += JumpInputListener;
-            pcControls.GamePlay.ThrowSword.performed += ThrowSwordInputListener;
-            pcControls.GamePlay.ThrowSword.canceled += ThrowSwordInputReleaseListener;
+            inputControls.Player.Enable();
+            inputControls.Player.PrimaryAttack.started += PrimaryAttackInputListener;
+            inputControls.Player.Jump.started += JumpInputListener;
+            inputControls.Player.ThrowSword.performed += ThrowSwordInputListener;
+            inputControls.Player.ThrowSword.canceled += ThrowSwordInputReleaseListener;
         }
         private void OnDisable()
         {
-            pcControls.GamePlay.Disable();
-            pcControls.GamePlay.PrimaryAttack.started -= PrimaryAttackInputListener;
-            pcControls.GamePlay.Jump.started -= JumpInputListener;
-            pcControls.GamePlay.ThrowSword.performed -= ThrowSwordInputListener;
-            pcControls.GamePlay.ThrowSword.canceled -= ThrowSwordInputReleaseListener;
+            inputControls.Player.Disable();
+            inputControls.Player.PrimaryAttack.started -= PrimaryAttackInputListener;
+            inputControls.Player.Jump.started -= JumpInputListener;
+            inputControls.Player.ThrowSword.performed -= ThrowSwordInputListener;
+            inputControls.Player.ThrowSword.canceled -= ThrowSwordInputReleaseListener;
         }
         private void PrimaryAttackInputListener(InputAction.CallbackContext context)
         {
@@ -130,7 +130,6 @@ namespace ND25.Gameplay.Character.Player
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody2D>();
             objectChecker = GetComponent<ObjectChecker>();
-            pcControls = new PCControls();
             animatorParam = new PlayerAnimatorParam(animator: animator);
         }
 
