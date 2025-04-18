@@ -458,7 +458,7 @@ namespace ND25.Core.XMachine
         protected abstract XMachineEffect<ContextType>[] ConfigureMachineEffects();
         protected abstract Enum ConfigureInitialStateId();
 
-        public void SetCurrentFacingDirection(XDirection direction)
+        protected void SetCurrentFacingDirection(XDirection direction)
         {
             if (direction == XDirection.None)
             {
