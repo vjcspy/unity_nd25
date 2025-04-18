@@ -96,7 +96,9 @@ namespace ND25.Gameplay.Character.Player
             inputControls.Player.PrimaryAttack.started += PrimaryAttackInputListener;
             inputControls.Player.Jump.started += JumpInputListener;
             inputControls.Player.ThrowSword.performed += ThrowSwordInputListener;
+            inputControls.Player.Skill1.performed += ThrowSwordInputListener;
             inputControls.Player.ThrowSword.canceled += ThrowSwordInputReleaseListener;
+            inputControls.Player.Skill1.canceled += ThrowSwordInputReleaseListener;
         }
         private void OnDisable()
         {
@@ -104,7 +106,9 @@ namespace ND25.Gameplay.Character.Player
             inputControls.Player.PrimaryAttack.started -= PrimaryAttackInputListener;
             inputControls.Player.Jump.started -= JumpInputListener;
             inputControls.Player.ThrowSword.performed -= ThrowSwordInputListener;
+            inputControls.Player.Skill1.performed -= ThrowSwordInputListener;
             inputControls.Player.ThrowSword.canceled -= ThrowSwordInputReleaseListener;
+            inputControls.Player.Skill1.canceled -= ThrowSwordInputReleaseListener;
         }
         private void PrimaryAttackInputListener(InputAction.CallbackContext context)
         {
