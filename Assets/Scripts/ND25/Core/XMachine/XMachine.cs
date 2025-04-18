@@ -1,4 +1,5 @@
 ﻿using ND25.Gameplay.Character;
+using ND25.Gameplay.Character.Common;
 using ND25.Util.Common.Enum;
 using R3;
 using System;
@@ -413,7 +414,7 @@ namespace ND25.Core.XMachine
         public Rigidbody2D rb;
         public ObjectChecker objectChecker;
         public Animator animator;
-        private XDirection currentFacingDirection = XDirection.Right;
+        protected XDirection currentFacingDirection = XDirection.Right;
 
         public InputSystemActions inputControls;
         public XMachine<ContextType> machine { private set; get; }
@@ -456,11 +457,6 @@ namespace ND25.Core.XMachine
         protected abstract XMachineState<ContextType>[] ConfigureMachineStates();
         protected abstract XMachineEffect<ContextType>[] ConfigureMachineEffects();
         protected abstract Enum ConfigureInitialStateId();
-
-        public XDirection GetCurrentFacingDirection()
-        {
-            return currentFacingDirection;
-        }
 
         public void SetCurrentFacingDirection(XDirection direction)
         {

@@ -8,11 +8,18 @@ using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using MethodInterface_XDirection = ND25.Gameplay.Character.Common.MethodInterface.XDirection;
+using XDirection = ND25.Gameplay.Character.Common.MethodInterface.XDirection;
 namespace ND25.Gameplay.Character.Player
 {
-    public class PlayerActor : XMachineActor<PlayerContext>, EntityXDirection
+    public class PlayerActor : XMachineActor<PlayerContext>, MethodInterface_XDirection
     {
         private PlayerAnimatorParam animatorParam;
+
+        public Util.Common.Enum.XDirection GetCurrentFacingDirection()
+        {
+            return currentFacingDirection;
+        }
         private void HandleAnimation()
         {
             machine.reactiveContext.CombineLatest(source2: machine.reactiveCurrentStateId, resultSelector: (context, stateId) => (Context: context, StateId: stateId))
@@ -64,15 +71,15 @@ namespace ND25.Gameplay.Character.Player
 
         private void Flip()
         {
-            if (GetCurrentFacingDirection() == XDirection.None)
+            if (GetCurrentFacingDirection() == Util.Common.Enum.XDirection.None)
             {
                 return;
             }
 
             transform.localScale = GetCurrentFacingDirection() switch
             {
-                XDirection.Right => FacingDirection.FacingRight,
-                XDirection.Left => FacingDirection.FacingLeft,
+                Util.Common.Enum.XDirection.Right => FacingDirection.FacingRight,
+                Util.Common.Enum.XDirection.Left => FacingDirection.FacingLeft,
                 _ => transform.localScale
             };
         }

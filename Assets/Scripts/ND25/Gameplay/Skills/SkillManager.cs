@@ -1,4 +1,5 @@
 ﻿using ND25.Gameplay.Character.Common;
+using ND25.Gameplay.Character.Common.MethodInterface;
 using ND25.Gameplay.Skills.Base;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,15 +20,17 @@ namespace ND25.Gameplay.Skills
         private readonly GameObject gameObject;
         private readonly SkillData skillData;
         private float cooldownRemaining;
+        private XDirection xDirection;
 
 
         public SkillInstance(GameObject gameObject, SkillData skillData)
         {
             this.gameObject = gameObject;
             this.skillData = skillData;
-            entityXDirection = gameObject.GetComponent<EntityXDirection>();
+
+            // The cost of getting the object and calling the interface method is acceptable here because the call frequency is low
+            xDirection = gameObject.GetComponent<XDirection>();
         }
-        public EntityXDirection entityXDirection { get; set; }
 
         public bool IsReady
         {
@@ -59,7 +62,7 @@ namespace ND25.Gameplay.Skills
         public void Activate()
         {
             Vector2 position = gameObject.transform.position;
-            Vector2 direction = gameObject.transform.rotation * new Vector2(x: (int)entityXDirection.GetCurrentFacingDirection(), y: 0); // Hoặc hướng mà bạn muốn kỹ năng bay
+            Vector2 direction = gameObject.transform.rotation * new Vector2(x: (int)xDirection.GetCurrentFacingDirection(), y: 0); // Hoặc hướng mà bạn muốn kỹ năng bay
             skillData.Activate(position: position, direction: direction);
         }
     }
