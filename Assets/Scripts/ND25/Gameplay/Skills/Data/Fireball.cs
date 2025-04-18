@@ -8,7 +8,7 @@ namespace ND25.Gameplay.Skills.Data
         [Header(header: "Fireball Settings")]
         public float speed = 10f;
 
-        public override void Activate(Vector2 position, Vector2 direction)
+        public override void Activate(Transform transform, Vector2 direction)
         {
             throw new System.NotImplementedException();
         }

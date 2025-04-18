@@ -9,7 +9,7 @@ namespace ND25.Gameplay.Skills.Base
         [SerializeField] public float cooldown;
         [SerializeField] public GameObject prefab;
 
-        public abstract void Activate(Vector2 position, Vector2 direction);
+        public abstract void Activate(Transform transform, Vector2 direction);
 
     }
 }

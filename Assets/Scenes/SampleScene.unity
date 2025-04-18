@@ -1213,19 +1213,21 @@ MonoBehaviour:
   checkDistance: 1
   overlapRadius: 0.25
   groundLayer:
-    serializedVersion: 2
     m_Bits: 64
   sideObstacleDistance: 0.5
   obstacleLayer:
-    serializedVersion: 2
     m_Bits: 0
   playerCheckMethod: 0
   playerDetectDistance: 1
   playerLayer:
-    serializedVersion: 2
     m_Bits: 0
   drawDebugRay: 0
   drawGizmos: 1
+  <isGrounded>k__BackingField: 0
+  <isBlockedLeft>k__BackingField: 0
+  <isBlockedRight>k__BackingField: 0
+  <hasPlayerLeft>k__BackingField: 0
+  <hasPlayerRight>k__BackingField: 0
 --- !u!114 &1232909393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1250,12 +1252,12 @@ GameObject:
   - component: {fileID: 1281836263}
   - component: {fileID: 1281836265}
   - component: {fileID: 1281836266}
-  - component: {fileID: 1281836268}
   - component: {fileID: 1281836269}
   - component: {fileID: 1281836270}
   - component: {fileID: 1281836271}
+  - component: {fileID: 1281836272}
   m_Layer: 7
-  m_Name: WarriorPlayer
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1342,36 +1344,6 @@ CapsuleCollider2D:
   m_Offset: {x: -0.03, y: -0.3}
   m_Size: {x: 0.8, y: 2.1}
   m_Direction: 0
---- !u!114 &1281836268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1281836262}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12cba85a5ff6e3741ae286bf0c1ebbe6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  groundCheckMethod: 0
-  groundCheckPoint: {fileID: 871147490}
-  checkDistance: 1.5
-  overlapRadius: 0.25
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  sideObstacleDistance: 0.5
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  playerCheckMethod: 0
-  playerDetectDistance: 1
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  drawDebugRay: 0
-  drawGizmos: 0
 --- !u!114 &1281836269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1443,6 +1415,36 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 86eb15c307e10dd40b25942ba93196d3, type: 2}
   - {fileID: 11400000, guid: c4f67e6f05c86394ca7cc5c4a951c3f2, type: 2}
   - {fileID: 11400000, guid: 318786c03a2c3f14b93c788406db89cb, type: 2}
+--- !u!114 &1281836272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1281836262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef280ed750c3406f8b4e7ac8d8ad45bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundCheckMethod: 0
+  groundCheckPoint: {fileID: 871147490}
+  checkDistance: 0.2
+  overlapRadius: 0.25
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  sideObstacleDistance: 0.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  playerCheckMethod: 0
+  playerDetectDistance: 1
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  drawDebugRay: 0
+  drawGizmos: 1
 --- !u!1 &1454792961
 GameObject:
   m_ObjectHideFlags: 0

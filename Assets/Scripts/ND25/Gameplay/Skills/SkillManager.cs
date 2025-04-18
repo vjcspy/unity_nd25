@@ -61,9 +61,8 @@ namespace ND25.Gameplay.Skills
 
         public void Activate()
         {
-            Vector2 position = gameObject.transform.position;
             Vector2 direction = gameObject.transform.rotation * new Vector2(x: (int)xDirection.GetCurrentFacingDirection(), y: 0); // Hoặc hướng mà bạn muốn kỹ năng bay
-            skillData.Activate(position: position, direction: direction);
+            skillData.Activate(gameObject.transform, direction: direction);
         }
     }
 
