@@ -1,20 +1,44 @@
-﻿using ND25.Gameplay.Character.Player;
-using UnityEngine;
+﻿using UnityEngine;
 namespace ND25.Gameplay.Skills.Controller
 {
     public class ThrowSwordSkill : MonoBehaviour
     {
-        private Animator animator;
-        private CircleCollider2D circleCollider;
-        private PlayerActor playerActor;
-        private Rigidbody2D rg;
+        private BoxCollider2D _collider;
+
+        private Rigidbody2D _rb;
+        private bool _stuck;
 
         private void Awake()
         {
-            animator = GetComponent<Animator>();
-            circleCollider = GetComponent<CircleCollider2D>();
-            playerActor = GetComponentInParent<PlayerActor>();
-            rg = GetComponent<Rigidbody2D>();
+            _collider = GetComponent<BoxCollider2D>();
+            _rb = GetComponent<Rigidbody2D>();
+        }
+
+        private void LateUpdate()
+        {
+            if (!_stuck)
+            {
+                transform.right = _rb.linearVelocity;
+            }
+        }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (_stuck)
+                _collider.enabled = false;
+
+            // 1. Ngừng vật lý
+            _rb.bodyType = RigidbodyType2D.Kinematic;
+            _rb.linearVelocity = Vector2.zero;
+            _rb.angularVelocity = 0f;
+            _rb.constraints = RigidbodyConstraints2D.FreezeAll;
+
+            // 2. Găm vào đối tượng bị đâm
+            // Giữ nguyên world position/rotation khi gắn parent
+            transform.SetParent(parent: collision.transform, worldPositionStays: true);
+
+            // 3. Ghi nhớ trạng thái
+            _stuck = true;
         }
     }
 }

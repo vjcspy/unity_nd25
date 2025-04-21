@@ -21,9 +21,6 @@ namespace ND25.Gameplay.Skills.Base
 
         [Header(header: "Skill Preparation")]
         [SerializeField] public PreCastSkillType preCastSkillType;
-        [SerializeField] public GameObject preCastPrefab;
-        [SerializeField] public int preCastNumberOfObjects = 10;
-        [SerializeField] public float preCastSpaceBetweenObjects;
 
         [Header(header: "Skill Physics")]
         [SerializeField] public Vector2 launchForce;
@@ -31,6 +28,6 @@ namespace ND25.Gameplay.Skills.Base
         [SerializeField] public Vector2 maxDistance;
         [SerializeField] public Vector2 aoeSize;
 
-        public abstract void Cast(GameObject owner, [CanBeNull] GameObject target);
+        public abstract void Cast(GameObject owner, Vector2 direction, [CanBeNull] GameObject target);
     }
 }

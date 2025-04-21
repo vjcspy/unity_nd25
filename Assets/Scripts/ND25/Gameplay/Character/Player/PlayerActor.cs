@@ -17,16 +17,27 @@ namespace ND25.Gameplay.Character.Player
 
         public XDirection GetCurrentFacingDirection()
         {
-            return currentFacingDirection;
+            return machine.GetContextValue().xFacingDirection;
         }
+
+        public void SetCurrentFacingDirection(XDirection direction)
+        {
+            machine.SetContext(contextUpdater: context =>
+            {
+                if (direction == XDirection.None)
+                {
+                    return;
+                }
+                context.xFacingDirection = direction;
+            });
+        }
+
         private void HandleAnimation()
         {
             machine.reactiveContext.CombineLatest(source2: machine.reactiveCurrentStateId, resultSelector: (context, stateId) => (Context: context, StateId: stateId))
                 .Subscribe(
                     onNext: x =>
                     {
-                        SetCurrentFacingDirection(direction: x.Context.xInputDirection);
-
                         switch (x.StateId)
                         {
                             case PlayerState.Idle:
@@ -49,7 +60,7 @@ namespace ND25.Gameplay.Character.Player
                                 break;
                         }
 
-                        // Because flip depend on xInput and it's in context
+                        // Because flip depend on xFacingDirection and it's in context
                         Flip();
                     }
                 );

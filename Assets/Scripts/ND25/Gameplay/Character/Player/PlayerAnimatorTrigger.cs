@@ -1,5 +1,4 @@
 ﻿using ND25.Gameplay.Skills;
-using ND25.Gameplay.Skills.Base;
 using UnityEngine;
 namespace ND25.Gameplay.Character.Player
 {
@@ -21,7 +20,7 @@ namespace ND25.Gameplay.Character.Player
 
         public void ThrowSword()
         {
-            skillManager.CastSkill(skillId: SkillId.ThrowSword, target: null);
+            skillManager.CastSkill(skillId: SkillId.ThrowSword);
         }
     }
 }

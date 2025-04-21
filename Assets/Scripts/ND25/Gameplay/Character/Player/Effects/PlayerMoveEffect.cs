@@ -6,9 +6,10 @@ namespace ND25.Gameplay.Character.Player.Effects
 {
     public class PlayerMoveEffect : XMachineEffect<PlayerContext>
     {
-
+        private readonly PlayerActor playerActor;
         public PlayerMoveEffect(PlayerActor actor) : base(actor: actor)
         {
+            playerActor = actor;
         }
 
         [XMachineEffect]
@@ -17,12 +18,18 @@ namespace ND25.Gameplay.Character.Player.Effects
             return upstream => upstream.OfAction(xAction: PlayerAction.MoveAction)
                 .Select(selector: action =>
                 {
-                    PlayerActor playerActor = (PlayerActor)actor;
                     Vector2 moveInput = playerActor.inputActions.Player.Move.ReadValue<Vector2>();
                     playerActor.machine.SetContext(contextUpdater: playerContext =>
                     {
-                        playerContext.xInputDirection = Direction.ConvertToXDirection(velocity: moveInput.x);
+                        XDirection xDirection = Direction.ConvertToXDirection(velocity: moveInput.x);
+                        // playerContext.xInputDirection = xDirection;
+                        if (xDirection == XDirection.None)
+                        {
+                            return;
+                        }
+                        playerContext.xFacingDirection = xDirection;
                     });
+
                     playerActor.SetVelocity(moveInput: moveInput);
 
                     if (action.GetBool(key: PlayerAction.DataKey.Transtion))

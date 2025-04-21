@@ -14,13 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 4
   skillName: Warrior Throw Sword
-  cooldown: 2
+  cooldown: 0
   prefab: {fileID: 4234734991941582865, guid: b7047956dbbfb5047bd24f06718c69de, type: 3}
   preCastSkillType: 1
-  preCastPrefab: {fileID: 865884784002215362, guid: d7e0041a12c27334182410578ef4099c, type: 3}
-  preCastNumberOfObjects: 10
-  preCastSpaceBetweenObjects: 0.07
-  launchForce: {x: 10, y: 0}
-  gravity: {x: 0, y: -9.81}
+  launchForce: {x: 40, y: 15}
+  gravityScale: 1
   maxDistance: {x: 0, y: 0}
   aoeSize: {x: 0, y: 0}
+  mass: 0.01

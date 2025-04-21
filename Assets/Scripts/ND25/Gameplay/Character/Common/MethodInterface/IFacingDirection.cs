@@ -1,7 +1,9 @@
-﻿namespace ND25.Gameplay.Character.Common.MethodInterface
+﻿using ND25.Util.Common.Enum;
+namespace ND25.Gameplay.Character.Common.MethodInterface
 {
     public interface IFacingDirection
     {
-        public Util.Common.Enum.XDirection GetCurrentFacingDirection();
+        public XDirection GetCurrentFacingDirection();
+        public void SetCurrentFacingDirection(XDirection direction);
     }
 }

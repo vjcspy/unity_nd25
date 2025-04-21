@@ -415,8 +415,6 @@ namespace ND25.Core.XMachine
         public Rigidbody2D rb;
         public ObjectChecker objectChecker;
         public Animator animator;
-        protected XDirection currentFacingDirection = XDirection.Right;
-
         public InputSystemActions inputActions;
         public XMachine<ContextType> machine { private set; get; }
 
@@ -458,14 +456,5 @@ namespace ND25.Core.XMachine
         protected abstract XMachineState<ContextType>[] ConfigureMachineStates();
         protected abstract XMachineEffect<ContextType>[] ConfigureMachineEffects();
         protected abstract Enum ConfigureInitialStateId();
-
-        protected void SetCurrentFacingDirection(XDirection direction)
-        {
-            if (direction == XDirection.None)
-            {
-                return;
-            }
-            currentFacingDirection = direction;
-        }
     }
 }

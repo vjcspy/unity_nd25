@@ -6,7 +6,8 @@ namespace ND25.Gameplay.Character.Player
         public float lastPrimaryAttackTime = 0f;
         public int primaryAttackCount = 0;
 
-        public XDirection xInputDirection = XDirection.None;
+        public XDirection xFacingDirection = XDirection.Right;
+        // public XDirection xInputDirection = XDirection.None;
         // public XDirection xVelocity = XDirection.None;
         public YDirection yVelocityDirection = YDirection.None;
     }

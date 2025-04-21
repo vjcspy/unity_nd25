@@ -1,5 +1,8 @@
 ﻿using JetBrains.Annotations;
+using ND25.Gameplay.Character.Common.MethodInterface;
 using ND25.Gameplay.Skills.Base;
+using ND25.Util.Common.Enum;
+using R3;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,40 +37,60 @@ namespace ND25.Gameplay.Skills
             }
         }
 
-        public void TryCast([CanBeNull] GameObject target)
+        public void TryCast(Vector2 direction, [CanBeNull] GameObject target)
         {
             if (!IsReady)
             {
                 return;
             }
 
-            Cast(target: target);
+            Cast(target: target, direction: direction);
             cooldownRemaining = skillData.cooldown;
         }
 
-        private void Cast([CanBeNull] GameObject target)
+        private void Cast(Vector2 direction, [CanBeNull] GameObject target)
         {
-            skillData.Cast(owner: gameObject, target: target);
+            skillData.Cast(owner: gameObject, target: target, direction: direction);
         }
     }
 
     public class SkillManager : MonoBehaviour
     {
+        [Header(header: "Skills")]
         [SerializeField] private List<SkillData> availableSkills;
 
+        [Header(header: "Precast: Aim Dots")]
+        [SerializeField] private GameObject preCastAimDotPrefab;
+        [SerializeField] private int preCastAimDotLength = 3;
+        [SerializeField] private float preCastAimDotSpace = 0.02f;
+
+
         private readonly Dictionary<SkillId, SkillInstance> skillInstances = new Dictionary<SkillId, SkillInstance>();
+        private IFacingDirection _facingDirection;
         private Camera _mainCamera;
         private SkillData _preCaSkillData;
         private GameObject[] _preCastAimDots;
+        private DisposableBag disposable;
 
         private void Awake()
         {
             _mainCamera = Camera.main;
+            _facingDirection = gameObject.GetComponent<IFacingDirection>();
             foreach (SkillData skillData in availableSkills)
             {
                 SkillInstance skillInstance = new SkillInstance(gameObject: gameObject, skillData: skillData);
                 skillInstances.Add(key: skillData.id, value: skillInstance);
             }
+        }
+
+        private void Start()
+        {
+            Observable.Interval(period: TimeSpan.FromMilliseconds(value: 50))
+                .Subscribe(onNext: x =>
+                {
+                    UpdateAimDotPosition();
+                })
+                .AddTo(bag: ref disposable);
         }
 
         private void Update()
@@ -78,18 +101,33 @@ namespace ND25.Gameplay.Skills
             }
         }
 
-        private void FixedUpdate()
+        private void OnDestroy()
         {
-            UpdateAimDotPosition();
+            disposable.Dispose();
         }
 
-        public void CastSkill(SkillId skillId, [CanBeNull] GameObject target)
+        public void CastSkill(SkillId skillId)
         {
             if (skillInstances.TryGetValue(key: skillId, value: out SkillInstance skillInstance))
             {
-                skillInstance.TryCast(target: target);
                 _preCaSkillData = null;
                 ToggleAimDots(state: false);
+
+                switch (skillInstance.skillData.preCastSkillType)
+                {
+                    case PreCastSkillType.Aim:
+                        skillInstance.TryCast(target: GetCurrentTarget(), direction: GetAimDirection());
+                        break;
+                    case PreCastSkillType.None:
+                        skillInstance.TryCast(target: GetCurrentTarget(), direction: GetCurrentFacingDirection());
+                        break;
+                    case PreCastSkillType.Target:
+                        break;
+                    case PreCastSkillType.Direction:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
             else
             {
@@ -104,7 +142,7 @@ namespace ND25.Gameplay.Skills
                 switch (skillInstance.skillData.preCastSkillType)
                 {
                     case PreCastSkillType.None:
-                        skillInstance.TryCast(target: GetCurrentTarget());
+                        skillInstance.TryCast(target: GetCurrentTarget(), direction: GetCurrentFacingDirection());
                         break;
                     case PreCastSkillType.Aim:
                         // Implement logic to show aim dots
@@ -126,6 +164,11 @@ namespace ND25.Gameplay.Skills
             }
         }
 
+        private Vector2 GetCurrentFacingDirection()
+        {
+            return transform.rotation * new Vector2(x: (int)_facingDirection.GetCurrentFacingDirection(), y: 0);
+        }
+
         private GameObject GetCurrentTarget()
         {
             // Implement logic to get the current target
@@ -138,11 +181,11 @@ namespace ND25.Gameplay.Skills
         {
             if (_preCastAimDots == null)
             {
-                _preCastAimDots = new GameObject[_preCaSkillData.preCastNumberOfObjects];
-                for (int i = 0; i < _preCaSkillData.preCastNumberOfObjects; i++)
+                _preCastAimDots = new GameObject[preCastAimDotLength];
+                for (int i = 0; i < preCastAimDotLength; i++)
                 {
                     _preCastAimDots[i] = Instantiate(
-                        original: _preCaSkillData.preCastPrefab,
+                        original: preCastAimDotPrefab,
                         position: transform.position,
                         rotation: Quaternion.identity,
                         parent: transform
@@ -152,7 +195,7 @@ namespace ND25.Gameplay.Skills
             }
         }
 
-        private Vector2 GetAimDirection()
+        public Vector2 GetAimDirection()
         {
             Vector2 ownerPos = transform.position;
             Vector2 screenPosition = Mouse.current.position.ReadValue();
@@ -187,8 +230,9 @@ namespace ND25.Gameplay.Skills
             for (int i = 0; i < _preCastAimDots.Length; i++)
             {
                 GameObject aimDot = _preCastAimDots[i];
-                aimDot.transform.position = GetAimDotPosition(t: i * _preCaSkillData.preCastSpaceBetweenObjects);
+                aimDot.transform.position = GetAimDotPosition(t: i * preCastAimDotSpace);
             }
+            _facingDirection.SetCurrentFacingDirection(direction: Direction.ConvertToXDirection(velocity: GetAimDirection().x));
         }
 
         #endregion
