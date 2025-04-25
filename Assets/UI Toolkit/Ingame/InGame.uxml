@@ -1,0 +1,13 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Container" style="flex-grow: 1;">
+        <ui:VisualElement name="Header" style="flex-grow: 1; height: 10%; flex-direction: row;">
+            <ui:VisualElement name="UserInfo" style="flex-grow: 1;" />
+            <ui:VisualElement name="TargetInfo" style="flex-grow: 1;" />
+            <ui:VisualElement name="Menu" style="flex-grow: 1; justify-content: flex-start; flex-direction: row-reverse;">
+                <ui:Button text="Button" name="MenuBtn" style="flex-direction: row-reverse; margin-top: 20px; margin-bottom: 20px; margin-right: 20px; margin-left: 20px; -unity-slice-type: sliced; background-color: rgb(255, 255, 255); border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; scale: 1 1; transform-origin: center; -unity-background-scale-mode: stretch-to-fill; -unity-slice-left: 0; -unity-slice-top: 0; -unity-slice-right: 0; -unity-slice-bottom: 0;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="Main" style="flex-grow: 1; height: 80%;" />
+        <ui:VisualElement name="Footer" style="flex-grow: 1; height: 10%;" />
+    </ui:VisualElement>
+</ui:UXML>
