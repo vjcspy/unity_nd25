@@ -7,16 +7,10 @@ namespace ND25.Core.Colyseus
     public class ColyseusManager : MonoBehaviour
     {
 
-        // [SerializeField]
-        private readonly string serverEndpoint = "ws://localhost:2567";
-        //
-        // private readonly ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
-        //
-        // // Dùng ColyseusClient thay cho Client ở v0.16
+        [SerializeField] private string serverEndpoint = "ws://localhost:2567";
 
         public ColyseusClient Client { get; private set; }
 
-        // private Room<State> room;
         public static ColyseusManager Instance { get; private set; }
         private void Awake()
         {
@@ -28,19 +22,12 @@ namespace ND25.Core.Colyseus
             Instance = this;
             DontDestroyOnLoad(target: gameObject);
 
-            // Khởi tạo ColyseusClient theo v0.16
             Client = new ColyseusClient(endpoint: serverEndpoint);
-        }
-
-        // Unity sẽ tự động gọi Start() và resume UniTask trên main thread
-        private async UniTaskVoid Start()
-        {
-            await SignInAsync(email: "test1@gmail.com", password: "test123456");
         }
 
         public async UniTask SignInAsync(string email, string password)
         {
-            ShowLoading(isLoading: true);
+            WhenLoading(isLoading: true);
 
             try
             {
@@ -62,13 +49,12 @@ namespace ND25.Core.Colyseus
             }
             finally
             {
-                ShowLoading(isLoading: false);
+                WhenLoading(isLoading: false);
             }
         }
 
-        private void ShowLoading(bool isLoading)
+        private void WhenLoading(bool isLoading)
         {
-            // TODO: bật/tắt spinner hoặc overlay
             Debug.Log(message: $"Loading: {isLoading}");
         }
     }
