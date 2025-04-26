@@ -24,3 +24,12 @@
     transition-timing-function: ease-out-elastic;
     scale: 1.1 1.1;
 }
+
+.submit-btn {
+    width: 120px;
+    height: 30px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

@@ -2,7 +2,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
-namespace ND25.Core.Colyseus
+namespace ND25.Colyseus
 {
     public class ColyseusManager : MonoBehaviour
     {

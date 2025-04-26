@@ -8,7 +8,16 @@
                 <ui:Button text="Menu" name="MenuBtn" class="menu-btn" />
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="Main" style="flex-grow: 1; height: 80%;" />
+        <ui:VisualElement name="Main" enabled="true" style="flex-grow: 1; height: 80%; flex-direction: row; flex-wrap: wrap;">
+            <ui:VisualElement name="TestingGroup" style="flex-grow: 1; display: none;">
+                <ui:Button text="Btn1" name="Btn1" selectable="false" double-click-selects-word="false" triple-click-selects-line="false" class="submit-btn" />
+                <ui:Button text="Button" name="Btn2" class="submit-btn" style="width: 120px; height: 30px; margin-left: 20px; margin-right: 20px; margin-top: 20px; margin-bottom: 20px;" />
+                <ui:Button text="Btn1" name="Btn1" selectable="false" double-click-selects-word="false" triple-click-selects-line="false" class="submit-btn" />
+                <ui:Button text="Btn1" name="Btn1" selectable="false" double-click-selects-word="false" triple-click-selects-line="false" class="submit-btn" />
+                <ui:Button text="Btn1" name="Btn1" selectable="false" double-click-selects-word="false" triple-click-selects-line="false" class="submit-btn" />
+                <ui:Button text="Btn1" name="Btn1" selectable="false" double-click-selects-word="false" triple-click-selects-line="false" class="submit-btn" />
+            </ui:VisualElement>
+        </ui:VisualElement>
         <ui:VisualElement name="Footer" style="flex-grow: 1; height: 10%;" />
     </ui:VisualElement>
 </ui:UXML>
